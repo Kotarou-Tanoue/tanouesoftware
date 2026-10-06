@@ -96,6 +96,44 @@ button:hover {
     background: #0059a8;
 }
 
+/* リンクボタン */
+.button {
+    text-decoration: none;
+    color: #0878dc;
+}
+
+.button:hover {
+    opacity: 0.7;
+}
+
+.feature-links {
+    display: inline-block;
+    text-align: right;
+}
+
+.feature-links a {
+    display: block;
+    text-decoration: none;
+    color: #0878dc;
+}
+
+.feature-links .input-link {
+    font-size: 12px;
+    color: #2e8b57;
+    margin-top: 3px;
+}
+
+.input-link {
+    display: block;
+    font-size: 20px !important;
+    color: #2e8b57 !important;
+    margin-top: 3px;
+}
+
+.input-link:hover {
+    color: #1f633d !important;
+}
+
 .main-button {
     width: 100%;
     margin-top: 15px;
@@ -135,6 +173,7 @@ button:hover {
 /* ホーム画面の機能紹介 */
 .features {
     display: flex;
+    flex-direction: column;
     gap: 8px;
     padding: 12px;
     background: #f4f8fc;
@@ -146,14 +185,19 @@ button:hover {
     background: white;
     border: 1px solid #dce5ed;
     border-radius: 5px;
-    padding: 15px 5px;
-    font-size: 12px;
+    padding: 30px 40px;
+    font-size: 40px;
 }
 
 .feature span {
-    font-size: 25px;
+    font-size: 60px;
     display: block;
     margin-bottom: 8px;
+}
+
+.feature p {
+    font-size: 20px;
+    line-height: 1.8;
 }
 
 /* カード */
@@ -166,13 +210,18 @@ button:hover {
 }
 
 /* 入力欄 */
-input,
+input:not([type="radio"]),
 select {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccd8e3;
     border-radius: 4px;
     margin: 5px 0 12px;
+}
+input[type="radio"] {
+    width: auto;
+    margin: 5px;
+    padding: 0;
 }
 
 /* 画像アップロード */
