@@ -41,9 +41,30 @@
 
                         <h4>被害の内容・写真を入力して下さい</h4>
 
+                        <label>被害を受けた部屋・場所</label>
+
+                        <select id="damage-location" onchange="showLocationOtherInput()">
+                            <option>和室</option>
+                            <option>洋室</option>
+                            <option>キッチン</option>
+                            <option>浴室</option>
+                            <option>トイレ</option>
+                            <option>廊下</option>
+                            <option>階段</option>
+                            <option>ベランダ</option>
+                            <option>外壁</option>
+                            <option>屋根</option>
+                            <option>庭</option>
+                            <option>車庫・ガレージ</option>
+                            <option>その他</option>
+                        </select>
+
+                        <input type="text" id="other-location" placeholder="被害を受けた場所を入力してください" style="display: none;">
+
+
                         <label>被害箇所</label>
 
-                        <select id="damage-part" onchange="showOtherInput()">
+                        <select id="damage-part" onchange="showDamageOtherInput()">
                             <option>壁</option>
                             <option>床</option>
                             <option>天井</option>
@@ -52,21 +73,39 @@
 
                         <input type="text" id="other-part" placeholder="被害箇所を入力してください" style="display: none;">
 
-                        <label>部屋の種類</label>
 
-                        <select id="damage-part" onchange="showOtherInput()">
-                            <option>リビング</option>
-                            <option>寝室</option>
-                            <option>廊下</option>
+                        <label>被害の種類</label><!--被害の大きさ 数値などは後で追加-->
+
+                        <select id="damage-type" onchange="showDamageTypeOtherInput()">
+                            <option>ひび割れ</option>
+                            <option>剥がれ</option>
+                            <option>変形</option>
+                            <option>破損</option>
+                            <option>傾き</option>
+                            <option>沈下</option>
+                            <option>倒壊</option>
                             <option>その他</option>
                         </select>
 
-                        <label>現在の状態について教えてください</label><br>
-                            <label>
-                                <input type="radio" name="damage"> 壁の一部に被害がある<br>
-                                <input type="radio" name="damage"> 建物全体に大きな被害がある<br>
-                                <input type="radio" name="damage"> わからない
-                            </label>
+                        <input type="text" id="other-damage-type" placeholder="被害の種類を入力してください" style="display: none;">
+
+
+                        <label>建物内部の写真を登録</label>
+
+                        <div class="upload">
+                            📷<br>
+                            ここに画像をドラッグ＆ドロップ<br>
+                            または
+
+                            <input
+                                type="file"
+                                accept="image/*"
+                                multiple
+                            >
+                        </div>
+
+                        <p>※複数枚の登録が可能です。</p>
+
                     </div>
 
                     <!-- ボタン -->
@@ -88,8 +127,9 @@
         </div>
     </main>
 
-    <script>//その他部分
-    function showOtherInput() {
+<script>
+    // 被害箇所の「その他」
+    function showDamageOtherInput() {
         const select = document.getElementById("damage-part");
         const input = document.getElementById("other-part");
 
@@ -99,7 +139,31 @@
             input.style.display = "none";
         }
     }
-    </script>
+
+    // 部屋・場所の「その他」
+    function showLocationOtherInput() {
+        const select = document.getElementById("damage-location");
+        const input = document.getElementById("other-location");
+
+        if (select.value === "その他") {
+            input.style.display = "block";
+        } else {
+            input.style.display = "none";
+        }
+    }
+
+    // 被害の種類の「その他」
+    function showDamageTypeOtherInput() {
+        const select = document.getElementById("damage-type");
+        const input = document.getElementById("other-damage-type");
+
+        if (select.value === "その他") {
+            input.style.display = "block";
+        } else {
+            input.style.display = "none";
+        }
+    }
+</script>
 
 </body>
 </html>
