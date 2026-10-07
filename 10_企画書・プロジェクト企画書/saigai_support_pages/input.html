@@ -36,49 +36,22 @@
 
                 <form action="analyzing.html">
 
-                    <!-- 写真登録 -->
-                    <div class="card">
-
-                        <h4>1. 建物内部の写真を登録</h4>
-
-                        <div class="upload">
-                            📷<br>
-                            ここに画像をドラッグ＆ドロップ<br>
-                            または
-
-                            <input
-                                type="file"
-                                accept="image/*"
-                                multiple
-                            >
-                        </div>
-
-                        <p>※複数枚の登録が可能です。</p>
-
-                    </div>
-
                     <!-- 質問入力 -->
                     <div class="card">
 
-                        <h4>2. 簡単な質問に回答してください</h4>
+                        <h4>1. 質問に回答してください</h4>
 
                         <label>建物の種類</label>
 
                         <select>
-                            <option>一戸建て</option>
-                            <option>マンション</option>
-                            <option>アパート</option>
+                            <option>戸建て住宅</option>
+                            <option>集合住宅</option>
                             <option>その他</option>
                         </select>
 
                         <label>建物の築年数</label>
 
-                        <select>
-                            <option>10～20年</option>
-                            <option>10年未満</option>
-                            <option>20～30年</option>
-                            <option>30年以上</option>
-                        </select>
+                            <input type="number" min="0" placeholder="築年数を入力してください">
 
                         <label>現在の状態について教えてください</label><br>
                             <label>
@@ -86,6 +59,10 @@
                                 <input type="radio" name="damage"> 建物全体に大きな被害がある<br>
                                 <input type="radio" name="damage"> わからない
                             </label>
+                    </div>
+
+                    <div class="card">
+
                     </div>
 
                     <!-- ボタン -->
