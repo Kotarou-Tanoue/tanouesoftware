@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>被害状況入力</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <main class="container">
+        <div class="screen">
+
+            <!-- ナビゲーション -->
+            <div class="nav">
+                <strong>🏠 災害復旧サポートシステム</strong>
+
+                <span>
+                    <a href="index.html">ホーム</a>
+                    <a href="input.html">被害状況入力</a>
+                    <a href="chat.html">AI相談チャット</a>
+                    <a href="history.html">履歴</a>
+                </span>
+            </div>
+
+            <div class="content">
+
+                <h2>📄 被害状況の入力</h2>
+
+                <p>
+                    建物の内部の写真をアップロードし、
+                    いくつかの質問に回答してください。
+                </p>
+
+                <form action="analyzing.html">
+
+                    <!-- 質問入力 -->
+                    <div class="card">
+
+                        <h4>被害の内容・写真を入力して下さい</h4>
+
+                        <label>被害箇所</label>
+
+                        <select id="damage-part" onchange="showOtherInput()">
+                            <option>壁</option>
+                            <option>床</option>
+                            <option>天井</option>
+                            <option>その他</option>
+                        </select>
+
+                        <input type="text" id="other-part" placeholder="被害箇所を入力してください" style="display: none;">
+
+                        <label>部屋の種類</label>
+
+                        <select id="damage-part" onchange="showOtherInput()">
+                            <option>リビング</option>
+                            <option>寝室</option>
+                            <option>廊下</option>
+                            <option>その他</option>
+                        </select>
+
+                        <label>現在の状態について教えてください</label><br>
+                            <label>
+                                <input type="radio" name="damage"> 壁の一部に被害がある<br>
+                                <input type="radio" name="damage"> 建物全体に大きな被害がある<br>
+                                <input type="radio" name="damage"> わからない
+                            </label>
+                    </div>
+
+                    <!-- ボタン -->
+                    <div class="actions">
+
+                        <button type="submit">
+                            🧠 AI分析を開始する　›
+                        </button>
+
+                        <a class="button secondary" href="index.html">
+                            戻る
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </main>
+
+    <script>//その他部分
+    function showOtherInput() {
+        const select = document.getElementById("damage-part");
+        const input = document.getElementById("other-part");
+
+        if (select.value === "その他") {
+            input.style.display = "block";
+        } else {
+            input.style.display = "none";
+        }
+    }
+    </script>
+
+</body>
+</html>
