@@ -5,7 +5,6 @@
 
 body {
     margin: 0;
-    padding: 20px;
     font-family: "Yu Gothic", "Meiryo", sans-serif;
     background: #eef2f7;
     color: #263b50;
@@ -28,19 +27,10 @@ body {
     background: white;
     border: 1px solid #9abbd6;
     border-radius: 5px;
-    overflow: hidden;
     margin-bottom: 10px;
     min-height: 550px;
 }
 
-/* 見出し */
-h2 {
-    background: #1260a0;
-    color: white;
-    padding: 12px;
-    margin: 0 0 10px;
-    font-size: 20px;
-}
 
 h3 {
     color: #164c79;
@@ -60,20 +50,261 @@ p {
     line-height: 1.8;
 }
 
-/* ナビゲーション */
-.nav {
-    background: #07518c;
-    color: white;
-    padding: 13px;
-    display: flex;
-    justify-content: space-between;
-    font-size: 13px;
+/* ヘッダー */
+.header {
+    position: fixed;
+    top: 0;
+    right: 0;
+
+    width: 100%;
+    height: 0;
+
+    z-index: 1000;
 }
 
-.nav a {
-    color: white;
+/* ナビゲーション */
+.nav {
+    position: relative;
+    width: 100%;
+}
+
+/* =========================
+   ハンバーガーボタン
+========================= */
+
+.menu-button {
+    position: fixed;
+    top: 20px;
+    right: 25px;
+
+    width: 72px;
+    height: 72px;
+
+    background-color: #ffffff;
+    color: #263b50;
+
+    border: 2px solid #263b50;
+    border-radius: 50%;
+
+    padding: 0;
+    margin: 0;
+
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    z-index: 1002;
+}
+
+
+/* 3本線 */
+
+.menu-button span {
+    display: block;
+
+    width: 30px;
+    height: 3px;
+
+    background-color: #263b50;
+
+    border-radius: 2px;
+}
+
+
+/* ホバー */
+
+.menu-button:hover {
+    background-color: #f4f7fa;
+}
+
+/* =========================
+   メニュー
+========================= */
+
+.menu {
+    position: fixed;
+    top: 0;
+    right: -420px;
+    width: 420px;
+    height: 100vh;
+    background-color: #ffffff;
+    z-index: 1000;
+
+    transition: right 0.35s ease;
+
+    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.08);
+}
+
+.menu.active {
+    right: 0;
+}
+
+
+/* =========================
+   閉じるボタン
+========================= */
+
+.menu-close {
+    position: absolute;
+
+    top: 20px;
+    right: 25px;
+
+    width: 72px;
+    height: 72px;
+
+    background-color: #ffffff;
+    color: #263b50;
+
+    border: 2px solid #263b50;
+    border-radius: 50%;
+
+    padding: 0;
+    margin: 0;
+
+    font-size: 38px;
+    font-weight: 300;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 1003;
+}
+
+
+.menu-close:hover {
+    background-color: #f4f7fa;
+}
+
+
+/* メニュー内部 */
+
+.menu-content {
+    padding: 130px 45px 40px;
+}
+
+
+/* =========================
+   ログイン
+========================= */
+
+.menu-account {
+    padding-bottom: 30px;
+    border-bottom: 1px solid #d9e1e8;
+}
+
+
+/* ログインボタン */
+
+.login-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 58px;
+
+    background-color: #263b50;
+    color: #ffffff;
+
     text-decoration: none;
-    margin-left: 10px;
+
+    font-size: 18px;
+    font-weight: 600;
+
+    letter-spacing: 0.08em;
+
+    border-radius: 4px;
+
+    transition: 0.2s;
+}
+
+.login-button:hover {
+    opacity: 0.85;
+}
+
+
+/* 新規登録 */
+
+.register-link {
+    display: block;
+
+    margin-top: 18px;
+
+    text-align: center;
+
+    color: #263b50;
+    text-decoration: none;
+
+    font-size: 15px;
+}
+
+.register-link:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================
+   メインメニュー
+========================= */
+
+.menu-nav {
+    padding: 10px 0;
+}
+
+.menu-nav a {
+    display: flex;
+    align-items: center;
+
+    height: 70px;
+
+    color: #263b50;
+    text-decoration: none;
+
+    font-size: 19px;
+
+    border-bottom: 1px solid #e2e7ec;
+
+    transition: 0.2s;
+}
+
+.menu-nav a:hover {
+    padding-left: 8px;
+    background-color: #f5f8fa;
+}
+
+
+/* =========================
+   サブメニュー
+========================= */
+
+.menu-sub {
+    padding-top: 20px;
+}
+
+.menu-sub a {
+    display: block;
+
+    padding: 13px 0;
+
+    color: #718396;
+    text-decoration: none;
+
+    font-size: 14px;
+}
+
+.menu-sub a:hover {
+    color: #263b50;
 }
 
 /* コンテンツ */
@@ -82,7 +313,8 @@ p {
 }
 
 /* ボタン */
-button {
+/* 通常のボタン */
+button:not(.menu-button):not(.menu-close) {
     background: #0878dc;
     color: white;
     border: none;
@@ -92,7 +324,7 @@ button {
     font-size: 14px;
 }
 
-button:hover {
+button:not(.menu-button):not(.menu-close):hover {
     background: #0059a8;
 }
 
@@ -145,9 +377,10 @@ button:hover {
     border: 1px solid #0878dc;
 }
 
-/* ホーム画面 */
 .hero {
-    height: 240px;
+    width: 100%;
+    min-height: 100vh;
+
     background:
         linear-gradient(
             rgba(0, 0, 0, 0.55),
@@ -157,28 +390,52 @@ button:hover {
 
     background-size: cover;
     background-position: center;
+
     color: white;
-    padding: 40px 25px;
+
+    padding: 40px;
+
+    position: relative;
 }
 
+/* システム名をど真ん中 */
 .hero h1 {
-    font-size: 23px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    margin: 0;
+
+    font-size: 48px;
+    white-space: nowrap;
+}
+
+/* 説明部分を一番下 */
+.hero h2 {
+    position: absolute;
+    bottom: 10px;
+    left: 40px;
+
+    margin: 0;
+
+    font-size: 30px;
     line-height: 1.7;
 }
 
-.hero p {
-    font-size: 13px;
-}
 
 /* ホーム画面の機能紹介 */
-.features {
+.main {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 12px;
+    gap: 10px;
+    padding-top: 100px;
     background: #f4f8fc;
+    padding-bottom: 80px;
 }
 
+/* 通常の機能カード */
 .feature {
     flex: 1;
     text-align: center;
@@ -198,6 +455,330 @@ button:hover {
 .feature p {
     font-size: 20px;
     line-height: 1.8;
+}
+
+.damage {
+    display: flex;
+
+    width: 100%;
+    height: 380px;
+
+    padding: 0;
+
+    overflow: hidden;
+
+    background: #073b59;
+
+    border: none;
+    border-radius: 0;
+
+    text-align: left;
+}
+
+
+/* 左側の画像 */
+.damage-image {
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.damage-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+    transition: transform 0.4s ease;
+}
+
+
+/* マウスを乗せたとき */
+.damage:hover .damage-image img {
+    transform: scale(1.03);
+}
+
+
+/* 右側 */
+.damage-content {
+    width: 50%;
+
+    padding: 50px 60px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    color: white;
+}
+
+
+/* タイトル */
+.damage-title {
+    display: block;
+
+    color: white;
+
+    font-size: 42px;
+    font-weight: bold;
+
+    text-decoration: underline;
+    text-underline-offset: 8px;
+
+    margin-bottom: 30px;
+}
+
+
+/* 矢印 */
+.damage-title span {
+    display: inline-block;
+
+    font-size: 50px;
+    font-weight: normal;
+
+    margin-left: 10px;
+
+    vertical-align: middle;
+
+    text-decoration: none;
+}
+
+
+/* 説明文 */
+.damage-content p {
+    margin: 0;
+
+    color: white;
+
+    font-size: 18px;
+    line-height: 2;
+}
+
+
+/* タイトルにマウスを乗せたとき */
+.damage-title:hover {
+    color: #e5f4ff;
+}
+
+
+/* =================================
+   スマートフォン
+   ================================= */
+
+@media (max-width: 600px) {
+
+    .damage {
+        height: auto;
+
+        flex-direction: column;
+    }
+
+    .damage-image {
+        width: 100%;
+        height: 230px;
+    }
+
+    .damage-content {
+        width: 100%;
+
+        padding: 35px 25px;
+    }
+
+    .damage-title {
+        font-size: 30px;
+    }
+
+    .damage-title span {
+        font-size: 40px;
+    }
+
+    .damage-content p {
+        font-size: 15px;
+    }
+}
+
+/* システム紹介 */
+.concept {
+    text-align: center;
+
+    margin-top: 60px;
+
+    padding: 70px 40px 80px;
+
+    background: white;
+}
+
+
+/* キャッチコピー */
+.concept h2 {
+    margin: 0 0 45px;
+
+    color: #263b50;
+
+    font-size: 32px;
+    font-weight: bold;
+
+    letter-spacing: 0.08em;
+}
+
+/* =================================
+   マイページ案内
+   ================================= */
+
+.mypage-section {
+    background: #fff;
+
+    margin-top: 60px;
+
+    padding: 70px 30px;
+
+    border-top: 1px solid #dce5ed; 
+}
+
+
+/* 全体を中央寄りにする */
+.mypage-inner {
+    width: 900px;
+    max-width: 100%;
+
+    margin: 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 55px;
+}
+
+
+/* 写真 */
+.mypage-image {
+    width: 230px;
+    height: 230px;
+
+    flex-shrink: 0;
+
+    overflow: hidden;
+
+    border-radius: 50%;
+
+    border: 1px solid #d6e2ed;
+
+    background: white;
+}
+
+
+.mypage-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+
+/* 文章部分 */
+.mypage-content {
+    width: 500px;
+
+    text-align: left;
+}
+
+
+/* 見出し */
+.mypage-content h2 {
+    margin: 0 0 25px;
+
+    color: #263b50;
+
+    font-size: 30px;
+    font-weight: bold;
+
+    letter-spacing: 0.05em;
+}
+
+
+/* 説明文 */
+.mypage-content p {
+    margin: 0 0 10px;
+
+    color: #263b50;
+
+    font-size: 16px;
+
+    line-height: 1.9;
+}
+
+
+/* マイページリンク */
+.mypage-link {
+    display: inline-block;
+
+    margin-top: 25px;
+
+    color: #263b50;
+
+    font-size: 20px;
+    font-weight: bold;
+
+    text-decoration: none;
+
+    border-bottom: 2px solid #263b50;
+
+    padding-bottom: 5px;
+}
+
+
+/* 矢印 */
+.mypage-link span {
+    margin-left: 10px;
+
+    font-size: 28px;
+}
+
+
+/* マウスを乗せたとき */
+.mypage-link:hover {
+    opacity: 0.65;
+}
+
+
+/* スマートフォン */
+@media (max-width: 700px) {
+
+    .mypage-section {
+        padding: 50px 20px;
+    }
+
+    .mypage-inner {
+        width: 100%;
+
+        flex-direction: column;
+
+        gap: 30px;
+    }
+
+    .mypage-image {
+        width: 180px;
+        height: 180px;
+    }
+
+    .mypage-content {
+        width: 100%;
+
+        text-align: center;
+    }
+
+    .mypage-content h2 {
+        font-size: 24px;
+    }
+
+    .mypage-content p {
+        font-size: 14px;
+    }
 }
 
 /* カード */
@@ -358,12 +939,59 @@ th {
 }
 
 /* フッター */
-footer {
+.footer {
+    background-color: #dfeaf2;
+    padding: 25px 20px 15px;
     text-align: center;
-    padding: 20px;
-    background: #eef6fc;
-    color: #17558a;
-    font-size: 13px;
+    color: #263b50;
+}
+
+.footer-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.footer h2 {
+    margin: 0 0 8px;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+}
+
+.footer-message {
+    margin: 0 0 15px;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+}
+
+.footer-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.footer-nav a {
+    color: #263b50;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.footer-nav a:hover {
+    opacity: 0.6;
+}
+
+.footer-nav span {
+    color: #8193a3;
+}
+
+.copyright {
+    margin: 0;
+    padding-top: 10px;
+    border-top: 1px solid #c5d4df;
+    font-size: 11px;
+    color: #718396;
 }
 
 /* タブレット */

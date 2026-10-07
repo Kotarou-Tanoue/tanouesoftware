@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ホーム | 災害復旧サポートシステム</title>
+    <title>ホーム | 地震被害度測定システム</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -13,71 +13,249 @@
     <main class="container">
         <div class="screen">
 
-            <!-- ナビゲーション -->
-            <div class="nav">
-                <strong>🏠 災害復旧サポートシステム</strong>
+            <div class="header">
 
-                <span>
-                    <a href="index.html">ホーム</a>
-                    <a href="input.html">被害状況入力</a>
-                    <a href="chat.html">AI相談チャット</a>
-                    <a href="history.html">履歴</a>
-                </span>
+                <div class="nav">
+
+                    <!-- メニューボタン -->
+                    <button class="menu-button" id="menuButton" aria-label="メニューを開く">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+
+                    <!-- メニュー -->
+                    <div class="menu" id="menu">
+
+                        <!-- 閉じるボタン -->
+                        <button class="menu-close" id="menuClose" aria-label="メニューを閉じる">
+                            ×
+                        </button>
+
+                        <div class="menu-content">
+
+                            <!-- アカウント -->
+                            <div class="menu-account">
+
+                                <a href="login.html" class="login-button">
+                                    ログイン
+                                </a>
+
+                                <a href="register.html" class="register-link">
+                                    新規登録
+                                </a>
+
+                            </div>
+
+                            <!-- ページメニュー -->
+                            <nav class="menu-nav">
+
+                                <a href="index.html">
+                                    ホーム
+                                </a>
+
+                                <a href="input.html">
+                                    被害状況入力
+                                </a>
+
+                                <a href="mypage.html">
+                                    マイページ
+                                </a>
+
+                            </nav>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
+
 
             <!-- メイン画面 -->
             <section class="hero">
 
-                <h1>
+                <h1>地震被害度測定システム</h1>
+
+                <h2>
                     地震後の不安を、<br>
                     このシステムでサポートします。
-                </h1>
-
-                <p>
-                    建物の内部写真と簡単な質問を入力するだけで、
-                    AIが被害状況を分析し、復旧に必要な情報を提示します。
-                </p>
+                </h2>
 
             </section>
+
 
             <!-- 機能紹介 -->
-            <section class="features">
+            <section class="main">
 
-                <div class="feature">
-                    <span>📷</span>
-                    <div class="feature-links">
-                        <b>被害状況を調べる</b>
-                        <a class="input-link" href="input.html">>>被害情報入力へ</a>
+                <div class="feature damage">
+
+                    <div class="damage-image">
+                        <img src="images/damage.jpg" alt="建物の被害状況">
                     </div>
-                    <p>建物内部の写真などの情報を入力し被害状況の目安などの情報を出力します。</p>
+
+                    <div class="damage-content">
+
+                        <a href="input.html" class="damage-title">
+                            被害状況を調べる
+                            <span>›</span>
+                        </a>
+
+                        <p>
+                            建物内部の写真などの情報を入力し、
+                            被害状況の目安などの情報を確認できます。
+                        </p>
+
+                    </div>
+
                 </div>
 
-                <div class="feature">
-                    <span>🧠</span>
-                    <div class="feature-links">
-                        <b>AIが自動分析</b>
-                        <a class="input-link" href="input.html">>>AI相談チャットへ</a>
-                    </div>
-                    <p>災害後の不安や疑問について、AIに質問できます。</p>
-                </div>
 
-                <div class="feature">
-                    <span>📋</span>
-                    <div class="feature-links">
-                        <b>履歴で再確認</b>
-                        <a class="input-link" href="input.html">>>履歴へ</a>
+                <!-- コンセプト -->
+                <section class="concept">
+
+                    <h2>
+                        被害を知ることが、復旧への第一歩。
+                    </h2>
+
+                    <p>
+                        地震後の不安を、ひとつずつ整理するために。
+                    </p>
+
+                    <p>
+                        建物の被害状況を確認し、
+                        復旧に向けた次の行動をサポートします。
+                    </p>
+
+                    <p>
+                        写真と簡単な質問を入力するだけで、
+                        被害状況の目安を確認できます。
+                    </p>
+
+                    <p>
+                        写真と簡単な質問から、
+                        今の状況を確認してみませんか？
+                    </p>
+
+                </section>
+
+
+                <!-- マイページ -->
+                <section class="mypage-section">
+
+                    <div class="mypage-inner">
+
+                        <div class="mypage-image">
+                            <img src="images/mypage.jpg" alt="マイページ">
+                        </div>
+
+                        <div class="mypage-content">
+
+                            <h2>
+                                ログインすると、もっと便利に。
+                            </h2>
+
+                            <p>
+                                過去に調べた被害状況を保存して、
+                                いつでも確認できるようになります。
+                            </p>
+
+                            <p>
+                                被害状況の履歴を確認したい方は、
+                                マイページをご利用ください。
+                            </p>
+
+                            <a href="mypage.html" class="mypage-link">
+                                マイページを見る
+                                <span>›</span>
+                            </a>
+
+                        </div>
+
                     </div>
-                    <p>被害状況を分析した結果の履歴を表示することができます。</p>
-                </div>
+
+                </section>
 
             </section>
 
-            <footer>
-                一人で悩まず、まずはご相談ください。
+
+            <!-- フッター -->
+            <footer class="footer">
+
+                <div class="footer-inner">
+
+                    <h2>
+                        地震被害度測定システム
+                    </h2>
+
+                    <p class="footer-message">
+                        被災後の「どうすればいい？」をサポートします。
+                    </p>
+
+                    <nav class="footer-nav">
+
+                        <a href="index.html">
+                            ホーム
+                        </a>
+
+                        <span>｜</span>
+
+                        <a href="input.html">
+                            被害状況入力
+                        </a>
+
+                        <span>｜</span>
+
+                        <a href="mypage.html">
+                            マイページ
+                        </a>
+
+                    </nav>
+
+                    <p class="copyright">
+                        © 2026 地震被害度測定システム
+                    </p>
+
+                </div>
+
             </footer>
 
         </div>
     </main>
 
+
+    <!-- メニュー用JavaScript -->
+    <script>
+
+        const menuButton = document.getElementById("menuButton");
+        const menu = document.getElementById("menu");
+        const menuClose = document.getElementById("menuClose");
+
+
+        // メニューを開く
+        menuButton.addEventListener("click", function () {
+
+            menu.classList.add("active");
+
+            // ハンバーガーボタンを隠す
+            menuButton.style.display = "none";
+
+        });
+
+
+        // メニューを閉じる
+        menuClose.addEventListener("click", function () {
+
+            menu.classList.remove("active");
+
+            // ハンバーガーボタンを表示
+            menuButton.style.display = "flex";
+
+        });
+
+    </script>
+
 </body>
+
 </html>
