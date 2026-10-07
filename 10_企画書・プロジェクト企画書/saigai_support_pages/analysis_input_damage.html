@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>被害状況入力</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <main class="container">
+        <div class="screen">
+
+            <!-- ナビゲーション -->
+            <div class="nav">
+                <strong>🏠 災害復旧サポートシステム</strong>
+
+                <span>
+                    <a href="index.html">ホーム</a>
+                    <a href="input.html">被害状況入力</a>
+                    <a href="chat.html">AI相談チャット</a>
+                    <a href="history.html">履歴</a>
+                </span>
+            </div>
+
+            <div class="content">
+
+                <h2>📄 被害状況の入力</h2>
+
+                <p>
+                    建物の内部の写真をアップロード、
+                    いくつかの質問に回答してください。
+                </p>
+
+                <form action="analyzing.html">
+
+                    <!-- 被害情報を入力する場所 -->
+                    <div class="card">
+
+                        <h4>被害情報を入力</h4>
+
+                        <!-- 被害を受けた部屋・場所 -->
+                        <label>被害を受けた部屋・場所</label>
+
+                        <select id="damage-location">
+                            <option>和室</option>
+                            <option>洋室</option>
+                            <option>キッチン</option>
+                            <option>浴室</option>
+                            <option>トイレ</option>
+                            <option>廊下</option>
+                            <option>階段</option>
+                            <option>ベランダ</option>
+                            <option>外壁</option>
+                            <option>屋根</option>
+                            <option>庭</option>
+                            <option>車庫・ガレージ</option>
+                            <option>その他</option>
+                        </select>
+
+                        <input
+                            type="text"
+                            id="other-location"
+                            placeholder="被害を受けた場所を入力してください"
+                            style="display: none;"
+                        >
+
+
+                        <!-- 被害箇所 -->
+                        <label>被害箇所</label>
+
+                        <select id="damage-part">
+                            <option>壁</option>
+                            <option>床</option>
+                            <option>天井</option>
+                            <option>その他</option>
+                        </select>
+
+                        <input
+                            type="text"
+                            id="other-part"
+                            placeholder="被害箇所を入力してください"
+                            style="display: none;"
+                        >
+
+
+                        <!-- 被害の種類 -->
+                        <label>被害の種類</label>
+
+                        <select id="damage-type">
+                            <option>ひび割れ</option>
+                            <option>剥がれ</option>
+                            <option>変形</option>
+                            <option>破損</option>
+                            <option>傾き</option>
+                            <option>沈下</option>
+                            <option>倒壊</option>
+                            <option>その他</option>
+                        </select>
+
+                        <input
+                            type="text"
+                            id="other-damage-type"
+                            placeholder="被害の種類を入力してください"
+                            style="display: none;"
+                        >
+
+
+                        <!-- 写真 -->
+                        <label>建物内部の写真を登録</label>
+
+                        <div class="upload">
+                            📷
+                            <br>
+                            ここに画像をドラッグ＆ドロップ
+                            <br>
+                            または
+
+                            <input
+                                type="file"
+                                id="damage-photo"
+                                accept="image/*"
+                                multiple
+                            >
+                        </div>
+
+                        <p>※複数枚の登録が可能です。</p>
+
+                    </div>
+
+
+                    <!-- 被害情報を追加 -->
+                    <div class="actions">
+
+                        <button type="button" id="add-damage">
+                            ＋ この被害情報を追加
+                        </button>
+
+                    </div>
+
+
+                    <!-- 登録済みの被害情報 -->
+                    <div class="card">
+
+                        <h4>📋 登録済みの被害情報</h4>
+
+                        <div id="saved-damages">
+
+                            <p id="no-damage">
+                                まだ被害情報は登録されていません。
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <br>
+
+
+                    <!-- AI分析 -->
+                    <div class="actions">
+
+                        <button type="submit">
+                            🧠 AI分析を開始する　›
+                        </button>
+
+                        <a class="button secondary" href="index.html">
+                            戻る
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </main>
+
+
+<script>
+
+    // =========================
+    // 「その他」の入力欄を表示
+    // =========================
+
+    function checkOther(select, input) {
+
+        if (select.value === "その他") {
+
+            input.style.display = "block";
+
+        } else {
+
+            input.style.display = "none";
+            input.value = "";
+
+        }
+
+    }
+
+
+    // =========================
+    // 部屋・場所
+    // =========================
+
+    const locationSelect = document.getElementById("damage-location");
+    const otherLocation = document.getElementById("other-location");
+
+    locationSelect.addEventListener("change", function () {
+
+        checkOther(locationSelect, otherLocation);
+
+    });
+
+
+    // =========================
+    // 被害箇所
+    // =========================
+
+    const partSelect = document.getElementById("damage-part");
+    const otherPart = document.getElementById("other-part");
+
+    partSelect.addEventListener("change", function () {
+
+        checkOther(partSelect, otherPart);
+
+    });
+
+
+    // =========================
+    // 被害の種類
+    // =========================
+
+    const typeSelect = document.getElementById("damage-type");
+    const otherDamageType = document.getElementById("other-damage-type");
+
+    typeSelect.addEventListener("change", function () {
+
+        checkOther(typeSelect, otherDamageType);
+
+    });
+
+
+    // =========================
+    // 被害情報を追加
+    // =========================
+
+    document.getElementById("add-damage").addEventListener("click", function () {
+
+        const savedDamages = document.getElementById("saved-damages");
+        const noDamage = document.getElementById("no-damage");
+
+
+        // 「まだ登録されていません」を消す
+        if (noDamage) {
+            noDamage.remove();
+        }
+
+
+        // 選択された内容を取得
+        let location = locationSelect.value;
+
+        let part = partSelect.value;
+
+        let type = typeSelect.value;
+
+
+        // 「その他」の場合は入力された文字を使用
+        if (location === "その他") {
+
+            if (otherLocation.value.trim() === "") {
+
+                alert("被害を受けた場所を入力してください。");
+                return;
+
+            }
+
+            location = otherLocation.value;
+
+        }
+
+
+        if (part === "その他") {
+
+            if (otherPart.value.trim() === "") {
+
+                alert("被害箇所を入力してください。");
+                return;
+
+            }
+
+            part = otherPart.value;
+
+        }
+
+
+        if (type === "その他") {
+
+            if (otherDamageType.value.trim() === "") {
+
+                alert("被害の種類を入力してください。");
+                return;
+
+            }
+
+            type = otherDamageType.value;
+
+        }
+
+
+        // 写真の枚数
+        const photoInput = document.getElementById("damage-photo");
+
+        const photoCount = photoInput.files.length;
+
+
+        // 現在何件登録されているか
+        const number =
+            savedDamages.querySelectorAll(".saved-damage").length + 1;
+
+
+        // 新しい一覧カードを作成
+        const damage = document.createElement("div");
+
+        damage.className = "card saved-damage";
+
+
+        damage.innerHTML = `
+            <strong>被害情報 ${number}</strong>
+
+            <p>
+                📍 場所：${location}<br>
+                🔨 被害箇所：${part}<br>
+                ⚠️ 被害の種類：${type}<br>
+                📷 写真：${photoCount}枚
+            </p>
+
+            <button type="button" class="delete-damage">
+                削除
+            </button>
+        `;
+
+
+        // 一覧に追加
+        savedDamages.appendChild(damage);
+
+
+        // 削除ボタン
+        damage.querySelector(".delete-damage").addEventListener(
+            "click",
+            function () {
+
+                damage.remove();
+
+                updateDamageNumbers();
+
+            }
+        );
+
+
+        // 入力欄を初期状態に戻す
+        locationSelect.selectedIndex = 0;
+        partSelect.selectedIndex = 0;
+        typeSelect.selectedIndex = 0;
+
+
+        otherLocation.value = "";
+        otherPart.value = "";
+        otherDamageType.value = "";
+
+
+        otherLocation.style.display = "none";
+        otherPart.style.display = "none";
+        otherDamageType.style.display = "none";
+
+
+        // 写真をリセット
+        photoInput.value = "";
+
+    });
+
+
+    // =========================
+    // 被害情報の番号を振り直す
+    // =========================
+
+    function updateDamageNumbers() {
+
+        const damages =
+            document.querySelectorAll(".saved-damage");
+
+
+        damages.forEach(function (damage, index) {
+
+            damage.querySelector("strong").textContent =
+                "被害情報 " + (index + 1);
+
+        });
+
+    }
+
+</script>
+
+</body>
+</html>
