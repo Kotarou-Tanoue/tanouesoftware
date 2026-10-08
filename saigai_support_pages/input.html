@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>被害状況入力</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <main class="container">
+        <div class="screen">
+
+            <!-- ナビゲーション -->
+            <div class="nav">
+                <strong>🏠 災害復旧サポートシステム</strong>
+
+                <span>
+                    <a href="index.html">ホーム</a>
+                    <a href="input.html">被害状況入力</a>
+                    <a href="history.html">履歴</a>
+                </span>
+            </div>
+
+            <div class="content">
+
+                <h2>📄 被害状況の入力</h2>
+
+                <p>
+                    建物の内部の写真をアップロードし、
+                    いくつかの質問に回答してください。
+                </p>
+
+                <form action="analyzing.html">
+
+                    <!-- 写真登録 -->
+                    <div class="card">
+
+                        <h4>1. 建物内部の写真を登録</h4>
+
+                        <div class="upload">
+                            📷<br>
+                            ここに画像をドラッグ＆ドロップ<br>
+                            または
+
+                            <input
+                                type="file"
+                                accept="image/*"
+                                multiple
+                            >
+                        </div>
+
+                        <p>※複数枚の登録が可能です。</p>
+
+                    </div>
+
+                    <!-- 質問入力 -->
+                    <div class="card">
+
+                        <h4>2. 簡単な質問に回答してください</h4>
+
+                        <label>建物の種類</label>
+
+                        <select>
+                            <option>一戸建て</option>
+                            <option>マンション</option>
+                            <option>アパート</option>
+                            <option>その他</option>
+                        </select>
+
+                        <label>建物の築年数</label>
+
+                        <select>
+                            <option>10～20年</option>
+                            <option>10年未満</option>
+                            <option>20～30年</option>
+                            <option>30年以上</option>
+                        </select>
+
+                        <label>現在の状態について教えてください</label>
+
+                        <p>
+                            <label>
+                                <input type="radio" name="damage">
+                                壁の一部に被害がある
+                            </label>
+                        </p>
+
+                        <p>
+                            <label>
+                                <input type="radio" name="damage">
+                                建物全体に大きな被害がある
+                            </label>
+                        </p>
+
+                        <p>
+                            <label>
+                                <input type="radio" name="damage">
+                                わからない
+                            </label>
+                        </p>
+
+                    </div>
+
+                    <!-- ボタン -->
+                    <div class="actions">
+
+                        <button type="submit">
+                            🧠 AI分析を開始する　›
+                        </button>
+
+                        <a class="button secondary" href="index.html">
+                            戻る
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
