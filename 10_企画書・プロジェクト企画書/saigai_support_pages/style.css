@@ -309,7 +309,7 @@ p {
 
 /* コンテンツ */
 .content {
-    padding: 20px;
+    padding: 130px 20px 20px;
 }
 
 /* ボタン */
@@ -382,10 +382,8 @@ button:not(.menu-button):not(.menu-close):hover {
     min-height: 100vh;
 
     background:
-        linear-gradient(
-            rgba(0, 0, 0, 0.55),
-            rgba(0, 0, 0, 0.65)
-        ),
+        linear-gradient(rgba(0, 0, 0, 0.55),
+            rgba(0, 0, 0, 0.65)),
         url("https://images.unsplash.com/photo-1590050752117-23a9d7fc6e8e?w=900");
 
     background-size: cover;
@@ -634,7 +632,7 @@ button:not(.menu-button):not(.menu-close):hover {
 
     padding: 70px 30px;
 
-    border-top: 1px solid #dce5ed; 
+    border-top: 1px solid #dce5ed;
 }
 
 
@@ -799,6 +797,7 @@ select {
     border-radius: 4px;
     margin: 5px 0 12px;
 }
+
 input[type="radio"] {
     width: auto;
     margin: 5px;
@@ -1018,4 +1017,209 @@ th {
     .hero h1 {
         font-size: 19px;
     }
+}
+
+/* =========================
+           ログイン画面
+           ========================= */
+
+.login-page {
+    min-height: calc(100vh - 90px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    background: #eef2f7;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 520px;
+    background: #ffffff;
+    padding: 50px 45px;
+    border: 1px solid #d9e0e8;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    text-align: center;
+}
+
+.login-card h1 {
+    margin: 0 0 15px;
+    color: #263b50;
+    font-size: 28px;
+}
+
+.login-card .description {
+    margin: 0 0 35px;
+    color: #5f6f80;
+    line-height: 1.8;
+    font-size: 15px;
+}
+
+.line-login-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 58px;
+
+    background: #06c755;
+    color: #ffffff;
+
+    border-radius: 4px;
+    text-decoration: none;
+
+    font-size: 17px;
+    font-weight: bold;
+
+    transition: opacity 0.2s;
+}
+
+.line-login-button:hover {
+    opacity: 0.85;
+}
+
+.login-note {
+    margin-top: 25px;
+    color: #718096;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 30px;
+    color: #0878dc;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================
+           スマートフォン対応
+           ========================= */
+
+@media (max-width: 600px) {
+
+    .login-page {
+        padding: 40px 15px;
+    }
+
+    .login-card {
+        padding: 40px 25px;
+    }
+
+    .login-card h1 {
+        font-size: 24px;
+    }
+
+}
+
+/* マイページのヘッダー */
+.page-header {
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background-color: #3B4A6B;
+    color: #ffffff;
+
+    padding: 0 25px 0 30px;
+    box-sizing: border-box;
+}
+
+
+/* マイページの見出し */
+.page-header h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+
+/* ハンバーガーメニュー */
+.page-header .nav {
+    display: flex;
+    align-items: center;
+}
+
+
+/* マイページのコンテンツ */
+.mypage-section {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.mypage-section h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+
+/* 建物カード */
+.mypage-section .card {
+    margin-bottom: 15px;
+}
+
+
+/* 分析履歴 */
+.mypage-section .history {
+    margin-bottom: 15px;
+}
+
+.building-detail-section {
+    margin-bottom: 30px;
+}
+
+.building-detail-section h2 {
+    margin-top: 0px;
+    margin-bottom: 15px;
+}
+
+.building-info p {
+    margin: 0 0 18px 0;
+}
+
+.building-info p:last-child {
+    margin-bottom: 0;
+}
+
+.building-detail-history {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.building-detail-history img {
+    width: 140px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.building-detail-history p {
+    margin: 0 0 8px 0;
+}
+
+.building-detail-history b {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.building-detail-history a {
+    color: #0878dc;
+    text-decoration: none;
+}
+
+.building-detail-history a:hover {
+    text-decoration: underline;
 }
