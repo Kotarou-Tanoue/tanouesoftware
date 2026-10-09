@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>被害状況入力</title>
+    <title>被害状況分析</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -17,7 +17,7 @@
 
                 <div class="page-header">
 
-                    <h1>被害状況入力</h1>
+                    <h1>被害状況分析</h1>
 
                     <!-- ハンバーガーメニュー -->
                     <div class="nav">
@@ -55,7 +55,7 @@
                                     </a>
 
                                     <a href="analysis_input_building.html">
-                                        被害状況入力
+                                        被害状況分析
                                     </a>
 
                                     <a href="mypage.html">
@@ -76,10 +76,10 @@
 
             <div class="content">
 
-                <h2>📄 被害状況の入力</h2>
+                <h2>📄 ステップ２：被害状況の入力</h2>
 
                 <p>
-                    建物の内部の写真をアップロード、
+                    建物の内部の写真をアップロードし、
                     いくつかの質問に回答してください。
                 </p>
 
@@ -106,7 +106,7 @@
                             <option>屋根</option>
                             <option>庭</option>
                             <option>車庫・ガレージ</option>
-                            <option>その他</option>
+                            <option>その他(自由入力可)</option>
                         </select>
 
                         <input
@@ -124,7 +124,7 @@
                             <option>壁</option>
                             <option>床</option>
                             <option>天井</option>
-                            <option>その他</option>
+                            <option>その他(自由入力可)</option>
                         </select>
 
                         <input
@@ -146,7 +146,7 @@
                             <option>傾き</option>
                             <option>沈下</option>
                             <option>倒壊</option>
-                            <option>その他</option>
+                            <option>その他(自由入力可)</option>
                         </select>
 
                         <input
@@ -155,6 +155,15 @@
                             placeholder="被害の種類を入力してください"
                             style="display: none;"
                         >
+
+
+                        <!-- 被害が発生した時期 -->
+                        <label for="damage-timing">この被害は地震の後に発生したものですか？</label>
+                        <select id="damage-timing" name="damage-timing">
+                            <option value="わからない">わからない</option>
+                            <option value="地震の前からあった">地震の前からあった</option>
+                            <option value="地震の後に発生した">地震の後に発生した</option>
+                        </select>
 
 
                         <!-- 写真 -->
@@ -202,6 +211,38 @@
                             </p>
 
                         </div>
+
+                    </div>
+
+                    <!-- 建物全体の状態についての質問 -->
+                    <div class="card">
+
+                        <h4>建物全体の状態について</h4>
+                        <p>建物全体の状態について、わかる範囲で回答してください。</p>
+
+                        <label for="door-window-status">ドアや窓は正常に開閉できますか？</label>
+                        <select id="door-window-status" name="door-window-status">
+                            <option value="未確認">わからない・確認していない</option>
+                            <option value="正常に開閉できる">正常に開閉できる</option>
+                            <option value="開閉しにくい">開閉しにくい</option>
+                            <option value="開閉できない">開閉できない</option>
+                        </select>
+
+                        <label for="unusual-noise">建物から普段と違う音がしますか？</label>
+                        <select id="unusual-noise" name="unusual-noise">
+                            <option value="未確認">わからない・確認していない</option>
+                            <option value="ない">いいえ、特にない</option>
+                            <option value="ある">はい、ある</option>
+                        </select>
+
+                        <label for="building-tilt">建物の傾きや床の傾斜を感じますか？</label>
+                        <select id="building-tilt" name="building-tilt">
+                            <option value="未確認">わからない・確認していない</option>
+                            <option value="感じない">いいえ、特に感じない</option>
+                            <option value="感じる">はい、感じる</option>
+                        </select>
+
+                        <p class="note">※危険が疑われる場合は、確認のために建物内を歩き回らず、安全な場所へ移動して専門家や自治体に相談してください。</p>
 
                     </div>
 
@@ -285,6 +326,7 @@
 
         const typeSelect = document.getElementById("damage-type");
         const otherDamageType = document.getElementById("other-damage-type");
+        const timingSelect = document.getElementById("damage-timing");
 
         typeSelect.addEventListener("change", function () {
 
@@ -303,18 +345,13 @@
             const noDamage = document.getElementById("no-damage");
 
 
-            // 「まだ登録されていません」を消す
-            if (noDamage) {
-                noDamage.remove();
-            }
-
-
             // 選択された内容を取得
             let location = locationSelect.value;
 
             let part = partSelect.value;
 
             let type = typeSelect.value;
+            const timing = timingSelect.value;
 
 
             // 「その他」の場合は入力された文字を使用
@@ -360,6 +397,12 @@
             }
 
 
+            // 入力内容が有効になったら「未登録」の表示を消す
+            if (noDamage) {
+                noDamage.remove();
+            }
+
+
             // 写真の枚数
             const photoInput = document.getElementById("damage-photo");
 
@@ -384,6 +427,7 @@
                     📍 場所：${location}<br>
                     🔨 被害箇所：${part}<br>
                     ⚠️ 被害の種類：${type}<br>
+                    🕒 発生時期：${timing}<br>
                     📷 写真：${photoCount}枚
                 </p>
 
@@ -414,6 +458,7 @@
             locationSelect.selectedIndex = 0;
             partSelect.selectedIndex = 0;
             typeSelect.selectedIndex = 0;
+            timingSelect.selectedIndex = 0;
 
 
             otherLocation.value = "";

@@ -149,7 +149,7 @@
         <mxCell id="MBZbnEWTIq1XZIDPfTxG-4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="建物情報を保存する" vertex="1">
           <mxGeometry height="70" width="140" x="414" y="327.5" as="geometry" />
         </mxCell>
-        <mxCell id="g-kVuzsuOGVBTgGqFfzp-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="保存するした建物の一覧を確認する" vertex="1">
+        <mxCell id="g-kVuzsuOGVBTgGqFfzp-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="保存した建物の一覧を確認する" vertex="1">
           <mxGeometry height="70" width="140" x="380" y="409" as="geometry" />
         </mxCell>
         <mxCell id="g-kVuzsuOGVBTgGqFfzp-2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="保存した建物の詳細を確認する" vertex="1">
