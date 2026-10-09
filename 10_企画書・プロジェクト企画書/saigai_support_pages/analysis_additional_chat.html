@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>追加情報の確認</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .chat-container {
+            max-width: 850px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .chat-header {
+            margin-bottom: 24px;
+        }
+
+        .chat-header h2 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .chat-header p {
+            margin: 0;
+        }
+
+        .chat-box {
+            background: #ffffff;
+            border: 1px solid #dddddd;
+            border-radius: 12px;
+            padding: 24px;
+            min-height: 420px;
+            max-height: 550px;
+            overflow-y: auto;
+
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .message {
+            display: flex;
+            gap: 10px;
+            max-width: 85%;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+        }
+
+        .message-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+
+            background: #e8f1ff;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .message.user .message-icon {
+            background: #e4f5e9;
+            font-size: 11px;
+        }
+
+        .message-content {
+            padding: 14px 16px;
+            border-radius: 12px;
+            background: #f1f3f5;
+            line-height: 1.7;
+        }
+
+        .message.user .message-content {
+            background: #dcecff;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            min-width: 0;
+
+            padding: 14px;
+
+            border: 1px solid #cccccc;
+            border-radius: 8px;
+
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .chat-input-area button {
+            padding: 12px 24px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: #2563eb;
+            color: white;
+
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .chat-input-area button:hover {
+            background: #1d4ed8;
+        }
+
+        .chat-note {
+            margin-top: 12px;
+
+            color: #666666;
+            font-size: 13px;
+        }
+
+        .analysis-status {
+            margin-top: 16px;
+            padding: 14px 16px;
+
+            background: #f5f8fc;
+            border: 1px solid #d7e0ec;
+            border-radius: 8px;
+
+            line-height: 1.7;
+        }
+
+        @media (max-width: 600px) {
+
+            .chat-box {
+                padding: 14px;
+            }
+
+            .message {
+                max-width: 100%;
+            }
+
+            .chat-input-area button {
+                padding: 10px 16px;
+            }
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+    <main class="container">
+
+        <div class="screen">
+
+            <!-- ヘッダー -->
+            <header class="header">
+
+                <div class="page-header">
+
+                    <h1>追加情報の確認</h1>
+
+                    <div class="nav">
+
+                        <button
+                            class="menu-button"
+                            id="menuButton"
+                            aria-label="メニューを開く"
+                        >
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
+
+
+                        <div class="menu" id="menu">
+
+                            <button
+                                class="menu-close"
+                                id="menuClose"
+                                aria-label="メニューを閉じる"
+                            >
+                                ×
+                            </button>
+
+
+                            <div class="menu-content">
+
+                                <div class="menu-account">
+
+                                    <a
+                                        href="login.html"
+                                        class="login-button"
+                                    >
+                                        ログイン
+                                    </a>
+
+                                </div>
+
+
+                                <nav class="menu-nav">
+
+                                    <a href="index.html">
+                                        ホーム
+                                    </a>
+
+                                    <a href="analysis_input_building.html">
+                                        被害状況入力
+                                    </a>
+
+                                    <a href="mypage.html">
+                                        マイページ
+                                    </a>
+
+                                </nav>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <div class="content">
+
+                <main class="chat-container">
+
+                    <div class="chat-header">
+
+                        <h2>追加情報の確認</h2>
+
+                        <p>
+                            被害状況の分析に必要な情報が不足しています。
+                            いくつか質問しますので回答してください。
+                        </p>
+
+                    </div>
+
+
+                    <!-- チャット -->
+                    <div class="chat-box" id="chatBox">
+
+                        <!-- AIからの質問 -->
+                        <div class="message ai">
+
+                            <div class="message-icon">
+                                AI
+                            </div>
+
+                            <div class="message-content">
+
+                                被害状況をより正確に分析するために、
+                                追加で確認したいことがあります。
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- AI質問 -->
+                        <div class="message ai">
+
+                            <div class="message-icon">
+                                AI
+                            </div>
+
+                            <div class="message-content">
+
+                                被害が確認された壁について、
+                                大きなひび割れや亀裂はありますか？
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ユーザー回答 -->
+                        <div class="message user">
+
+                            <div class="message-icon">
+                                あなた
+                            </div>
+
+                            <div class="message-content">
+
+                                はい。壁に大きなひび割れがあります。
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- 次のAI質問 -->
+                        <div class="message ai">
+
+                            <div class="message-icon">
+                                AI
+                            </div>
+
+                            <div class="message-content">
+
+                                ありがとうございます。<br>
+
+                                次に、ひび割れの周辺に
+                                建物の柱や梁の変形は確認できますか？
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- 分析状況 -->
+                    <div class="analysis-status">
+
+                        <strong>分析状況</strong><br>
+
+                        追加情報を確認しています。
+                        回答が完了すると、被害状況の分析を再開します。
+
+                    </div>
+
+
+                    <!-- 回答入力 -->
+                    <form
+                        class="chat-input-area"
+                        id="chatForm"
+                    >
+
+                        <input
+                            type="text"
+                            id="userInput"
+                            placeholder="質問に対する回答を入力してください..."
+                            autocomplete="off"
+                        >
+
+                        <button type="submit">
+                            回答
+                        </button>
+
+                    </form>
+
+
+                    <p class="chat-note">
+                        ※現在は画面確認用のサンプルです。
+                        実際のシステムでは、分析状況に応じてAIが質問します。
+                    </p>
+
+                </main>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <script>
+
+        const menuButton =
+            document.getElementById("menuButton");
+
+        const menu =
+            document.getElementById("menu");
+
+        const menuClose =
+            document.getElementById("menuClose");
+
+
+        menuButton.addEventListener("click", function () {
+
+            menu.classList.add("active");
+
+            menuButton.style.display = "none";
+
+        });
+
+
+        menuClose.addEventListener("click", function () {
+
+            menu.classList.remove("active");
+
+            menuButton.style.display = "flex";
+
+        });
+
+
+        const chatBox =
+            document.getElementById("chatBox");
+
+        const chatForm =
+            document.getElementById("chatForm");
+
+        const userInput =
+            document.getElementById("userInput");
+
+
+        // メッセージを追加
+        function addMessage(message, sender) {
+
+            const messageElement =
+                document.createElement("div");
+
+            messageElement.classList.add(
+                "message",
+                sender
+            );
+
+
+            const icon =
+                document.createElement("div");
+
+            icon.classList.add("message-icon");
+
+            icon.textContent =
+                sender === "ai"
+                    ? "AI"
+                    : "あなた";
+
+
+            const content =
+                document.createElement("div");
+
+            content.classList.add(
+                "message-content"
+            );
+
+            content.textContent = message;
+
+
+            messageElement.appendChild(icon);
+
+            messageElement.appendChild(content);
+
+            chatBox.appendChild(messageElement);
+
+
+            chatBox.scrollTop =
+                chatBox.scrollHeight;
+        }
+
+
+        // サンプルの次の質問
+        function getAIQuestion() {
+
+            return "ありがとうございます。追加情報を確認しました。ほかに確認が必要な情報があれば質問します。";
+
+        }
+
+
+        // 回答を送信
+        function sendMessage(message) {
+
+            const answer =
+                message.trim();
+
+
+            if (answer === "") {
+                return;
+            }
+
+
+            addMessage(
+                answer,
+                "user"
+            );
+
+
+            userInput.value = "";
+
+
+            // サンプルのAI応答
+            setTimeout(function () {
+
+                const response =
+                    getAIQuestion();
+
+                addMessage(
+                    response,
+                    "ai"
+                );
+
+            }, 500);
+
+        }
+
+
+        chatForm.addEventListener(
+            "submit",
+            function (event) {
+
+                event.preventDefault();
+
+                sendMessage(
+                    userInput.value
+                );
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>
