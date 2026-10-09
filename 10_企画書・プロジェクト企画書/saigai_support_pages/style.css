@@ -396,7 +396,6 @@ button:not(.menu-button):not(.menu-close):hover {
     position: relative;
 }
 
-/* システム名をど真ん中 */
 .hero h1 {
     position: absolute;
     top: 50%;
@@ -410,7 +409,6 @@ button:not(.menu-button):not(.menu-close):hover {
     white-space: nowrap;
 }
 
-/* 説明部分を一番下 */
 .hero h2 {
     position: absolute;
     bottom: 10px;
@@ -430,7 +428,7 @@ button:not(.menu-button):not(.menu-close):hover {
     gap: 10px;
     padding-top: 100px;
     background: #f4f8fc;
-    padding-bottom: 80px;
+    padding-bottom: 60px;
 }
 
 /* 通常の機能カード */
@@ -625,7 +623,7 @@ button:not(.menu-button):not(.menu-close):hover {
    マイページ案内
    ================================= */
 
-.mypage-section {
+.mypage-guidance {
     background: #fff;
 
     margin-top: 60px;
@@ -747,7 +745,7 @@ button:not(.menu-button):not(.menu-close):hover {
 /* スマートフォン */
 @media (max-width: 700px) {
 
-    .mypage-section {
+    .mypage-guidance {
         padding: 50px 20px;
     }
 
@@ -1152,25 +1150,25 @@ th {
 
 
 /* マイページのコンテンツ */
-.mypage-section {
+.mypage-sec {
     margin-top: 0;
     margin-bottom: 10px;
 }
 
-.mypage-section h2 {
+.mypage-sec h2 {
     margin-top: 0;
     margin-bottom: 15px;
 }
 
 
 /* 建物カード */
-.mypage-section .card {
+.mypage-sec .card {
     margin-bottom: 15px;
 }
 
 
 /* 分析履歴 */
-.mypage-section .history {
+.mypage-sec .history {
     margin-bottom: 15px;
 }
 
