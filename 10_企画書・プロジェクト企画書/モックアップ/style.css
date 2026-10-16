@@ -1221,3 +1221,60 @@ th {
 .building-detail-history a:hover {
     text-decoration: underline;
 }
+
+
+/* =========================
+   分析結果：写真表示・ダウンロード
+   ========================= */
+
+.photo-card {
+    margin-top: 24px;
+}
+
+.photo-message {
+    line-height: 1.8;
+    color: #40566b;
+    margin-bottom: 20px;
+}
+
+.result-photo {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.result-photo img {
+    display: block;
+    width: 100%;
+    max-width: 650px;
+    max-height: 450px;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 1px solid #d5e0e9;
+    background-color: #f7f9fb;
+}
+
+.download-button {
+    display: block;
+    width: fit-content;
+    margin: 20px auto;
+    padding: 12px 20px;
+    background: #0878dc;
+    color: #ffffff;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background 0.2s, opacity 0.2s;
+}
+
+.download-button:hover {
+    background: #0059a8;
+    opacity: 0.95;
+}
+
+.photo-note {
+    font-size: 13px;
+    color: #6b7b8b;
+    line-height: 1.6;
+}
