@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>復旧情報</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="recovery.css">
 </head>
 
 <body>
@@ -15,71 +16,143 @@
 
             <!-- ヘッダー -->
             <header class="header">
-
                 <div class="page-header">
-
                     <h1>復旧情報</h1>
 
                     <!-- ハンバーガーメニュー -->
                     <div class="nav">
-
-                        <button class="menu-button" id="menuButton" aria-label="メニューを開く">
+                        <button class="menu-button" id="menuButton"
+                            aria-label="メニューを開く">
                             <span></span>
                             <span></span>
                             <span></span>
                         </button>
 
-
-                        <!-- メニュー -->
                         <div class="menu" id="menu">
-
-                            <button class="menu-close" id="menuClose" aria-label="メニューを閉じる">
-                                ×
-                            </button>
-
+                            <button class="menu-close" id="menuClose"
+                                aria-label="メニューを閉じる">×</button>
 
                             <div class="menu-content">
-
                                 <div class="menu-account">
                                     <a href="login.html" class="login-button">
                                         ログイン
                                     </a>
                                 </div>
 
-
                                 <nav class="menu-nav">
-
-                                    <a href="index.html">
-                                        ホーム
-                                    </a>
-
-                                    <a href="analysis_input_building.html">
-                                        被害状況分析
-                                    </a>
-
-                                    <a href="mypage.html">
-                                        マイページ
-                                    </a>
-
+                                    <a href="index.html">ホーム</a>
+                                    <a href="analysis_input_building.html">被害状況分析</a>
+                                    <a href="mypage.html">マイページ</a>
                                 </nav>
-
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </header>
 
-            <div class="content">
+            <!-- メインコンテンツ -->
+            <div class="content recovery-page">
 
-                <h2>後ほど制作予定</h2>
+                <p class="intro">
+                    被災後の生活再建に役立つ制度や情報を確認できます。
+                </p>
 
-                <!-- 移動ボタン -->
+                <!-- 情報の種類：タブ -->
+                <div class="tabs" role="tablist">
+                    <button class="tab active" role="tab"
+                        id="tab0" aria-selected="true"
+                        aria-controls="panel">
+                        罹災証明書の発行
+                    </button>
+
+                    <button class="tab" role="tab"
+                        id="tab1" aria-selected="false"
+                        aria-controls="panel">
+                        応急修理制度
+                    </button>
+
+                    <button class="tab" role="tab"
+                        id="tab2" aria-selected="false"
+                        aria-controls="panel">
+                        被災者生活再建支援金
+                    </button>
+
+                    <button class="tab" role="tab"
+                        id="tab3" aria-selected="false"
+                        aria-controls="panel">
+                        災害時のアドバイス
+                    </button>
+                </div>
+
+                <!-- タブごとの内容が表示される場所 -->
+                <section class="info-panel" id="panel"
+                    role="tabpanel" aria-labelledby="tab0">
+
+                    <div class="info-heading">
+                        <span class="info-icon">📄</span>
+                        <div>
+                            <p class="category">RECOVERY SUPPORT</p>
+                            <h2 id="infoTitle">罹災証明書の発行</h2>
+                        </div>
+                    </div>
+
+                    <p class="info-description" id="infoDescription">
+                        自然災害による住家の被害について、市区町村が被害の程度を証明する書類です。
+                        各種支援制度の申請などに利用されます。
+                    </p>
+
+                    <div class="info-card">
+                        <h3>📌 制度について</h3>
+                        <p id="infoOverview">
+                            住家の被害状況について調査などを行い、
+                            全壊・大規模半壊・中規模半壊・半壊などの
+                            被害の程度を証明します。
+                        </p>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>📋 申請前に確認すること</h3>
+                        <ul id="infoList">
+                            <li>本人確認書類</li>
+                            <li>被害状況が分かる写真</li>
+                            <li>申請先の市区町村と必要書類</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>📝 手続きの流れ</h3>
+                        <div class="steps" id="infoSteps">
+                            <div class="step">
+                                <span>1</span>
+                                <p>自治体の窓口や公式サイトで申請方法を確認</p>
+                            </div>
+                            <div class="step">
+                                <span>2</span>
+                                <p>必要書類を準備して申請</p>
+                            </div>
+                            <div class="step">
+                                <span>3</span>
+                                <p>自治体の調査・確認後、証明書を受け取る</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="notice" id="infoNotice">
+                        ※ 必要書類や申請方法は自治体によって異なります。
+                        お住まいの市区町村の公式情報を確認してください。
+                    </div>
+
+                    <button class="detail-button" id="detailButton">
+                        確認しました
+                    </button>
+
+                    <p class="action-message" id="actionMessage"
+                        aria-live="polite"></p>
+
+                </section>
+
+                <!-- ページ移動ボタン -->
                 <div class="actions">
-
                     <a class="button secondary" href="result.html">
                         分析結果に戻る
                     </a>
@@ -87,42 +160,194 @@
                     <a class="button" href="history.html">
                         履歴を見る
                     </a>
-
                 </div>
 
             </div>
         </div>
     </main>
 
-    <!-- メニュー用JavaScript -->
     <script>
-
+        // ハンバーガーメニュー
         const menuButton = document.getElementById("menuButton");
         const menu = document.getElementById("menu");
         const menuClose = document.getElementById("menuClose");
 
-
-        // メニューを開く
         menuButton.addEventListener("click", function () {
-
             menu.classList.add("active");
-
-            // ハンバーガーボタンを隠す
             menuButton.style.display = "none";
-
         });
 
-
-        // メニューを閉じる
         menuClose.addEventListener("click", function () {
-
             menu.classList.remove("active");
-
-            // ハンバーガーボタンを表示
             menuButton.style.display = "flex";
-
         });
 
+        // タブごとの表示内容
+        const tabData = [
+            {
+                title: "罹災証明書の発行",
+                icon: "📄",
+                description:
+                    "自然災害による住家の被害について、市区町村が被害の程度を証明する書類です。各種支援制度の申請などに利用されます。",
+                overview:
+                    "住家の被害状況について調査などを行い、全壊・大規模半壊・中規模半壊・半壊などの被害の程度を証明します。",
+                list: [
+                    "本人確認書類",
+                    "被害状況が分かる写真",
+                    "申請先の市区町村と必要書類"
+                ],
+                steps: [
+                    "自治体の窓口や公式サイトで申請方法を確認",
+                    "必要書類を準備して申請",
+                    "自治体の調査・確認後、証明書を受け取る"
+                ],
+                notice:
+                    "※ 必要書類や申請方法は自治体によって異なります。",
+                button: "確認しました"
+            },
+            {
+                title: "応急修理制度",
+                icon: "🔨",
+                description:
+                    "災害によって住宅に被害を受けた場合に、一定の条件のもとで住宅の応急的な修理を支援する制度です。",
+                overview:
+                    "日常生活に必要な部分の修理が対象となる場合があります。対象となる被害や世帯の条件、修理内容には決まりがあります。",
+                list: [
+                    "住家の被害状況",
+                    "世帯や所得などの対象条件",
+                    "修理を始める前に自治体へ相談"
+                ],
+                steps: [
+                    "自治体の窓口で対象条件を確認",
+                    "必要書類や修理見積書などを準備",
+                    "自治体の案内に従って手続きを進める"
+                ],
+                notice:
+                    "※ 自治体の確認前に修理を契約・着工すると対象外になる場合があります。先に相談してください。",
+                button: "確認しました"
+            },
+            {
+                title: "被災者生活再建支援金",
+                icon: "🏠",
+                description:
+                    "災害により住宅に大きな被害を受けた世帯の生活再建を支援するための制度です。",
+                overview:
+                    "住宅の被害程度や再建方法など、制度で定められた条件に応じて支援金が支給される場合があります。",
+                list: [
+                    "住宅の被害程度",
+                    "世帯や申請者に関する条件",
+                    "申請期限と必要書類"
+                ],
+                steps: [
+                    "自治体で対象となる制度を確認",
+                    "罹災証明書など必要書類を準備",
+                    "申請窓口に提出し、審査結果を確認"
+                ],
+                notice:
+                    "※ 支給額・対象条件・申請期限は災害や制度の適用条件によって異なります。",
+                button: "確認しました"
+            },
+            {
+                title: "災害時のアドバイス",
+                icon: "🛡️",
+                description:
+                    "地震や災害の後に、自分や家族の安全を守り、復旧を進めるためのポイントを確認しましょう。",
+                overview:
+                    "危険な建物への立ち入りを避け、自治体や公的機関から最新の情報を入手することが大切です。",
+                list: [
+                    "余震や倒壊のおそれがある場所に近づかない",
+                    "被害写真は安全を確保してから撮影する",
+                    "避難情報やライフラインの情報を確認する"
+                ],
+                steps: [
+                    "自分と家族の安全を確保する",
+                    "必要に応じて避難所や支援窓口を利用する",
+                    "被害状況を記録し、復旧や支援の相談を行う"
+                ],
+                notice:
+                    "※ 火災・ガス漏れ・建物倒壊などの危険がある場合は、その場を離れ、消防・警察などの公的機関の指示に従ってください。",
+                button: "確認しました"
+            }
+        ];
+
+        const tabs = document.querySelectorAll(".tab");
+        const panel = document.getElementById("panel");
+        const infoTitle = document.getElementById("infoTitle");
+        const infoDescription = document.getElementById("infoDescription");
+        const infoOverview = document.getElementById("infoOverview");
+        const infoList = document.getElementById("infoList");
+        const infoSteps = document.getElementById("infoSteps");
+        const infoNotice = document.getElementById("infoNotice");
+        const detailButton = document.getElementById("detailButton");
+        const actionMessage = document.getElementById("actionMessage");
+
+        // タブを切り替える
+        function showTab(index) {
+            const data = tabData[index];
+
+            tabs.forEach(function (tab, i) {
+                tab.classList.toggle("active", i === index);
+                tab.setAttribute("aria-selected", i === index);
+            });
+
+            panel.setAttribute("aria-labelledby", "tab" + index);
+
+            infoTitle.textContent = data.title;
+            infoDescription.textContent = data.description;
+            infoOverview.textContent = data.overview;
+            infoNotice.textContent = data.notice;
+            detailButton.textContent = data.button;
+
+            // 必要なもののリストを更新
+            infoList.replaceChildren();
+
+            data.list.forEach(function (item) {
+                const li = document.createElement("li");
+                li.textContent = item;
+                infoList.appendChild(li);
+            });
+
+            // 手続きの流れを更新
+            infoSteps.replaceChildren();
+
+            data.steps.forEach(function (item, i) {
+                const step = document.createElement("div");
+                step.className = "step";
+
+                const number = document.createElement("span");
+                number.textContent = i + 1;
+
+                const text = document.createElement("p");
+                text.textContent = item;
+
+                step.append(number, text);
+                infoSteps.appendChild(step);
+            });
+
+            // 切り替え時にメッセージをリセット
+            actionMessage.textContent = "";
+
+            // 切り替えアニメーション
+            panel.classList.remove("show");
+            void panel.offsetWidth;
+            panel.classList.add("show");
+        }
+
+        tabs.forEach(function (tab, index) {
+            tab.addEventListener("click", function () {
+                showTab(index);
+            });
+        });
+
+        // 確認ボタン
+        detailButton.addEventListener("click", function () {
+            actionMessage.textContent =
+                "「" + infoTitle.textContent +
+                "」の情報を確認しました。";
+
+            detailButton.textContent = "確認済み ✓";
+            detailButton.classList.add("confirmed");
+        });
     </script>
 
 </body>
