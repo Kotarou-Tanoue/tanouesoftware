@@ -1532,3 +1532,82 @@ th {
         padding: 10px 16px;
     }
 }
+
+/* =========================
+   ログアウト確認画面
+   ========================= */
+
+.logout-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 550px;
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+.logout-card {
+    width: 100%;
+    max-width: 480px;
+    padding: 40px 30px;
+    box-sizing: border-box;
+    text-align: center;
+    background-color: #ffffff;
+    border: 1px solid #d9e0e8;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.logout-card h1 {
+    margin-bottom: 25px;
+    color: #263b50;
+    font-size: 28px;
+}
+
+.logout-card .description {
+    margin-bottom: 20px;
+    color: #263b50;
+    font-size: 18px;
+}
+
+.logout-note {
+    margin-bottom: 30px;
+    color: #666666;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+/* ログアウトボタン */
+.logout-confirm-button {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 6px;
+    background-color: #d9534f;
+    color: #ffffff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.logout-confirm-button:hover {
+    background-color: #c9302c;
+}
+
+/* キャンセルボタン */
+.logout-cancel-button {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #9aa8b5;
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #263b50;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.logout-cancel-button:hover {
+    background-color: #eef2f7;
+}
