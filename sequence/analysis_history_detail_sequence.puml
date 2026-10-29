@@ -1,0 +1,47 @@
+@startuml 地震被害度測定システム\n分析履歴詳細確認シーケンス図
+
+actor "User" as u
+
+boundary "mypage.html(マイページ画面)" as mp
+boundary "history_detail.html(分析履歴詳細画面)" as hd
+
+control "HistoryView(履歴表示処理)" as hv
+
+entity "AnalysisHistory(分析履歴)" as ah
+entity "Building(建物情報)" as b
+entity "DamageReport(被害状況)" as dr
+entity "DamagePhoto(被害写真)" as dp
+entity "ChatMessage(チャット履歴)" as cm
+
+
+u -> mp : 「分析結果確認」リンクをクリック
+mp -> hv : 分析履歴詳細の表示を要求
+
+hv -> ah : 分析履歴を取得
+ah --> hv : 分析日・分析結果を返す
+
+hv -> b : 建物情報を取得
+b --> hv : 建物情報を返す
+
+hv -> dr : 被害状況を取得
+dr --> hv : 被害状況を返す
+
+hv -> dp : 被害写真の情報を取得
+dp --> hv : 写真の保存先・ファイル情報を返す
+
+hv -> cm : チャット履歴を取得
+cm --> hv : チャット履歴を返す
+
+hv -> hd : 分析結果詳細を表示
+
+hd -> hd : 分析日・建物情報・被害状況を表示
+hd -> hd : 分析結果・被害写真を表示
+hd -> hd : ダウンロードリンクを表示
+
+alt チャット履歴がある場合
+    hd -> hd : チャット履歴を表示
+else チャット履歴がない場合
+    hd -> hd : 「チャット履歴はありません」を表示
+end
+
+@enduml

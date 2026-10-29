@@ -1,0 +1,49 @@
+@startuml 地震被害度測定システム\n建物情報登録シーケンス図
+
+actor "User" as u
+
+boundary "mypage.html(マイページ画面)" as mp
+boundary "building_register.html(建物登録画面)" as br
+boundary "building_complate.html(建物登録完了画面)" as bc
+
+boundary "mypage.html(マイページ画面)" as mp
+boundary "building_register.html(建物登録画面)" as br
+boundary "建物登録完了画面" as bc
+
+control "BuildingView(建物管理処理)" as bv
+
+entity "Building(建物情報)" as b
+
+u -> mp : 「建物登録」リンクをクリック
+mp -> bv : 建物登録画面の表示を要求
+bv -> br : 建物登録画面を表示
+
+u -> br : 建物情報を入力して「登録」をクリック
+br -> bv : 入力された建物情報を送信
+
+bv -> bv : 入力内容をチェック
+
+alt 未入力・未選択がある場合
+    bv -> br : 催促メッセージを表示
+
+else 入力内容に問題がない場合
+    bv -> bv : 建物情報の重複をチェック
+
+    alt 重複する建物がある場合
+        bv -> br : 登録済みメッセージを表示
+
+    else 重複する建物がない場合
+        bv -> b : 建物情報を保存
+        b --> bv : 保存完了
+
+        bv -> bc : 建物登録完了画面を表示
+    end
+end
+
+opt 利用者が「戻る」をクリック
+    u -> br : 「戻る」ボタンをクリック
+    br -> bv : マイページへの移動を要求
+    bv -> mp : マイページ画面を表示
+end
+
+@enduml

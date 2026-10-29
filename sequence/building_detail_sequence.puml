@@ -1,0 +1,30 @@
+@startuml 地震被害度測定システム\n建物詳細確認シーケンス図
+
+actor "User" as u
+
+boundary "mypage.html(マイページ画面)" as mp
+boundary "building_detail.html(建物詳細画面)" as bd
+
+control "BuildingView(建物情報表示処理)" as bv
+
+entity "Building(建物情報)" as b
+entity "AnalysisHistory(分析履歴)" as ah
+
+u -> mp : 「建物詳細」リンクをクリック
+mp -> bv : 建物詳細の表示を要求
+
+bv -> b : 建物情報を取得
+b --> bv : 建物情報を返す
+
+bv -> bd : 建物詳細情報を表示
+
+bv -> ah : 建物に関連する分析履歴を取得
+ah --> bv : 分析履歴を返す
+
+alt 建物の分析履歴がある場合
+    bv -> bd : 建物の分析履歴一覧を表示
+else 建物の分析履歴がない場合
+    bv -> bd : 「分析履歴はありません」を表示
+end
+
+@enduml

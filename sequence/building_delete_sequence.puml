@@ -1,0 +1,36 @@
+@startuml 地震被害度測定システム\n建物情報削除シーケンス図
+
+actor "User" as u
+
+boundary "building_edit.html(建物編集画面)" as be
+boundary "building_delete_confirm.html(建物削除確認画面)" as bdc
+boundary "building_delete_complete.html(建物削除完了画面)html名は仮" as bcomp
+
+control "BuildingView(建物管理処理)" as bv
+
+entity "Building(建物情報)" as b
+
+u -> be : 「建物削除」リンクをクリック
+be -> bv : 建物情報の取得を要求
+
+bv -> b : 建物情報を取得
+b --> bv : 建物情報を返す
+
+bv -> bdc : 建物削除確認画面を表示
+
+alt 利用者が「戻る」ボタンをクリック
+    u -> bdc : 「戻る」ボタンをクリック
+    bdc -> bv : 削除処理の中止を要求
+    bv -> be : 建物編集画面を表示
+
+else 利用者が「削除する」ボタンをクリック
+    u -> bdc : 「削除する」ボタンをクリック
+    bdc -> bv : 削除処理を要求
+
+    bv -> b : 建物情報を削除
+    b --> bv : 削除完了
+
+    bv -> bcomp : 建物削除完了画面を表示
+end
+
+@enduml

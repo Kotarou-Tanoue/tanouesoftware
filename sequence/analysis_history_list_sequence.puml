@@ -1,0 +1,21 @@
+@startuml 地震被害度測定システム\n分析履歴一覧シーケンス図
+
+actor "User" as u
+
+boundary "mypage.html(マイページ画面)" as mp
+boundary "history_list.html(分析履歴一覧画面)" as hl
+
+control "HistoryView(履歴表示処理)" as hv
+
+entity "AnalysisHistory(分析履歴)" as ah
+
+
+u -> mp : 「すべての分析履歴」リンクをクリック
+mp -> hv : 分析履歴一覧の表示を要求
+
+hv -> ah : 分析履歴を取得
+ah --> hv : 過去の分析履歴を返す
+
+hv -> hl : 分析履歴一覧を表示
+
+@enduml

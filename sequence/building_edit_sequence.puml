@@ -1,0 +1,55 @@
+@startuml 地震被害度測定システム\n建物情報編集シーケンス図
+
+actor "User" as u
+
+boundary "building_detail.html(建物詳細画面)" as bd
+boundary "building_edit.html(建物編集画面)" as be
+boundary "building_edit_complete.html(建物情報更新完了画面)" as bec
+
+control "BuildingView(建物管理処理)" as bv
+
+entity "Building(建物情報)" as b
+
+u -> bd : 「建物情報を編集する」リンクをクリック
+bd -> bv : 建物情報の取得を要求
+
+bv -> b : 建物情報を取得
+b --> bv : 建物情報を返す
+
+bv -> be : 建物編集画面を表示
+
+u -> be : 建物情報を変更して「更新」をクリック
+be -> bv : 変更した建物情報を送信
+
+bv -> bv : 入力内容をチェック
+
+alt 未入力・未選択がある場合
+    bv -> be : 催促メッセージを表示
+
+else 入力内容に問題がない場合
+    bv -> bv : 建物情報の重複をチェック
+
+    alt 重複あり
+        bv -> be : 登録済みメッセージを表示
+
+    else 重複なし
+        bv -> b : 建物情報を更新
+        b --> bv : 更新完了
+
+        bv -> bec : 建物情報更新完了画面を表示
+    end
+end
+
+opt 利用者が「戻る」ボタンをクリック
+    u -> be : 「戻る」ボタンをクリック
+    be -> bv : 編集処理の中止を要求
+    bv -> bd : 建物詳細画面を表示
+end
+
+opt 利用者が「建物削除」ボタンをクリック
+    u -> be : 「建物削除」ボタンをクリック
+    be -> bv : 建物削除処理を要求
+    bv -> bv : 建物削除処理を開始
+end
+
+@enduml
