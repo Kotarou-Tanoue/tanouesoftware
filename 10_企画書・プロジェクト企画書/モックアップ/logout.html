@@ -83,7 +83,7 @@
 
                 <div class="logout-card">
 
-                    <h1>ログアウト確認</h1>
+                    <h1>ログアウト</h1>
 
                     <p class="description">
                         ログアウトしてもよろしいですか？
@@ -148,18 +148,8 @@
         document.getElementById("logoutConfirm")
             .addEventListener("click", function () {
 
-                // モックアップ用の確認ダイアログ
-                const result = confirm("ログアウトしますか？");
-
-                if (result) {
-
-                    // ログアウト完了画面を表示
-                    alert("ログアウトしました。");
-
-                    // トップ画面へ戻る
-                    window.location.href = "index.html";
-
-                }
+                // ホーム画面へ戻る
+                window.location.href = "index.html";
 
             });
 
