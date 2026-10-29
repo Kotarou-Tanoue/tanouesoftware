@@ -1,6 +1,6 @@
 @startuml 地震被害度測定システム\n建物情報登録シーケンス図
 
-actor "User" as u
+actor "ユーザー" as u
 
 boundary "mypage.html(マイページ画面)" as mp
 boundary "building_register.html(建物登録画面)" as br

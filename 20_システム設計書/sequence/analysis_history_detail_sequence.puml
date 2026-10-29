@@ -1,6 +1,6 @@
 @startuml 地震被害度測定システム\n分析履歴詳細確認シーケンス図
 
-actor "User" as u
+actor "ユーザー" as u
 
 boundary "mypage.html(マイページ画面)" as mp
 boundary "history_detail.html(分析履歴詳細画面)" as hd

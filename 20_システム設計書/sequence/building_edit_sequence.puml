@@ -1,6 +1,6 @@
 @startuml 地震被害度測定システム\n建物情報編集シーケンス図
 
-actor "User" as u
+actor "ユーザー" as u
 
 boundary "building_detail.html(建物詳細画面)" as bd
 boundary "building_edit.html(建物編集画面)" as be

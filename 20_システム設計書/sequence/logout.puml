@@ -1,0 +1,32 @@
+@startuml ログアウトする
+
+    actor user as a1
+    boundary 任意の画面 as b1
+    boundary index.html as b2
+    control AuthView as c1
+    control IndexView as c2
+
+    == ログアウト確認 ==
+    a1 -> b1 : 1. サイドバーのログアウトボタンをクリック
+    
+    note over b1 : ブラウザで確認アラートを表示\n(JavaScript: confirm)
+    b1 -> a1 : 2. 「本当にログアウトしますか？」
+
+    alt OKをクリックした場合
+        a1 -> b1 : 3. [OK] をクリック
+        
+        == ログアウト処理の実行 ==
+        b1 -> c1 : 4. ログアウトをリクエスト (POST /logout)
+        
+        note over c1 : ユーザーのセッション情報をクリア\n(session.clear())
+        
+        c1 -> c2 : 5. トップ画面へリダイレクト (GET /)
+        c2 -> b2 : 6. 画面レンダリング (render_template)
+        b2 -> a1 : 7. ログアウト後のトップ画面を表示
+
+    else キャンセルをクリックした場合
+        a1 -> b1 : 3. [キャンセル] をクリック
+        note over b1 : ログアウト処理を中断し、\n現在の画面にとどまる
+    end
+
+@enduml

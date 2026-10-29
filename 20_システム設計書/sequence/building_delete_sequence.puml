@@ -1,6 +1,6 @@
 @startuml 地震被害度測定システム\n建物情報削除シーケンス図
 
-actor "User" as u
+actor "ユーザー" as u
 
 boundary "building_edit.html(建物編集画面)" as be
 boundary "building_delete_confirm.html(建物削除確認画面)" as bdc

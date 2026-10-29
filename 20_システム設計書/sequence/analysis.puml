@@ -1,0 +1,55 @@
+@startuml AI分析
+
+    actor ユーザー as a1
+    boundary analysis.html as b1
+    boundary followup.html as b2
+    boundary damage_input.html as b3
+    boundary index.html as b4
+    boundary analysis_result.html as b5
+    control AnalysisView as c1
+    control ai
+    entity AnalysisHistory as e1
+
+    == 1. 分析画面の表示とAI分析の開始 ==
+    b3-> c1 : 前画面から遷移 (GET /analysis)
+    c1 -> b1 : analysis.htmlを表示
+    b1 -> c1 : AI分析を開始
+    c1 -> ai : AI分析を実行
+
+    == 2. AI分析中の分岐処理（タイムアウト / 追加質問 / 完了） ==
+    
+    alt 決められた制限時間内にAI分析が完了しなかった場合（タイムアウト）
+        ai --> c1 : タイムアウトエラー
+        c1 -> c1 : 処理を中断
+        c1 -> b1 : エラーメッセージを表示
+        c1 -> b1 : 戻るボタンとキャンセルボタンを表示
+        
+        alt 利用者が戻るボタンをクリック
+            a1 -> b1 : 戻るボタンをクリック
+            b1 -> b3 : damage_input.htmlを表示
+        else 利用者がキャンセルをクリック
+            a1 -> b1 : キャンセルをクリック
+            b1 -> b4 : index.htmlを表示
+        end
+
+    else AIが、分析に必要な情報が不足していると判断した場合
+        ai --> c1 : 追加質問の必要あり
+        c1 -> b2 : followup.htmlを表示
+
+    else AI分析完了の場合
+        ai --> c1 : AI分析完了
+
+        == 3. ログイン状態による保存先の分岐 ==     
+        alt ログインしている
+            c1 -> e1 : 分析結果の要約を保存
+            e1 --> c1 : 保存完了
+        else ログアウトしていない
+            c1 -> c1 : セッションに分析結果の要約を保存
+        end
+
+        == 4. 分析結果画面の表示 ==
+        c1 -> b5 : 分析結果と修理費用の目安と\n被害写真のダウンロードリンクを表示
+        b5 -> a1 : 分析結果画面を表示
+    end
+
+@enduml
