@@ -1,0 +1,37 @@
+@startuml ログイン
+
+    actor ユーザー as a1
+    boundary 任意の画面 as b1
+    boundary login.html as b2
+    boundary LINE認証画面 as b3
+    boundary index.html as b4
+    control AuthView as c1
+    control LINEPlatform as c2
+    control IndexView as c3
+    entity User as e1
+
+    == 1. ログイン画面の表示 ==
+    a1 -> b1 : ログインリンクをクリック
+    b1 -> c1 : GET /login
+    c1 -> b2 : login.htmlを表示
+
+    == 2. LINE認証 ==
+    a1 -> b2 : LINEログインボタンをクリック
+    b2 -> b3 : LINE認証画面へ遷移
+    a1 -> b3 : ログイン & 同意
+    b3 -> c2 : 認証リクエスト
+    c2 -> c1 : 認証結果（ユーザー情報）を通知
+    alt 認証失敗
+        c1 -> b2 : エラーメッセージを表示
+    end
+    == 3. アプリ側でのログイン・画面遷移 ==
+    c1 -> e1 : ユーザー情報の検索 / 登録
+    e1 --> c1 : ユーザー情報
+    
+    note over c1 : ログイン状態を保存 (session)
+
+    c1 -> c3 : トップ画面へリダイレクト (GET /)
+    c3 -> b4 : index.htmlを表示
+    b4 -> a1 : ログイン後のトップ画面を表示
+
+@enduml

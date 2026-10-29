@@ -1,0 +1,73 @@
+@startuml 建物情報入力
+
+    actor ユーザー as a1
+    boundary 各画面のメニュー as b1
+    boundary index.html as b2
+    boundary building_input.html as b3
+    boundary damage_input.html as b4
+    control DamageView as c1
+    entity Building as e1
+
+    == 1. 建物入力画面の表示と初期判定 ==
+    a1 -> b1 : 「被害状況分析」を押す
+    b1 -> c1 : GET /building
+    
+    alt ログインしていない
+        c1 -> b3 : 分析建物入力画面を表示
+    else ログインしている
+        c1 -> e1 : ユーザーが登録している建物データを取得
+        e1 --> c1 : 建物データ
+
+        alt 建物データがある
+            c1 -> b3 : 入力した建物情報を保存できるようにする\n（分析建物入力画面を表示）
+        else ない
+            c1 -> b3 : 登録済みの建物などを選択できるようにする\n（分析建物入力画面を表示）
+        end
+    end
+    b3 -> a1 : 分析建物入力画面を表示
+
+    == 2. 画面内での動的制御 ==
+    alt 「新しい建物を入力」が選択されたか？
+        a1 -> b3 : 「新しい建物を入力」を選択
+        b3 -> b3 : 新規入力欄を表示する
+    else 登録済みの建物が選択されたか？
+        a1 -> b3 : 登録済みの建物（リスト）を選択
+        b3 -> b3 : 新規入力欄を非表示にする
+    end
+
+    == 3. 「次へ」押下時の入力チェックと分岐処理 ==
+    a1 -> b3 : 分析する建物の情報を入力し「次へ」を押す
+    b3 -> c1 : POST /building/input
+    
+    note over c1 : 入力をチェックする
+
+    alt 入力力 / 未選択がある（未入力・未選択がある場合）
+        c1 -> b3 : 「入力 / 選択してください」メッセージ表示
+    
+    else 登録済みの建物が選択された場合
+        c1 -> e1 : 選択された建物のデータを取得
+        e1 --> c1 : 建物データ
+        c1 -> c2 : リダイレクト (GET /damage/input)
+        c2 -> b4 : damage_input.htmlを表示
+        b4 -> a1 : 「被害状況を入力する」へ遷移
+        
+    else 新しい建物が入力された場合
+        alt 建物名が登録済みの建物と重複している
+            c1 -> b3 : 「すでに登録している建物です」メッセージ表示
+        else 重複していない
+            alt ログインしていない
+                c1 -> c2 : リダイレクト (GET /damage/input)
+                c2 -> b4 : damage_input.htmlを表示
+            else ログインしている
+                c1 -> e1 : 建物情報を保存
+                e1 --> c1 : 保存完了
+                c1 -> b4 : damage_input.htmlを表示
+            end
+        end
+    end
+
+    == 4. 「戻る」押下時の処理 ==
+    a1 -> b3 : 「戻る」が押されたか？
+    b3 -> b2 : トップ画面を表示
+
+@enduml
