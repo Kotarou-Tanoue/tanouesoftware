@@ -1,0 +1,32 @@
+@startuml 追加質問回答
+
+    actor ユーザー as a1
+    boundary analysis.html as b1
+    boundary followup.html as b2
+    control AnalysisView as c1
+    control ai
+
+    == 1. 初期表示（前画面からの続き） ==
+    b1 -> b2 : 「分析に必要な情報についての質問を表示」
+
+    == 2. 回答の入力とAIによる判定ループ ==
+    loop 利用者の回答が不十分な場合
+        a1 -> b2 : 質問に対しての回答を入力し\n「回答」ボタンをクリック
+        b2 -> c1
+        c1 -> ai : 回答をAIに渡す    
+        alt 利用者の回答が不十分なものであるとAIが判断
+            ai -> c1
+            c1 -> b2 : ふたたび分析に必要な質問を表示
+            b2 -> a1 : 再度の回答入力を求める
+        end
+    end
+
+    == 3. 回答が十分な場合の処理とAI再分析 ==
+    note over c1 : 回答が十分であると判断された場合
+
+    ai -> c1 : AIからの応答を取得
+    c1 -> b2 : 回答に対する応答を表示
+    
+    b2 -> c1 : AI分析へ遷移（再実行）
+
+@enduml
