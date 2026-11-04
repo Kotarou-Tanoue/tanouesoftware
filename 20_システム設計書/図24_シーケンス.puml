@@ -1,0 +1,726 @@
+@startuml ログインする
+    title ログインする
+
+    actor "ユーザー" as a1
+    boundary "任意の画面" as b1
+    boundary "login.html" as b2
+    boundary "LINE認証画面" as b3
+    boundary "index.html" as b4
+    control "AuthView" as c1
+    control "LINEPlatform" as c2
+    control "IndexView" as c3
+    entity "User" as e1
+
+    == 1. ログイン画面の表示 ==
+    a1 -> b1 : ログインリンクをクリック
+    b1 -> c1 : GET /login
+    c1 -> b2 : login.htmlを表示
+
+    == 2. LINE認証 ==
+    a1 -> b2 : LINEログインボタンをクリック
+    b2 -> b3 : LINE認証画面へ遷移
+    a1 -> b3 : ログイン & 同意
+    b3 -> c2 : 認証リクエスト
+    c2 -> c1 : 認証結果（ユーザー情報）を通知
+    alt 認証失敗
+        c1 -> b2 : エラーメッセージを表示
+    end
+    == 3. アプリ側でのログイン・画面遷移 ==
+    c1 -> e1 : ユーザー情報の検索 / 登録
+    e1 --> c1 : ユーザー情報
+
+    note over c1 : ログイン状態を保存 (session)
+
+    c1 -> c3 : トップ画面へリダイレクト (GET /)
+    c3 -> b4 : index.htmlを表示
+    b4 -> a1 : ログイン後のトップ画面を表示
+
+@enduml
+
+
+@startuml ログアウトする
+    title ログアウトする
+
+    actor "user" as a1
+    boundary "任意の画面" as b1
+    boundary "index.html" as b2
+    control "AuthView" as c1
+    control "IndexView" as c2
+
+    == ログアウト確認 ==
+    a1 -> b1 : 1. サイドバーのログアウトボタンをクリック
+
+    note over b1 : ブラウザで確認アラートを表示\n(JavaScript: confirm)
+    b1 -> a1 : 2. 「本当にログアウトしますか？」
+
+    alt OKをクリックした場合
+        a1 -> b1 : 3. [OK] をクリック
+
+        == ログアウト処理の実行 ==
+        b1 -> c1 : 4. ログアウトをリクエスト (POST /logout)
+
+        note over c1 : ユーザーのセッション情報をクリア\n(session.clear())
+
+        c1 -> c2 : 5. トップ画面へリダイレクト (GET /)
+        c2 -> b2 : 6. 画面レンダリング (render_template)
+        b2 -> a1 : 7. ログアウト後のトップ画面を表示
+
+    else キャンセルをクリックした場合
+        a1 -> b1 : 3. [キャンセル] をクリック
+        note over b1 : ログアウト処理を中断し、\n現在の画面にとどまる
+    end
+
+@enduml
+
+
+@startuml 建物情報を入力する
+    title 建物情報を入力する
+
+    actor "ユーザー" as a1
+    boundary "各画面のメニュー" as b1
+    boundary "index.html" as b2
+    boundary "building_input.html" as b3
+    boundary "damage_input.html" as b4
+    control "DamageView" as c1
+    entity "Building" as e1
+
+    == 1. 建物入力画面の表示と初期判定 ==
+    a1 -> b1 : 「被害状況分析」を押す
+    b1 -> c1 : GET /building
+
+    alt ログインしていない
+        c1 -> b3 : 分析建物入力画面を表示
+    else ログインしている
+        c1 -> e1 : ユーザーが登録している建物データを取得
+        e1 --> c1 : 建物データ
+
+        alt 建物データがある
+            c1 -> b3 : 入力した建物情報を保存できるようにする\n（分析建物入力画面を表示）
+        else ない
+            c1 -> b3 : 登録済みの建物などを選択できるようにする\n（分析建物入力画面を表示）
+        end
+    end
+    b3 -> a1 : 分析建物入力画面を表示
+
+    == 2. 画面内での動的制御 ==
+    alt 「新しい建物を入力」が選択されたか？
+        a1 -> b3 : 「新しい建物を入力」を選択
+        b3 -> b3 : 新規入力欄を表示する
+    else 登録済みの建物が選択されたか？
+        a1 -> b3 : 登録済みの建物（リスト）を選択
+        b3 -> b3 : 新規入力欄を非表示にする
+    end
+
+    == 3. 「次へ」押下時の入力チェックと分岐処理 ==
+    a1 -> b3 : 分析する建物の情報を入力し「次へ」を押す
+    b3 -> c1 : POST /building/input
+
+    note over c1 : 入力をチェックする
+
+    alt 入力力 / 未選択がある（未入力・未選択がある場合）
+        c1 -> b3 : 「入力 / 選択してください」メッセージ表示
+
+    else 登録済みの建物が選択された場合
+        c1 -> e1 : 選択された建物のデータを取得
+        e1 --> c1 : 建物データ
+        c1 -> c2 : リダイレクト (GET /damage/input)
+        c2 -> b4 : damage_input.htmlを表示
+        b4 -> a1 : 「被害状況を入力する」へ遷移
+
+    else 新しい建物が入力された場合
+        alt 建物名が登録済みの建物と重複している
+            c1 -> b3 : 「すでに登録している建物です」メッセージ表示
+        else 重複していない
+            alt ログインしていない
+                c1 -> c2 : リダイレクト (GET /damage/input)
+                c2 -> b4 : damage_input.htmlを表示
+            else ログインしている
+                c1 -> e1 : 建物情報を保存
+                e1 --> c1 : 保存完了
+                c1 -> b4 : damage_input.htmlを表示
+            end
+        end
+    end
+
+    == 4. 「戻る」押下時の処理 ==
+    a1 -> b3 : 「戻る」が押されたか？
+    b3 -> b2 : トップ画面を表示
+
+@enduml
+
+
+@startuml 被害状況を入力する
+    title 被害状況を入力する
+
+    actor "ユーザー" as a1
+    boundary "damage_input.html" as b1
+    boundary "写真ライブラリ画面" as b2
+    boundary "カメラ画面" as b3
+    boundary "building_input.html" as b4
+    control "DamageView" as c1
+    control "AnalysisView" as c2
+
+    == 1. 写真の取得処理 ==
+    alt 写真を選択する場合
+        a1 -> b1 : 被害写真に関する情報を入力し、\nファイルを選択ボタンをクリック
+        b1 -> b2 : 端末の写真ライブラリを開く
+
+        alt 写真ライブラリへのアクセスが拒否された
+            b2 -> b1 : エラーメッセージを表示
+        else アクセス許可
+            a1 -> b2 : 写真を選択
+            b2 -> b1 : 写真情報を返す
+        end
+
+    else 写真を撮影する場合
+        a1 -> b1 : 「写真を撮影」をクリック
+        b1 -> b3 : カメラを起動
+
+        alt カメラへのアクセスが拒否された
+            b3 -> b1 : エラーメッセージを表示
+        else アクセス許可
+            a1 -> b3 : カメラで被害写真を撮影
+            b3 -> b1 : 写真情報を返す
+        end
+    end
+
+    == 2. 「この被害情報を追加」押下時のチェックとリスト追加 ==
+    a1 -> b1 : 「この被害情報を追加」ボタンをクリック
+    b1 -> c1 : POST /damage/add (またはフロントでの入力検証)
+
+    == [チェック1] 未入力・未選択チェック ==
+    c1 -> c1 : 未入力・未選択チェック
+    alt 未入力・未選択あり
+        c1 -> b1 : 催促メッセージ（エラーメッセージ）を表示
+    else 未入力・未選択なし
+
+        == [チェック2] 写真の未登録チェック ==
+        c1 -> c1 : 写真の未登録チェック
+        alt 写真が1枚も未登録
+            c1 -> b1 : 催促メッセージ（エラーメッセージ）を表示
+        else 写真あり
+
+            == [チェック3] 写真のファイル形式チェック ==
+            c1 -> c1 : 写真のファイル形式チェック
+            alt ファイル指定形式以外
+                c1 -> b1 : エラーメッセージを表示
+            else ファイル指定形式内
+                c1 --> b1 : チェック成功通知
+                b1 -> b1 : 「登録済みの被害情報」項目に\n選択した内容・写真を追加
+            end
+        end
+    end
+
+    == 3. 登録済み情報の削除操作 ==
+    alt 利用者が被害写真の削除ボタンをクリック
+        a1 -> b1 : 被害写真の削除ボタンをクリック
+        b1 -> b1 : 被害写真を削除
+
+    else 利用者が被害情報の削除ボタンをクリック
+        a1 -> b1 : 被害情報の削除ボタンをクリック
+        b1 -> b1 : 選択された被害情報を削除
+    end
+
+    == 4. 「分析開始」押下時の最終チェックと分析遷移 ==
+    a1 -> b1 : 「建物全体の状態について」の質問への回答を選択し、\n「分析開始」ボタンをクリック
+    b1 -> c1 : POST /damage/input (分析開始リクエスト)
+
+    == [チェック4] 被害状況登録チェック ==
+    c1 -> c1 : 被害状況登録チェック
+    alt 1件も登録されてない（リストが空）
+        c1 -> b1 : 催促メッセージ（エラーメッセージ）を表示
+    else 1件以上登録されている
+
+        == [チェック5] 被害写真上限チェック ==
+        c1 -> c1 : 被害写真上限チェック
+        alt 上限枚数を超えている
+            c1 -> b1 : 上限超過メッセージを表示
+        else 上限枚数を超えていない
+
+            == 5. AI分析への遷移 ==
+            c1 -> c2 : AI分析を開始 (Redirect /analysis)
+            note over c2 : AI分析処理へ移行
+        end
+    end
+
+    == 6. 「戻る」押下時の処理 ==
+    a1 -> b1 : 利用者が戻るボタンをクリック
+    b1 -> c1 : 処理を中断
+    c1 -> b4 : building_input.htmlへ
+
+@enduml
+
+
+@startuml 被害状況をAI分析する
+    title 被害状況をAI分析する
+
+    actor "ユーザー" as a1
+    boundary "analysis.html" as b1
+    boundary "followup.html" as b2
+    boundary "damage_input.html" as b3
+    boundary "index.html" as b4
+    boundary "analysis_result.html" as b5
+    control "AnalysisView" as c1
+    control "ai"
+    entity "AnalysisHistory" as e1
+
+    == 1. 分析画面の表示とAI分析の開始 ==
+    b3-> c1 : 前画面から遷移 (GET /analysis)
+    c1 -> b1 : analysis.htmlを表示
+    b1 -> c1 : AI分析を開始
+    c1 -> ai : AI分析を実行
+
+    == 2. AI分析中の分岐処理（タイムアウト / 追加質問 / 完了） ==
+
+    alt 決められた制限時間内にAI分析が完了しなかった場合（タイムアウト）
+        ai --> c1 : タイムアウトエラー
+        c1 -> c1 : 処理を中断
+        c1 -> b1 : エラーメッセージを表示
+        c1 -> b1 : 戻るボタンとキャンセルボタンを表示
+
+        alt 利用者が戻るボタンをクリック
+            a1 -> b1 : 戻るボタンをクリック
+            b1 -> b3 : damage_input.htmlを表示
+        else 利用者がキャンセルをクリック
+            a1 -> b1 : キャンセルをクリック
+            b1 -> b4 : index.htmlを表示
+        end
+
+    else AIが、分析に必要な情報が不足していると判断した場合
+        ai --> c1 : 追加質問の必要あり
+        c1 -> b2 : followup.htmlを表示
+
+    else AI分析完了の場合
+        ai --> c1 : AI分析完了
+
+        == 3. ログイン状態による保存先の分岐 ==
+        alt ログインしている
+            c1 -> e1 : 分析結果の要約を保存
+            e1 --> c1 : 保存完了
+        else ログアウトしていない
+            c1 -> c1 : セッションに分析結果の要約を保存
+        end
+
+        == 4. 分析結果画面の表示 ==
+        c1 -> b5 : 分析結果と修理費用の目安と\n被害写真のダウンロードリンクを表示
+        b5 -> a1 : 分析結果画面を表示
+    end
+
+@enduml
+
+
+@startuml 不足情報の追加質問に回答する
+    title 不足情報の追加質問に回答する
+
+    actor "ユーザー" as a1
+    boundary "analysis.html" as b1
+    boundary "followup.html" as b2
+    control "AnalysisView" as c1
+    control "ai"
+
+    == 1. 初期表示（前画面からの続き） ==
+    b1 -> b2 : 「分析に必要な情報についての質問を表示」
+
+    == 2. 回答の入力とAIによる判定ループ ==
+    loop 利用者の回答が不十分な場合
+        a1 -> b2 : 質問に対しての回答を入力し\n「回答」ボタンをクリック
+        b2 -> c1
+        c1 -> ai : 回答をAIに渡す
+        alt 利用者の回答が不十分なものであるとAIが判断
+            ai -> c1
+            c1 -> b2 : ふたたび分析に必要な質問を表示
+            b2 -> a1 : 再度の回答入力を求める
+        end
+    end
+
+    == 3. 回答が十分な場合の処理とAI再分析 ==
+    note over c1 : 回答が十分であると判断された場合
+
+    ai -> c1 : AIからの応答を取得
+    c1 -> b2 : 回答に対する応答を表示
+
+    b2 -> c1 : AI分析へ遷移（再実行）
+
+@enduml
+
+
+@startuml 分析結果について質問する
+    title 分析結果について質問する
+
+    actor "ユーザー" as a1
+    boundary "analysis_result.html / history_detail.html" as b1
+    boundary "chat.html" as b2
+    control "ChatView" as c1
+    control "ai" as s1
+    entity "ChatMessage" as e1
+
+    == 1. チャット画面の起動 ==
+    a1 -> b1 : 「結果についてチャットボットに質問する」\nリンクをクリック
+    b1 -> c1 : GET /chat
+    c1 -> b2 : 画面を表示し、チャットボットを利用できる状態にする
+    b2 -> a1 : 「分析結果について質問」画面を表示
+
+    == 2. 質問の送信とAI処理 ==
+    a1 -> b2 : 質問を入力し、「送信」ボタンをクリック
+    b2 -> c1 : POST /chat/message (質問を送信)
+    c1 -> s1 : 回答をAIに渡す
+    activate s1
+
+    == 3. 分析結果の取得と応答判定 ==
+    s1 -> s1 : 分析結果を取得
+
+    alt 分析結果が取得できない
+        s1 --> c1 : 取得できない（エラー）
+        c1 -> c1 : 処理を中断
+        c1 -> b2 : エラーメッセージを表示
+
+    else 決められた制限時間内に応答が完了しなかった場合（タイムアウト）
+        s1 --> c1 : タイムアウト
+        c1 -> c1 : 処理を中断
+        c1 -> b2 : エラーメッセージを表示
+
+    else 正常に応答が完了した場合
+        s1 -> s1 : AIからの応答を取得
+        s1 --> c1 : 応答データ
+        deactivate s1
+
+        c1 -> b2 : 応答を表示
+        b2 -> a1 : AIの回答を表示
+
+        == 4. ログイン状態による履歴保存の分岐 ==
+        c1 -> c1 : ログインチェック
+
+        alt ログイン状態
+            c1 -> e1 : チャットを保存
+            e1 --> c1 : 保存完了
+            c1 -> b2 : チャット履歴に反映
+        else ログアウト状態
+            note over c1 : チャットは保存せず\nそのまま画面を維持する
+        end
+    end
+
+@enduml
+
+
+@startuml 復旧に必要な情報を確認する
+    title 復旧に必要な情報を確認する
+
+    actor "ユーザー" as a1
+    boundary "任意の画面" as b1
+    boundary "recovery_info.html" as b2
+    control "RecoveryView" as c1
+
+    == 1. 復旧情報画面の初期表示 ==
+    a1 -> b1 : 「復旧情報」または\n「復旧に必要な情報を確認する」リンクをクリック
+    b1 -> c1 : GET /recovery
+    c1 -> b2 : recovery_info.htmlを表示
+
+    note over b2 : 初期表示として\n「罹災証明書の発行の案内」を表示
+    b2 -> a1 : recovery_info.htmlを表示
+
+    == 2. 4つのボタンクリックによる案内切り替え（画面内制御） ==
+    alt 「罹災証明書の発行」ボタンをクリック
+        a1 -> b2 : 「罹災証明書の発行」ボタンをクリック
+        b2 -> b2 : 罹災証明書の発行の案内を表示
+
+    else 「応急修理制度」ボタンをクリック
+        a1 -> b2 : 「応急修理制度」ボタンをクリック
+        b2 -> b2 : 応急修理制度の案内を表示
+
+    else 「被災者生活再建支援金」ボタンをクリック
+        a1 -> b2 : 「被災者生活再建支援金」ボタンをクリック
+        b2 -> b2 : 被災者生活再建支援金の案内を表示
+
+    else 「災害時のアドバイス」ボタンをクリック
+        a1 -> b2 : 「災害時のアドバイス」ボタンをクリック
+        b2 -> b2 : 災害時のアドバイスを表示
+    end
+
+    == 3. 案内の確認完了 ==
+    note over b2 : いずれの案内を表示した後も\nrecovery_info.htmlを維持する
+
+@enduml
+
+
+@startuml マイページを確認する
+    title マイページを確認する
+
+    actor "ユーザー" as a1
+    boundary "任意の画面" as b1
+    boundary "mypage.html" as b2
+    control "MyPageView" as c1
+    entity "Building" as e1
+    entity "AnalysisHistory" as e2
+
+    == 1. マイページへのアクセスと建物情報の取得 ==
+    a1 -> b1 : 「マイページ」リンクをクリック
+    b1 -> c1 : GET /mypage
+
+    c1 -> e1 : 建物情報を取得
+    e1 --> c1 : 建物データ
+
+    == 2. 登録建物の有無による分岐 ==
+    alt 登録された建物がない場合
+        c1 -> c1 : 「登録建物なし」メッセージを設定
+
+    else 登録された建物がある場合
+        c1 -> c1 : 登録した建物一覧を表示用に設定
+    end
+
+    == 3. 分析履歴の取得と件数による分岐 ==
+    c1 -> e2 : 分析履歴を取得
+    e2 --> c1 : 分析履歴データ
+
+    alt 分析履歴がない場合
+        c1 -> c1 : 「分析履歴なし」メッセージを設定
+        c1 -> c1 : 「すべての分析履歴」リンクを非表示に設定
+
+    else 最近の分析履歴がある場合
+        c1 -> c1 : 最近の分析履歴を表示用に設定
+    end
+
+    == 4. マイページ画面のレンダリング ==
+    c1 -> b2 : 設定した内容でmypage.htmlを表示
+    b2 -> a1 : マイページ画面を表示
+
+@enduml
+
+
+@startuml 建物詳細を確認する
+    title 建物詳細を確認する
+
+    actor "ユーザー" as u
+    boundary "mypage.html(マイページ画面)" as mp
+    boundary "building_detail.html(建物詳細画面)" as bd
+    control "BuildingView(建物情報表示処理)" as bv
+    entity "Building(建物情報)" as b
+    entity "AnalysisHistory(分析履歴)" as ah
+
+    u -> mp : 「建物詳細」リンクをクリック
+    mp -> bv : 建物詳細の表示を要求
+
+    bv -> b : 建物情報を取得
+    b --> bv : 建物情報を返す
+
+    bv -> bd : 建物詳細情報を表示
+
+    bv -> ah : 建物に関連する分析履歴を取得
+    ah --> bv : 分析履歴を返す
+
+    alt 建物の分析履歴がある場合
+        bv -> bd : 建物の分析履歴一覧を表示
+    else 建物の分析履歴がない場合
+        bv -> bd : 「分析履歴はありません」を表示
+    end
+
+@enduml
+
+
+@startuml 建物情報を編集する
+    title 建物情報を編集する
+
+    actor "ユーザー" as u
+    boundary "building_detail.html(建物詳細画面)" as bd
+    boundary "building_edit.html(建物編集画面)" as be
+    boundary "building_edit_complete.html(建物情報更新完了画面)" as bec
+    control "BuildingView(建物管理処理)" as bv
+    entity "Building(建物情報)" as b
+
+    u -> bd : 「建物情報を編集する」リンクをクリック
+    bd -> bv : 建物情報の取得を要求
+
+    bv -> b : 建物情報を取得
+    b --> bv : 建物情報を返す
+
+    bv -> be : 建物編集画面を表示
+
+    u -> be : 建物情報を変更して「更新」をクリック
+    be -> bv : 変更した建物情報を送信
+
+    bv -> bv : 入力内容をチェック
+
+    alt 未入力・未選択がある場合
+        bv -> be : 催促メッセージを表示
+
+    else 入力内容に問題がない場合
+        bv -> bv : 建物情報の重複をチェック
+
+        alt 重複あり
+            bv -> be : 登録済みメッセージを表示
+
+        else 重複なし
+            bv -> b : 建物情報を更新
+            b --> bv : 更新完了
+
+            bv -> bec : 建物情報更新完了画面を表示
+        end
+    end
+
+    opt 利用者が「戻る」ボタンをクリック
+        u -> be : 「戻る」ボタンをクリック
+        be -> bv : 編集処理の中止を要求
+        bv -> bd : 建物詳細画面を表示
+    end
+
+    opt 利用者が「建物削除」ボタンをクリック
+        u -> be : 「建物削除」ボタンをクリック
+        be -> bv : 建物削除処理を要求
+        bv -> bv : 建物削除処理を開始
+    end
+
+@enduml
+
+
+@startuml 建物情報を削除する
+    title 建物情報を削除する
+
+    actor "ユーザー" as u
+    boundary "building_edit.html(建物編集画面)" as be
+    boundary "building_delete_confirm.html(建物削除確認画面)" as bdc
+    boundary "building_delete_complete.html(建物削除完了画面)html名は仮" as bcomp
+    control "BuildingView(建物管理処理)" as bv
+    entity "Building(建物情報)" as b
+
+    u -> be : 「建物削除」リンクをクリック
+    be -> bv : 建物情報の取得を要求
+
+    bv -> b : 建物情報を取得
+    b --> bv : 建物情報を返す
+
+    bv -> bdc : 建物削除確認画面を表示
+
+    alt 利用者が「戻る」ボタンをクリック
+        u -> bdc : 「戻る」ボタンをクリック
+        bdc -> bv : 削除処理の中止を要求
+        bv -> be : 建物編集画面を表示
+
+    else 利用者が「削除する」ボタンをクリック
+        u -> bdc : 「削除する」ボタンをクリック
+        bdc -> bv : 削除処理を要求
+
+        bv -> b : 建物情報を削除
+        b --> bv : 削除完了
+
+        bv -> bcomp : 建物削除完了画面を表示
+    end
+
+@enduml
+
+
+@startuml 建物情報を登録する
+    title 建物情報を登録する
+
+    actor "ユーザー" as u
+    boundary "mypage.html(マイページ画面)" as mp
+    boundary "building_register.html(建物登録画面)" as br
+    boundary "building_complate.html(建物登録完了画面)" as bc
+    boundary "mypage.html(マイページ画面)" as mp
+    boundary "building_register.html(建物登録画面)" as br
+    boundary "建物登録完了画面" as bc
+    control "BuildingView(建物管理処理)" as bv
+    entity "Building(建物情報)" as b
+
+    u -> mp : 「建物登録」リンクをクリック
+    mp -> bv : 建物登録画面の表示を要求
+    bv -> br : 建物登録画面を表示
+
+    u -> br : 建物情報を入力して「登録」をクリック
+    br -> bv : 入力された建物情報を送信
+
+    bv -> bv : 入力内容をチェック
+
+    alt 未入力・未選択がある場合
+        bv -> br : 催促メッセージを表示
+
+    else 入力内容に問題がない場合
+        bv -> bv : 建物情報の重複をチェック
+
+        alt 重複する建物がある場合
+            bv -> br : 登録済みメッセージを表示
+
+        else 重複する建物がない場合
+            bv -> b : 建物情報を保存
+            b --> bv : 保存完了
+
+            bv -> bc : 建物登録完了画面を表示
+        end
+    end
+
+    opt 利用者が「戻る」をクリック
+        u -> br : 「戻る」ボタンをクリック
+        br -> bv : マイページへの移動を要求
+        bv -> mp : マイページ画面を表示
+    end
+
+@enduml
+
+
+@startuml 分析履歴一覧を確認する
+    title 分析履歴一覧を確認する
+
+    actor "ユーザー" as u
+    boundary "mypage.html(マイページ画面)" as mp
+    boundary "history_list.html(分析履歴一覧画面)" as hl
+    control "HistoryView(履歴表示処理)" as hv
+    entity "AnalysisHistory(分析履歴)" as ah
+
+
+    u -> mp : 「すべての分析履歴」リンクをクリック
+    mp -> hv : 分析履歴一覧の表示を要求
+
+    hv -> ah : 分析履歴を取得
+    ah --> hv : 過去の分析履歴を返す
+
+    hv -> hl : 分析履歴一覧を表示
+
+@enduml
+
+
+@startuml 分析履歴の詳細を確認する
+    title 分析履歴の詳細を確認する
+
+    actor "ユーザー" as u
+
+    boundary "mypage.html(マイページ画面)" as mp
+    boundary "history_detail.html(分析履歴詳細画面)" as hd
+
+    control "HistoryView(履歴表示処理)" as hv
+
+    entity "AnalysisHistory(分析履歴)" as ah
+    entity "Building(建物情報)" as b
+    entity "DamageReport(被害状況)" as dr
+    entity "DamagePhoto(被害写真)" as dp
+    entity "ChatMessage(チャット履歴)" as cm
+
+
+    u -> mp : 「分析結果確認」リンクをクリック
+    mp -> hv : 分析履歴詳細の表示を要求
+
+    hv -> ah : 分析履歴を取得
+    ah --> hv : 分析日・分析結果を返す
+
+    hv -> b : 建物情報を取得
+    b --> hv : 建物情報を返す
+
+    hv -> dr : 被害状況を取得
+    dr --> hv : 被害状況を返す
+
+    hv -> dp : 被害写真の情報を取得
+    dp --> hv : 写真の保存先・ファイル情報を返す
+
+    hv -> cm : チャット履歴を取得
+    cm --> hv : チャット履歴を返す
+
+    hv -> hd : 分析結果詳細を表示
+
+    hd -> hd : 分析日・建物情報・被害状況を表示
+    hd -> hd : 分析結果・被害写真を表示
+    hd -> hd : ダウンロードリンクを表示
+
+    alt チャット履歴がある場合
+        hd -> hd : チャット履歴を表示
+    else チャット履歴がない場合
+        hd -> hd : 「チャット履歴はありません」を表示
+    end
+
+@enduml

@@ -1,11 +1,11 @@
 @startuml 分析結果についての質問
 
-    actor ユーザー as a1
-    boundary analysis_result.html / history_detail.html as b1
-    boundary chat.html as b2
-    control ChatView as c1
-    control ai
-    entity ChatMessage as e1
+    actor "ユーザー" as a1
+    boundary "analysis_result.html / history_detail.html" as b1
+    boundary "chat.html" as b2
+    control "ChatView" as c1
+    control "ai" as s1
+    entity "ChatMessage" as e1
 
     == 1. チャット画面の起動 ==
     a1 -> b1 : 「結果についてチャットボットに質問する」\nリンクをクリック
@@ -21,28 +21,28 @@
 
     == 3. 分析結果の取得と応答判定 ==
     s1 -> s1 : 分析結果を取得
-    
+
     alt 分析結果が取得できない
         s1 --> c1 : 取得できない（エラー）
         c1 -> c1 : 処理を中断
         c1 -> b2 : エラーメッセージを表示
-        
+
     else 決められた制限時間内に応答が完了しなかった場合（タイムアウト）
         s1 --> c1 : タイムアウト
         c1 -> c1 : 処理を中断
         c1 -> b2 : エラーメッセージを表示
-        
+
     else 正常に応答が完了した場合
         s1 -> s1 : AIからの応答を取得
         s1 --> c1 : 応答データ
         deactivate s1
-        
+
         c1 -> b2 : 応答を表示
         b2 -> a1 : AIの回答を表示
 
         == 4. ログイン状態による履歴保存の分岐 ==
         c1 -> c1 : ログインチェック
-        
+
         alt ログイン状態
             c1 -> e1 : チャットを保存
             e1 --> c1 : 保存完了
