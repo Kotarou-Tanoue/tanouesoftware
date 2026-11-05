@@ -4,7 +4,7 @@
     boundary "analysis_result.html / history_detail.html" as b1
     boundary "chat.html" as b2
     control "ChatView" as c1
-    control "ai" as s1
+    control "ai"
     entity "ChatMessage" as e1
 
     == 1. チャット画面の起動 ==
@@ -16,26 +16,24 @@
     == 2. 質問の送信とAI処理 ==
     a1 -> b2 : 質問を入力し、「送信」ボタンをクリック
     b2 -> c1 : POST /chat/message (質問を送信)
-    c1 -> s1 : 回答をAIに渡す
-    activate s1
+    c1 -> ai : 回答をAIに渡す
 
     == 3. 分析結果の取得と応答判定 ==
-    s1 -> s1 : 分析結果を取得
+    ai -> ai : 分析結果を取得
 
     alt 分析結果が取得できない
-        s1 --> c1 : 取得できない（エラー）
+        ai --> c1 : 取得できない（エラー）
         c1 -> c1 : 処理を中断
         c1 -> b2 : エラーメッセージを表示
 
     else 決められた制限時間内に応答が完了しなかった場合（タイムアウト）
-        s1 --> c1 : タイムアウト
+        ai --> c1 : タイムアウト
         c1 -> c1 : 処理を中断
         c1 -> b2 : エラーメッセージを表示
 
     else 正常に応答が完了した場合
-        s1 -> s1 : AIからの応答を取得
-        s1 --> c1 : 応答データ
-        deactivate s1
+        ai -> ai : AIからの応答を取得
+        ai --> c1 : 応答データ
 
         c1 -> b2 : 応答を表示
         b2 -> a1 : AIの回答を表示
