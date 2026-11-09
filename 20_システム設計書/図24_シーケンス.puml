@@ -1,24 +1,33 @@
 @startuml ログインする
     title ログインする
 
-    actor "ユーザー" as a1
-    boundary "任意の画面" as b1
+    actor "利用者" as a1
+    boundary "メニュー" as b1
     boundary "login.html" as b2
     boundary "LINE認証画面" as b3
-    boundary "index.html" as b4
     control "AuthView" as c1
-    control "LINEPlatform" as c2
+    control "LINE認証サービス" as c2
+    entity "UserAuth" as e1
+    entity "User" as e2
     control "IndexView" as c3
-    entity "User" as e1
+    boundary "index.html" as b4
 
     == 1. ログイン画面の表示 ==
     a1 -> b1 : ログインリンクをクリック
     b1 -> c1 : GET /login
     c1 -> b2 : login.htmlを表示
 
+    alt 「ホームに戻る」押下時の処理
+        a1 -> b2 : ホームに戻るをクリック
+        b1 -> c3 : GET /index
+        c3 -> b4 : 表示
+        note over b4 : ユースケース終了
+    end
+
     == 2. LINE認証 ==
     a1 -> b2 : LINEログインボタンをクリック
-    b2 -> b3 : LINE認証画面へ遷移
+    b2 -> c2 : POST
+    c2 -> b3 : LINE認証画面へ遷移
     a1 -> b3 : ログイン & 同意
     b3 -> c2 : 認証リクエスト
     c2 -> c1 : 認証結果（ユーザー情報）を通知
@@ -26,12 +35,20 @@
         c1 -> b2 : エラーメッセージを表示
     end
     == 3. アプリ側でのログイン・画面遷移 ==
-    c1 -> e1 : ユーザー情報の検索 / 登録
-    e1 --> c1 : ユーザー情報
+    c1 -> e1 : ユーザー認証情報の取得
+    alt ユーザー認証情報が取得できない場合
+        c1 -> e2 : ユーザー新規登録
+        e2 --> c1 : 登録完了
+        c1 -> e1 : ユーザー認証情報新規登録
 
-    note over c1 : ログイン状態を保存 (session)
+    end
+    e1 --> c1 : ユーザー認証情報
+    c1 -> e2 : 認証情報が一致したユーザーを取得
+    e2 --> c1 : ユーザー情報
 
-    c1 -> c3 : トップ画面へリダイレクト (GET /)
+    c1 -> c1 : sessionにuser_idを保存
+
+    c1 -> c3 : リダイレクト
     c3 -> b4 : index.htmlを表示
     b4 -> a1 : ログイン後のトップ画面を表示
 
@@ -41,33 +58,30 @@
 @startuml ログアウトする
     title ログアウトする
 
-    actor "user" as a1
-    boundary "任意の画面" as b1
-    boundary "index.html" as b2
-    control "AuthView" as c1
+    actor "利用者" as a1
+    boundary "メニュー" as b1
+    boundary "logout.html" as b2
+    control "LogoutView" as c1
     control "IndexView" as c2
+    boundary "index.html" as b3
 
-    == ログアウト確認 ==
-    a1 -> b1 : 1. サイドバーのログアウトボタンをクリック
+    a1 -> b1 : ログアウトリンクをクリック
+    b1 -> c1 : GET /logout
+    c1 -> b2 : 表示
 
-    note over b1 : ブラウザで確認アラートを表示\n(JavaScript: confirm)
-    b1 -> a1 : 2. 「本当にログアウトしますか？」
+    alt キャンセルをクリックした場合
+        a1 -> b2 : キャンセルをクリック
+        b2 -> c2 : GET /index
+        c2 -> b3 : 表示
+        note over b3 : ユースケース終了
+    else ログアウトをクリックした場合
+        a1 -> b2 : ログアウトをクリック
+        b2 -> c1 : POST
 
-    alt OKをクリックした場合
-        a1 -> b1 : 3. [OK] をクリック
+        c1 -> c1 : ユーザーのセッション情報をクリア\n(session.clear())
 
-        == ログアウト処理の実行 ==
-        b1 -> c1 : 4. ログアウトをリクエスト (POST /logout)
-
-        note over c1 : ユーザーのセッション情報をクリア\n(session.clear())
-
-        c1 -> c2 : 5. トップ画面へリダイレクト (GET /)
-        c2 -> b2 : 6. 画面レンダリング (render_template)
-        b2 -> a1 : 7. ログアウト後のトップ画面を表示
-
-    else キャンセルをクリックした場合
-        a1 -> b1 : 3. [キャンセル] をクリック
-        note over b1 : ログアウト処理を中断し、\n現在の画面にとどまる
+        c1 -> c2 : リダイレクト
+        c2 -> b3 : 表示
     end
 
 @enduml
@@ -76,91 +90,96 @@
 @startuml 建物情報を入力する
     title 建物情報を入力する
 
-    actor "ユーザー" as a1
-    boundary "各画面のメニュー" as b1
-    boundary "index.html" as b2
-    boundary "building_input.html" as b3
-    boundary "damage_input.html" as b4
-    control "DamageView" as c1
+    actor "利用者" as a1
+    boundary "メニュー / ホーム" as b1
+    boundary "analysis_input_building.html" as b2
+    control "AnalysisInputView" as c1
     entity "Building" as e1
+    boundary "analysis_input_damage.html" as b3
+    control "IndexView" as c2
+    boundary "index.html" as b4
+
 
     == 1. 建物入力画面の表示と初期判定 ==
-    a1 -> b1 : 「被害状況分析」を押す
+    a1 -> b1 : 被害状況分析リンクをクリック
     b1 -> c1 : GET /building
+    c1 -> c1 : ログイン状態を確認
 
     alt ログインしていない
-        c1 -> b3 : 分析建物入力画面を表示
+        c1 -> b2 : 分析建物入力画面を表示
     else ログインしている
         c1 -> e1 : ユーザーが登録している建物データを取得
         e1 --> c1 : 建物データ
+        c1 -> b2 : 分析建物入力画面を表示
 
+        b2 -> b2 : 新規入力した建物情報を保存できるようにする
         alt 建物データがある
-            c1 -> b3 : 入力した建物情報を保存できるようにする\n（分析建物入力画面を表示）
-        else ない
-            c1 -> b3 : 登録済みの建物などを選択できるようにする\n（分析建物入力画面を表示）
+            b2 -> b2 : 登録済みの建物を選択できるようにする
         end
     end
-    b3 -> a1 : 分析建物入力画面を表示
+    b2 --> a1
 
     == 2. 画面内での動的制御 ==
-    alt 「新しい建物を入力」が選択されたか？
-        a1 -> b3 : 「新しい建物を入力」を選択
-        b3 -> b3 : 新規入力欄を表示する
-    else 登録済みの建物が選択されたか？
-        a1 -> b3 : 登録済みの建物（リスト）を選択
-        b3 -> b3 : 新規入力欄を非表示にする
+    alt 「新しい建物を入力」が選択された
+        a1 -> b2 : 「新しい建物を入力」を選択
+        b2 -> b2 : 新規入力欄を表示する
+    else 登録済みの建物が選択された
+        a1 -> b2 : 登録済みの建物（リスト）を選択
+        b2 -> b2 : 新規入力欄を非表示にする
     end
 
     == 3. 「次へ」押下時の入力チェックと分岐処理 ==
-    a1 -> b3 : 分析する建物の情報を入力し「次へ」を押す
-    b3 -> c1 : POST /building/input
-
-    note over c1 : 入力をチェックする
-
-    alt 入力力 / 未選択がある（未入力・未選択がある場合）
-        c1 -> b3 : 「入力 / 選択してください」メッセージ表示
-
-    else 登録済みの建物が選択された場合
-        c1 -> e1 : 選択された建物のデータを取得
-        e1 --> c1 : 建物データ
-        c1 -> c2 : リダイレクト (GET /damage/input)
-        c2 -> b4 : damage_input.htmlを表示
-        b4 -> a1 : 「被害状況を入力する」へ遷移
-
-    else 新しい建物が入力された場合
-        alt 建物名が登録済みの建物と重複している
-            c1 -> b3 : 「すでに登録している建物です」メッセージ表示
-        else 重複していない
-            alt ログインしていない
-                c1 -> c2 : リダイレクト (GET /damage/input)
-                c2 -> b4 : damage_input.htmlを表示
-            else ログインしている
-                c1 -> e1 : 建物情報を保存
-                e1 --> c1 : 保存完了
-                c1 -> b4 : damage_input.htmlを表示
+    a1 -> b2 : 分析する建物の情報を入力し「次へ」をクリック
+    b2 -> c1 : POST
+    c1 -> c1 : 入力をチェックする
+    alt 登録済みの建物を選択した場合
+        c1 -> c1 : sessionにbuilding_idを保存
+        c1 -> b3 : 表示
+    else 新しい建物を入力した場合
+        alt 未入力・未選択がある場合
+            c1 -> b2 : 「入力 / 選択してください」メッセージ表示
+        else 入力が正しい場合
+            alt ログインしている場合
+                alt 建物名が同じユーザの登録済みの建物と重複している場合
+                    c1 -> b2 : 「すでに登録している建物です」メッセージ表示
+                else 重複していない場合
+                    c1 -> e1 : 建物情報を保存
+                    e1 --> c1 : 保存完了 / 建物データ
+                    c1 -> c1 : sessionにbuilding_idを保存
+                    c1 -> b3 : 表示
+                    note over b3 : ユースケース\n「被害状況を入力する」へ
+                end
+            else ログインしていない場合
+                c1 --> b2 : 成功レスポンスを返す
+                b2 -> b2 : 入力内容をsessionStorageに保存
+                b2 -> b3 : 遷移
+                note over b3 : ユースケース\n「被害状況を入力する」へ
             end
         end
     end
 
     == 4. 「戻る」押下時の処理 ==
-    a1 -> b3 : 「戻る」が押されたか？
-    b3 -> b2 : トップ画面を表示
+    a1 -> b2 : 「戻る」をクリック
+    b2 -> c2 : GET
+    c2 -> b4 : 表示
+    note over b4 : ユースケース終了
 
 @enduml
 
 
-@startuml 被害状況を入力する
-    title 被害状況を入力する
+@startuml 被害状況を入力する_1
+    title 被害状況を入力する1 (情報入力)
 
-    actor "ユーザー" as a1
-    boundary "damage_input.html" as b1
+    actor "利用者" as a1
+    boundary "analysis_input_damage.html" as b1
     boundary "写真ライブラリ画面" as b2
     boundary "カメラ画面" as b3
-    boundary "building_input.html" as b4
-    control "DamageView" as c1
-    control "AnalysisView" as c2
+    control "AnalysisInputView" as c1
+    boundary "analysis_input_building.html" as b4
+    control "AnalysisView" as c3
 
     == 1. 写真の取得処理 ==
+    note over b1 : ユースケース\n「建物情報を入力する」から
     alt 写真を選択する場合
         a1 -> b1 : 被害写真に関する情報を入力し、\nファイルを選択ボタンをクリック
         b1 -> b2 : 端末の写真ライブラリを開く
@@ -214,7 +233,7 @@
     == 3. 登録済み情報の削除操作 ==
     alt 利用者が被害写真の削除ボタンをクリック
         a1 -> b1 : 被害写真の削除ボタンをクリック
-        b1 -> b1 : 被害写真を削除
+        b1 -> b1 : 選択中の写真をリストから削除
 
     else 利用者が被害情報の削除ボタンをクリック
         a1 -> b1 : 被害情報の削除ボタンをクリック
@@ -238,36 +257,127 @@
         else 上限枚数を超えていない
 
             == 5. AI分析への遷移 ==
-            c1 -> c2 : AI分析を開始 (Redirect /analysis)
-            note over c2 : AI分析処理へ移行
+            note over c1 : シーケンス\n「被害状況を入力する2 (登録／分析開始)」へ
         end
     end
 
-    == 6. 「戻る」押下時の処理 ==
+    == ex. 「戻る」押下時の処理 ==
     a1 -> b1 : 利用者が戻るボタンをクリック
-    b1 -> c1 : 処理を中断
+    b1 -> c1 : POST
     c1 -> b4 : building_input.htmlへ
+    note over b4 : ユースケース終了
 
+@enduml
+
+@startuml 被害状況を入力する_2
+    title 被害状況を入力する2 (登録／分析開始)
+
+    actor "利用者" as a1
+    boundary "analysis_input_damage.html" as b1
+    control "AnalysisInputView" as c1
+    control "PhotoStorageService" as s1
+    entity "S3" as S3
+    entity "DamageReport" as e1
+    entity "DamageLocation" as e2
+    entity "DamagePhoto" as e3
+    control "AnalysisView" as c2
+
+    == 5. AI分析への遷移 ==
+    note over c1 : シーケンス\n「被害状況を入力する1 (情報入力)」から
+    loop 登録された被害写真の枚数分
+        c1 -> s1 : upload_photo()
+        s1 -> S3 : 写真をアップロード
+        S3 --> s1 : アップロード結果
+        s1 --> c1 : s3_object_key
+    end
+    alt 写真のアップロードに失敗
+        c1 --> b1 : エラーメッセージを表示し\n再アップロードを促す
+    else 写真のアップロードに成功
+        alt ログインしている場合
+            c1 -> c1 : sessionからbuilding_idを取得し\n建物の所有者を確認
+            c1 -> e1 : 被害状況を登録
+            e1 --> c1 : report_id
+
+            loop 登録された被害箇所の件数分
+                c1 -> e2 : 被害箇所を登録
+                e2 --> c1 : location_id
+                loop 被害箇所に紐づいた被害写真の件数分
+                    c1 -> e3 : 写真情報とs3_object_keyを登録
+                    e3 --> c1 : 登録完了
+                end
+            end
+            alt DBへの保存に失敗
+                loop アップロードした被害写真の枚数分
+                    c1 -> s1 : delete_photo(s3_object_key)
+                    s1 -> S3 : 写真を削除
+                    S3 --> s1 : 削除結果
+                    s1 --> c1 : 削除完了
+                    c1 --> b1 : エラーメッセージ表示
+                end
+            else DBへの保存に成功
+                c1 -> c1 : sessionにreport_idを保存
+                c1 -> c2 : AI分析を開始
+                note over c2 : ユースケース\n「被害状況をAI分析する」へ
+            end
+        else ログインしていない場合
+            c1 -> c1 : サーバー側の一時セッションに\ns3_object_keyを関連付けて保存
+            c1 -> b1 : 成功レスポンスを返す
+            b1 -> b1 : 入力内容をsessionStorageに保存
+            b1 -> c2 : AI分析を開始 (Redirect /analysis)
+            note over c2 : ユースケース\n「被害状況をAI分析する」へ
+        end
+    end
 @enduml
 
 
 @startuml 被害状況をAI分析する
     title 被害状況をAI分析する
 
-    actor "ユーザー" as a1
+    actor "利用者" as a1
     boundary "analysis.html" as b1
-    boundary "followup.html" as b2
-    boundary "damage_input.html" as b3
-    boundary "index.html" as b4
-    boundary "analysis_result.html" as b5
     control "AnalysisView" as c1
-    control "ai"
-    entity "AnalysisHistory" as e1
+    control "DamageAnalysisService" as s1
+    entity "Building" as e1
+    entity "DamageReport" as e2
+    entity "DamageLocation" as e3
+    entity "DamagePhoto" as e4
+    entity "S3" as S3
+    control "PhotoStorageService" as s2
+    control "GeminiService" as s3
+    entity "AnalysisHistory" as e5
+    boundary "analysis_additional_chat.html" as b2
+    boundary "analysis_input_damage.html" as b3
+    control "AnalysisInputView" as c2
+    boundary "index.html" as b4
+    control "IndexView" as c3
+    boundary "analysis_result.html" as b5
+
 
     == 1. 分析画面の表示とAI分析の開始 ==
-    b3-> c1 : 前画面から遷移 (GET /analysis)
+    note over c1 : ユースケース\n「被害状況を入力する」から
     c1 -> b1 : analysis.htmlを表示
     b1 -> c1 : AI分析を開始
+    c1 -> c1 : 分析に必要な情報を取得
+    alt ログインしている
+        c1 -> e1 : 建物情報を取得(building_id)
+        e1 --> c1 : 建物データ
+        c1 -> e2 : 被害状況を取得(report_id)
+        e2 --> c1 : 被害状況データ
+        c1 -> e3 : 被害箇所を取得(report_id)
+        e3 --> c1 : 被害箇所データ
+        c1 -> e4 : 被害写真を取得(report_id)
+        e4 --> c1 : 被害写真テーブルデータ
+        loop 取得できた被害写真データの件数分
+            c1 -> s1 : generate_presigned_url(s3_object_key)
+            s1 -> S3 : S3の被害写真データを取得
+            S3 --> s1 : 取得結果
+            s1 --> c1 : 被害写真写真データ
+        end
+    else ログインしていない
+        c1 -> c1 : sessionStorageから入力データを取得
+        loop サーバー側の一時セッションに保存されているs3_object_key件数分
+        c1 -> s1 :
+    end
     c1 -> ai : AI分析を実行
 
     == 2. AI分析中の分岐処理（タイムアウト / 追加質問 / 完了） ==
@@ -295,8 +405,8 @@
 
         == 3. ログイン状態による保存先の分岐 ==
         alt ログインしている
-            c1 -> e1 : 分析結果の要約を保存
-            e1 --> c1 : 保存完了
+            c1 -> e5 : 分析結果の要約を保存
+            e5 --> c1 : 保存完了
         else ログアウトしていない
             c1 -> c1 : セッションに分析結果の要約を保存
         end
@@ -351,7 +461,7 @@
     boundary "analysis_result.html / history_detail.html" as b1
     boundary "chat.html" as b2
     control "ChatView" as c1
-    control "ai" as s1
+    control "ai"
     entity "ChatMessage" as e1
 
     == 1. チャット画面の起動 ==
@@ -363,26 +473,24 @@
     == 2. 質問の送信とAI処理 ==
     a1 -> b2 : 質問を入力し、「送信」ボタンをクリック
     b2 -> c1 : POST /chat/message (質問を送信)
-    c1 -> s1 : 回答をAIに渡す
-    activate s1
+    c1 -> ai : 回答をAIに渡す
 
     == 3. 分析結果の取得と応答判定 ==
-    s1 -> s1 : 分析結果を取得
+    ai -> ai : 分析結果を取得
 
     alt 分析結果が取得できない
-        s1 --> c1 : 取得できない（エラー）
+        ai --> c1 : 取得できない（エラー）
         c1 -> c1 : 処理を中断
         c1 -> b2 : エラーメッセージを表示
 
     else 決められた制限時間内に応答が完了しなかった場合（タイムアウト）
-        s1 --> c1 : タイムアウト
+        ai --> c1 : タイムアウト
         c1 -> c1 : 処理を中断
         c1 -> b2 : エラーメッセージを表示
 
     else 正常に応答が完了した場合
-        s1 -> s1 : AIからの応答を取得
-        s1 --> c1 : 応答データ
-        deactivate s1
+        ai -> ai : AIからの応答を取得
+        ai --> c1 : 応答データ
 
         c1 -> b2 : 応答を表示
         b2 -> a1 : AIの回答を表示
