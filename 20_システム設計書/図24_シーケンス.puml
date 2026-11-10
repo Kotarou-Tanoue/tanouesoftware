@@ -9,6 +9,7 @@
     control "LINE認証サービス" as c2
     entity "UserAuth" as e1
     entity "User" as e2
+    collections "Flask-Session\nEC2ローカルファイル" as sess
     control "IndexView" as c3
     boundary "index.html" as b4
 
@@ -33,24 +34,27 @@
     c2 -> c1 : 認証結果（ユーザー情報）を通知
     alt 認証失敗
         c1 -> b2 : エラーメッセージを表示
+        note over b2 : ユースケース終了
+    else 認証成功
+        == 3. アプリ側でのログイン・画面遷移 ==
+        c1 -> e1 : ユーザー認証情報の取得
+        alt ユーザー認証情報が取得できない場合
+            c1 -> e2 : ユーザー新規登録
+            e2 --> c1 : 登録完了
+            c1 -> e1 : ユーザー認証情報新規登録
+
+        end
+        e1 --> c1 : ユーザー認証情報
+        c1 -> e2 : 認証情報が一致したユーザーを取得
+        e2 --> c1 : ユーザー情報
+
+        c1 -> sess : sessionにuser_idを保存
+        sess --> c1 : 保存完了
+
+        c1 -> c3 : リダイレクト
+        c3 -> b4 : index.htmlを表示
+        b4 -> a1 : ログイン後のトップ画面を表示
     end
-    == 3. アプリ側でのログイン・画面遷移 ==
-    c1 -> e1 : ユーザー認証情報の取得
-    alt ユーザー認証情報が取得できない場合
-        c1 -> e2 : ユーザー新規登録
-        e2 --> c1 : 登録完了
-        c1 -> e1 : ユーザー認証情報新規登録
-
-    end
-    e1 --> c1 : ユーザー認証情報
-    c1 -> e2 : 認証情報が一致したユーザーを取得
-    e2 --> c1 : ユーザー情報
-
-    c1 -> c1 : sessionにuser_idを保存
-
-    c1 -> c3 : リダイレクト
-    c3 -> b4 : index.htmlを表示
-    b4 -> a1 : ログイン後のトップ画面を表示
 
 @enduml
 
@@ -62,6 +66,7 @@
     boundary "メニュー" as b1
     boundary "logout.html" as b2
     control "LogoutView" as c1
+    collections "Flask-Session\nEC2ローカルファイル" as sess
     control "IndexView" as c2
     boundary "index.html" as b3
 
@@ -78,7 +83,8 @@
         a1 -> b2 : ログアウトをクリック
         b2 -> c1 : POST
 
-        c1 -> c1 : ユーザーのセッション情報をクリア\n(session.clear())
+        c1 -> sess : ユーザーのセッション情報をクリア\n(session.clear())
+        sess --> c1 : 削除完了
 
         c1 -> c2 : リダイレクト
         c2 -> b3 : 表示
@@ -95,6 +101,7 @@
     boundary "analysis_input_building.html" as b2
     control "AnalysisInputView" as c1
     entity "Building" as e1
+    collections "Flask-Session\nEC2ローカルファイル" as sess
     boundary "analysis_input_damage.html" as b3
     control "IndexView" as c2
     boundary "index.html" as b4
@@ -103,7 +110,8 @@
     == 1. 建物入力画面の表示と初期判定 ==
     a1 -> b1 : 被害状況分析リンクをクリック
     b1 -> c1 : GET /building
-    c1 -> c1 : ログイン状態を確認
+    c1 -> sess : ログイン状態を確認
+    sess --> c1 : ログイン状態
 
     alt ログインしていない
         c1 -> b2 : 分析建物入力画面を表示
@@ -119,7 +127,7 @@
     end
     b2 --> a1
 
-    == 2. 画面内での動的制御 ==
+    == 2. 画面内での動的制御(ログイン時のみ) ==
     alt 「新しい建物を入力」が選択された
         a1 -> b2 : 「新しい建物を入力」を選択
         b2 -> b2 : 新規入力欄を表示する
@@ -132,8 +140,8 @@
     a1 -> b2 : 分析する建物の情報を入力し「次へ」をクリック
     b2 -> c1 : POST
     c1 -> c1 : 入力をチェックする
-    alt 登録済みの建物を選択した場合
-        c1 -> c1 : sessionにbuilding_idを保存
+    alt 登録済みの建物を選択した場合(ログイン時のみ)
+        c1 -> c1 : 新規開始なら分析参照を初期化しbuilding_idを保存
         c1 -> b3 : 表示
     else 新しい建物を入力した場合
         alt 未入力・未選択がある場合
@@ -145,14 +153,15 @@
                 else 重複していない場合
                     c1 -> e1 : 建物情報を保存
                     e1 --> c1 : 保存完了 / 建物データ
-                    c1 -> c1 : sessionにbuilding_idを保存
+                    c1 -> sess : 新規開始なら分析参照を初期化しbuilding_idを保存
+                    sess --> c1 : 保存完了
                     c1 -> b3 : 表示
                     note over b3 : ユースケース\n「被害状況を入力する」へ
                 end
             else ログインしていない場合
-                c1 --> b2 : 成功レスポンスを返す
-                b2 -> b2 : 入力内容をsessionStorageに保存
-                b2 -> b3 : 遷移
+                c1 -> sess : 新規開始なら前回の分析情報を初期化\n建物・被害・結果・チャット・S3キー・追加回答を破棄\n入力された建物情報を保存
+                sess --> c1 : 保存完了
+                c1 -> b3 : 表示
                 note over b3 : ユースケース\n「被害状況を入力する」へ
             end
         end
@@ -277,6 +286,7 @@
     control "AnalysisInputView" as c1
     control "PhotoStorageService" as s1
     entity "S3" as S3
+    collections "Flask-Session\nEC2ローカルファイル" as sess
     entity "DamageReport" as e1
     entity "DamageLocation" as e2
     entity "DamagePhoto" as e3
@@ -294,7 +304,8 @@
         c1 --> b1 : エラーメッセージを表示し\n再アップロードを促す
     else 写真のアップロードに成功
         alt ログインしている場合
-            c1 -> c1 : sessionからbuilding_idを取得し\n建物の所有者を確認
+            c1 -> sess : sessionからbuilding_idを取得し\n建物の所有者を確認
+            sess --> c1 : building_id
             c1 -> e1 : 被害状況を登録
             e1 --> c1 : report_id
 
@@ -315,14 +326,14 @@
                     c1 --> b1 : エラーメッセージ表示
                 end
             else DBへの保存に成功
-                c1 -> c1 : sessionにreport_idを保存
+                c1 -> sess : sessionにreport_idを保存
+                sess --> c1 : 保存完了
                 c1 -> c2 : AI分析を開始
                 note over c2 : ユースケース\n「被害状況をAI分析する」へ
             end
         else ログインしていない場合
-            c1 -> c1 : サーバー側の一時セッションに\ns3_object_keyを関連付けて保存
-            c1 -> b1 : 成功レスポンスを返す
-            b1 -> b1 : 入力内容をsessionStorageに保存
+            c1 -> sess : 入力した被害状況、被害写真のs3キーを保存
+            sess --> c1 : 保存完了
             b1 -> c2 : AI分析を開始 (Redirect /analysis)
             note over c2 : ユースケース\n「被害状況をAI分析する」へ
         end
@@ -330,126 +341,169 @@
 @enduml
 
 
-@startuml 被害状況をAI分析する
-    title 被害状況をAI分析する
+@startuml 被害状況をAI分析する_1
+    title 被害状況をAI分析する_1 (情報取得／分析開始)
 
     actor "利用者" as a1
     boundary "analysis.html" as b1
     control "AnalysisView" as c1
+    collections "Flask-Session\nEC2ローカルファイル" as sess
     control "DamageAnalysisService" as s1
     entity "Building" as e1
     entity "DamageReport" as e2
     entity "DamageLocation" as e3
     entity "DamagePhoto" as e4
-    entity "S3" as S3
     control "PhotoStorageService" as s2
-    control "GeminiService" as s3
-    entity "AnalysisHistory" as e5
-    boundary "analysis_additional_chat.html" as b2
-    boundary "analysis_input_damage.html" as b3
-    control "AnalysisInputView" as c2
-    boundary "index.html" as b4
-    control "IndexView" as c3
-    boundary "analysis_result.html" as b5
+    entity "S3" as S3
 
 
     == 1. 分析画面の表示とAI分析の開始 ==
     note over c1 : ユースケース\n「被害状況を入力する」から
     c1 -> b1 : analysis.htmlを表示
-    b1 -> c1 : AI分析を開始
-    c1 -> c1 : 分析に必要な情報を取得
+    b1 -> c1 : POST
+    c1 -> sess : ログイン状態・現在のreport_id \n/ guest_analysisを取得
+    sess --> c1 : ログイン状態・report_id\n・guest_analysis
+    c1 -> s1 : analyze_damage() \n(AI分析を実行)
+
     alt ログインしている
-        c1 -> e1 : 建物情報を取得(building_id)
-        e1 --> c1 : 建物データ
-        c1 -> e2 : 被害状況を取得(report_id)
-        e2 --> c1 : 被害状況データ
-        c1 -> e3 : 被害箇所を取得(report_id)
-        e3 --> c1 : 被害箇所データ
-        c1 -> e4 : 被害写真を取得(report_id)
-        e4 --> c1 : 被害写真テーブルデータ
-        loop 取得できた被害写真データの件数分
-            c1 -> s1 : generate_presigned_url(s3_object_key)
-            s1 -> S3 : S3の被害写真データを取得
-            S3 --> s1 : 取得結果
-            s1 --> c1 : 被害写真写真データ
-        end
+        s1 -> e1 : 建物情報を取得(building_id)
+        e1 --> s1 : 建物データ
+        s1 -> e2 : 被害状況を取得(report_id)
+        e2 --> s1 : 被害状況データ
+        s1 -> e3 : 被害箇所を取得(report_id)
+        e3 --> s1 : 被害箇所データ
+        s1 -> e4 : 被害写真を取得(report_id)
+        e4 --> s1 : 被害写真データ
     else ログインしていない
-        c1 -> c1 : sessionStorageから入力データを取得
-        loop サーバー側の一時セッションに保存されているs3_object_key件数分
-        c1 -> s1 :
+        s1 -> sess : 建物・全体回答・被害箇所\n・S3キー・追加回答を取得
+        sess --> s1 : サーバー側の一時分析データ
     end
-    c1 -> ai : AI分析を実行
+    loop 被害写真の件数分
+        s1 -> s2 : get_photo_data(s3_object_key) \nS3から写真をダウンロードする
+        s2 -> S3 : GetObject(s3_object_key)
+        S3 --> s2 : 写真データ
+        s2 --> s1 : 写真データ
+    end
+
+    note over s1 : シーケンス\n「被害状況をAI分析する_2」へ
+
+
+@enduml
+
+@startuml 被害状況をAI分析する_2
+    title 被害状況をAI分析する_2 (分岐処理／結果表示・保存)
+
+    actor "利用者" as a1
+    control "DamageAnalysisService" as s1
+    control "GeminiService" as s2
+    control "AnalysisView" as c1
+    boundary "analysis_failure.html" as b1
+    boundary "analysis_input_damage.html" as b2
+    control "AnalysisInputView" as c2
+    boundary "index.html" as b3
+    control "IndexView" as c3
+    entity "AnalysisHistory" as e1
+    collections "Flask-Session\nEC2ローカルファイル" as sess
+    control "PhotoStorageService" as s3
+    boundary "analysis_result.html" as b4
 
     == 2. AI分析中の分岐処理（タイムアウト / 追加質問 / 完了） ==
+    note over s1 : シーケンス\n「被害状況をAI分析する_1」から
+    s1 -> s1 : preprocess_images() \n(分析に使用する写真を前処理)
+    s1 -> s2 : judgement_data() \n(分析に不足している情報があるか判断)
+    s2 --> s1 : 判断結果
+
+    alt AIが、分析に必要な情報が不足していると判断した場合
+    s1 -> s2 : generate_followup_questions() \n(不足情報を確認し追加質問を生成)
+    s2 --> s1 : 生成結果
+    s1 --> c1 : 質問内容
+    note over c1 : ユースケース\n「不足情報の追加質問に回答する」へ
+    else AI分析に必要な情報が揃っている場合
+    note over s1 : ユースケース\n「不足情報の追加質問に回答する」から
+    s1 -> s2 : generate_analysis_result() \n(分析結果を生成する)
 
     alt 決められた制限時間内にAI分析が完了しなかった場合（タイムアウト）
-        ai --> c1 : タイムアウトエラー
-        c1 -> c1 : 処理を中断
-        c1 -> b1 : エラーメッセージを表示
-        c1 -> b1 : 戻るボタンとキャンセルボタンを表示
+        s2 --> s1 : タイムアウトエラー
+        s1 -> c1 : 処理を中断
+        c1 -> b1 : エラーページ表示
 
-        alt 利用者が戻るボタンをクリック
-            a1 -> b1 : 戻るボタンをクリック
-            b1 -> b3 : damage_input.htmlを表示
-        else 利用者がキャンセルをクリック
-            a1 -> b1 : キャンセルをクリック
-            b1 -> b4 : index.htmlを表示
+        alt 利用者が被害状況入力に戻るボタンをクリックした場合
+            a1 -> b1 : 被害状況入力に戻るボタンをクリック
+            b1 -> c2 : GET
+            c2 -> b2 : 表示
+            note over b2 : ユースケース終了
+        else 利用者がホームに戻るボタンをクリックした場合
+            a1 -> b1 : ホームに戻るボタンをクリック
+            b1 -> c3 : GET
+            c3 -> b3 : 表示
+            note over b3 : ユースケース終了
         end
 
-    else AIが、分析に必要な情報が不足していると判断した場合
-        ai --> c1 : 追加質問の必要あり
-        c1 -> b2 : followup.htmlを表示
-
     else AI分析完了の場合
-        ai --> c1 : AI分析完了
+        s2 --> s1 : 分析結果・被害レベル・修理費用
 
         == 3. ログイン状態による保存先の分岐 ==
         alt ログインしている
-            c1 -> e5 : 分析結果の要約を保存
-            e5 --> c1 : 保存完了
-        else ログアウトしていない
-            c1 -> c1 : セッションに分析結果の要約を保存
+            s1 -> e1 : 分析結果を保存
+            e1 --> s1 : 保存完了
+            s1 --> c1 : 分析結果
+            c1 -> sess : sessionにanalysis_idを保存
+            sess --> c1 : 保存完了
+        else ログインしていない
+            s1 --> c1 : 分析結果
+            c1 -> sess : sessionに分析結果を保存
+            sess --> c1 : 保存完了
         end
 
         == 4. 分析結果画面の表示 ==
-        c1 -> b5 : 分析結果と修理費用の目安と\n被害写真のダウンロードリンクを表示
-        b5 -> a1 : 分析結果画面を表示
+        loop 被害写真の枚数分
+            c1 -> s3 : generate_presigned_url(s3_object_key) \nS3内写真の表示・ダウンロード用URLを発行する
+            s3 --> c1 : 写真url
+        end
+        c1 -> b4 : 分析結果と修理費用の目安と\n被害写真のダウンロードリンクを表示
+    end
     end
 
 @enduml
 
-
 @startuml 不足情報の追加質問に回答する
     title 不足情報の追加質問に回答する
 
-    actor "ユーザー" as a1
-    boundary "analysis.html" as b1
-    boundary "followup.html" as b2
+    actor "利用者" as a1
+    boundary "analysis_additional_chat.html" as b1
     control "AnalysisView" as c1
-    control "ai"
+    control "DamageAnalysisService" as s1
+    control "GeminiService" as s2
+    boundary "analysis.html" as b2
 
     == 1. 初期表示（前画面からの続き） ==
-    b1 -> b2 : 「分析に必要な情報についての質問を表示」
+    c1 -> b1 : 「分析に必要な情報についての質問を表示」
 
     == 2. 回答の入力とAIによる判定ループ ==
     loop 利用者の回答が不十分な場合
-        a1 -> b2 : 質問に対しての回答を入力し\n「回答」ボタンをクリック
-        b2 -> c1
-        c1 -> ai : 回答をAIに渡す
+        a1 -> b1 : 質問に対しての回答を入力し\n「回答」ボタンをクリック
+        b1 -> c1 : POST
+        c1 -> s1 : process_answers() \n(利用者の追加回答をAIに渡す)
+        s1 -> s1 : 一時保持している分析情報と\n追加回答を結合
+        s1 -> s2 : judgement_data() \n(分析に不足している情報があるか判断)
+        s2 --> s1 : 判断結果
         alt 利用者の回答が不十分なものであるとAIが判断
-            ai -> c1
-            c1 -> b2 : ふたたび分析に必要な質問を表示
-            b2 -> a1 : 再度の回答入力を求める
+            s1 --> c1 : 生成された質問
+            c1 -> b1 : ふたたび分析に必要な質問を表示
+            b1 --> a1 : 再度の回答入力を求める
         end
     end
 
     == 3. 回答が十分な場合の処理とAI再分析 ==
     note over c1 : 回答が十分であると判断された場合
 
-    ai -> c1 : AIからの応答を取得
-    c1 -> b2 : 回答に対する応答を表示
+    s1 --> c1 : AIからの応答
+    c1 -> b1 : 回答に対する応答を表示
 
-    b2 -> c1 : AI分析へ遷移（再実行）
+    b1 -> b2 : 一定時間後に自動遷移
+    b2 -> c1 : POST
+    c1 -> s1 : 分析再開
+    note over s1 : ユースケース\n「被害状況をAI分析する」へ（再実行）\n分岐「AI分析に必要な情報が揃っている場合」から
 
 @enduml
 
@@ -457,53 +511,66 @@
 @startuml 分析結果について質問する
     title 分析結果について質問する
 
-    actor "ユーザー" as a1
-    boundary "analysis_result.html / history_detail.html" as b1
-    boundary "chat.html" as b2
+    actor "利用者" as a1
+    boundary "analysis_result.html \n/ history_detail.html" as b1
+    boundary "analysis_user_chat.html" as b2
     control "ChatView" as c1
+    control "ChatService" as s1
+    entity "AnalysisHistory" as e1
+    collections "Flask-Session\nEC2ローカルファイル" as sess
+    entity "DamagePhoto" as e2
+    control "GeminiService" as s2
     control "ai"
-    entity "ChatMessage" as e1
+    entity "ChatHistory" as e3
 
     == 1. チャット画面の起動 ==
     a1 -> b1 : 「結果についてチャットボットに質問する」\nリンクをクリック
     b1 -> c1 : GET /chat
-    c1 -> b2 : 画面を表示し、チャットボットを利用できる状態にする
+    c1 -> b2 : 画面を表示し、チャットボットを\n利用できる状態にする
     b2 -> a1 : 「分析結果について質問」画面を表示
 
     == 2. 質問の送信とAI処理 ==
     a1 -> b2 : 質問を入力し、「送信」ボタンをクリック
     b2 -> c1 : POST /chat/message (質問を送信)
-    c1 -> ai : 回答をAIに渡す
+    c1 -> s1 : process_chatbot() \n(チャットボットによる応答を実行)
 
     == 3. 分析結果の取得と応答判定 ==
-    ai -> ai : 分析結果を取得
+    alt ログインしている
+        s1 -> e1 : 分析結果を取得(analysis_id)
+        e1 --> s1 : 分析結果
+    else ログインしていない
+        s1 -> sess : 分析結果を取得
+        sess --> s1 : 分析結果
+    end
 
     alt 分析結果が取得できない
-        ai --> c1 : 取得できない（エラー）
+        s1 --> c1 : 取得できない（エラー）
         c1 -> c1 : 処理を中断
         c1 -> b2 : エラーメッセージを表示
+    else 分析結果が取得できた
+        s1 -> s2 : generate_chat_response()
+        alt 決められた制限時間内に応答が完了しなかった場合（タイムアウト）
+            s2 --> s1 : タイムアウト
+            s1 --> c1 : タイムアウト
+            c1 -> c1 : 処理を中断
+            c1 -> b2 : エラーメッセージを表示
 
-    else 決められた制限時間内に応答が完了しなかった場合（タイムアウト）
-        ai --> c1 : タイムアウト
-        c1 -> c1 : 処理を中断
-        c1 -> b2 : エラーメッセージを表示
+        else 正常に応答が完了した場合
+            s2 --> s1 : 応答データ
 
-    else 正常に応答が完了した場合
-        ai -> ai : AIからの応答を取得
-        ai --> c1 : 応答データ
+            == 4. ログイン状態による履歴保存の分岐 ==
+            s1 -> sess : ログインチェック
 
-        c1 -> b2 : 応答を表示
-        b2 -> a1 : AIの回答を表示
+            alt ログイン状態
+                c1 -> e1 : チャットを保存
+                e1 --> c1 : 保存完了
+                c1 -> b2 : チャット履歴に反映
+            else ログアウト状態
+                note over c1 : チャットは保存せず\nそのまま画面を維持する
+            end
 
-        == 4. ログイン状態による履歴保存の分岐 ==
-        c1 -> c1 : ログインチェック
-
-        alt ログイン状態
-            c1 -> e1 : チャットを保存
-            e1 --> c1 : 保存完了
-            c1 -> b2 : チャット履歴に反映
-        else ログアウト状態
-            note over c1 : チャットは保存せず\nそのまま画面を維持する
+            c1 -> b2 : 応答を表示
+            b2 -> a1 : AIの回答を表示
         end
     end
 
@@ -651,9 +718,9 @@
         bv -> be : 催促メッセージを表示
 
     else 入力内容に問題がない場合
-        bv -> bv : 建物情報の重複をチェック
+        bv -> bv : 建物名の重複をチェック
 
-        alt 重複あり
+        alt 同一利用者の登録済み建物名と重複あり
             bv -> be : 登録済みメッセージを表示
 
         else 重複なし
@@ -743,7 +810,7 @@
     else 入力内容に問題がない場合
         bv -> bv : 建物情報の重複をチェック
 
-        alt 重複する建物がある場合
+        alt 同一利用者の登録済み建物名と重複している場合
             bv -> br : 登録済みメッセージを表示
 
         else 重複する建物がない場合

@@ -362,7 +362,7 @@
     </mxGraphModel>
   </diagram>
   <diagram name="AI分析" id="mpGDMnSyUyZFEkv95OHe">
-    <mxGraphModel dx="1664" dy="611" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1810" dy="504" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="YCK70QZ3uc2CR85IP90H-0" />
         <mxCell id="YCK70QZ3uc2CR85IP90H-1" parent="YCK70QZ3uc2CR85IP90H-0" />
@@ -379,7 +379,7 @@
           <mxGeometry height="400" width="240" x="1076" y="80" as="geometry" />
         </mxCell>
         <mxCell id="KAUVxpOgy7_o24ES7bld-0" parent="YCK70QZ3uc2CR85IP90H-1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="AnalysisView(analysis_routes.py)" vertex="1">
-          <mxGeometry height="156" width="451" x="514.5" y="133.5" as="geometry" />
+          <mxGeometry height="182" width="451" x="514.5" y="133.5" as="geometry" />
         </mxCell>
         <mxCell id="KAUVxpOgy7_o24ES7bld-1" parent="KAUVxpOgy7_o24ES7bld-0" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ GET:&amp;nbsp;show_analysis() (AI分析画面を表示)" vertex="1">
           <mxGeometry height="26" width="451" y="26" as="geometry" />
@@ -395,6 +395,9 @@
         </mxCell>
         <mxCell id="KAUVxpOgy7_o24ES7bld-5" parent="KAUVxpOgy7_o24ES7bld-0" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ GET:&amp;nbsp;show_analysis_result() (AI分析の結果を表示)" vertex="1">
           <mxGeometry height="26" width="451" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="5C73R72qSzMqKFBUqKvF-3" parent="KAUVxpOgy7_o24ES7bld-0" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ GET:&amp;nbsp;show_analysis_failure() (AI分析失敗画面を表示)" vertex="1">
+          <mxGeometry height="26" width="451" y="156" as="geometry" />
         </mxCell>
         <mxCell id="zn3JQ804mHtfJHy0Z0Sz-18" edge="1" parent="YCK70QZ3uc2CR85IP90H-1" source="7nYusDRsxmerJtbTRHId-0" style="edgeStyle=none;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;strokeColor=#666666;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;startSize=10;endArrow=classic;endFill=1;endSize=10;fillColor=#ffe6cc;exitX=0.001;exitY=0.154;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1.023;entryY=0.092;entryDx=0;entryDy=0;entryPerimeter=0;" target="-R7oSClYLFoBA1W5J7l2-0">
           <mxGeometry relative="1" as="geometry" />
@@ -415,7 +418,7 @@
         <mxCell id="7nYusDRsxmerJtbTRHId-0" parent="YCK70QZ3uc2CR85IP90H-1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="ChatView(chat_routes.py)" vertex="1">
           <mxGeometry height="78" width="451" x="514.5" y="350" as="geometry" />
         </mxCell>
-        <mxCell id="7nYusDRsxmerJtbTRHId-1" parent="7nYusDRsxmerJtbTRHId-0" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ GET:&amp;nbsp;show_chat() (AI相談チャット画面を表示)" vertex="1">
+        <mxCell id="7nYusDRsxmerJtbTRHId-1" parent="7nYusDRsxmerJtbTRHId-0" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ GET:&amp;nbsp;show_user_chat() (AI相談チャット画面を表示)" vertex="1">
           <mxGeometry height="26" width="451" y="26" as="geometry" />
         </mxCell>
         <mxCell id="7nYusDRsxmerJtbTRHId-2" parent="7nYusDRsxmerJtbTRHId-0" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ POST:&amp;nbsp;send_message() (利用者の質問を受け取り、AIへの回答生成を依頼)" vertex="1">
@@ -513,13 +516,13 @@
           <mxGeometry height="40" width="160" x="1096" y="140" as="geometry" />
         </mxCell>
         <mxCell id="7oAxnJm1rCzDydcPWQdn-0" parent="YCK70QZ3uc2CR85IP90H-1" style="html=1;whiteSpace=wrap;" value="analysis_additional_chat.html" vertex="1">
-          <mxGeometry height="40" width="200" x="1096" y="210" as="geometry" />
+          <mxGeometry height="40" width="200" x="1096" y="204.5" as="geometry" />
         </mxCell>
-        <mxCell id="iYzAxLuSdjJFuF63EZZl-0" parent="YCK70QZ3uc2CR85IP90H-1" style="html=1;whiteSpace=wrap;" value="result.html" vertex="1">
-          <mxGeometry height="40" width="160" x="1096" y="280" as="geometry" />
+        <mxCell id="iYzAxLuSdjJFuF63EZZl-0" parent="YCK70QZ3uc2CR85IP90H-1" style="html=1;whiteSpace=wrap;" value="analysis_result.html" vertex="1">
+          <mxGeometry height="40" width="160" x="1096" y="275.5" as="geometry" />
         </mxCell>
-        <mxCell id="uAIt9Ub1p9UHZHtYwXs0-0" parent="YCK70QZ3uc2CR85IP90H-1" style="html=1;whiteSpace=wrap;" value="analysis_chat.html" vertex="1">
-          <mxGeometry height="40" width="160" x="1096" y="382" as="geometry" />
+        <mxCell id="uAIt9Ub1p9UHZHtYwXs0-0" parent="YCK70QZ3uc2CR85IP90H-1" style="html=1;whiteSpace=wrap;" value="analysis_user_chat.html" vertex="1">
+          <mxGeometry height="40" width="160" x="1096" y="402" as="geometry" />
         </mxCell>
         <mxCell id="KIB885WmK0BS5-hB7-0g-12" edge="1" parent="YCK70QZ3uc2CR85IP90H-1" source="oU1KeuLmJOfHYG6a5c8T-0" style="edgeStyle=none;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;startSize=10;endArrow=classic;endFill=1;endSize=10;fillColor=#ffe6cc;" target="KIB885WmK0BS5-hB7-0g-6">
           <mxGeometry relative="1" as="geometry" />
@@ -677,7 +680,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="BYCcMowsIHghyu1aMJfP-0" parent="YCK70QZ3uc2CR85IP90H-1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="PhotoStorageService(photo_storage_service.py)" vertex="1">
-          <mxGeometry height="104" width="430" x="535.5" y="810" as="geometry" />
+          <mxGeometry height="130" width="430" x="535.5" y="810" as="geometry" />
         </mxCell>
         <mxCell id="BYCcMowsIHghyu1aMJfP-1" parent="BYCcMowsIHghyu1aMJfP-0" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="upload_photo() (写真をS3にアップロードし、S3オブジェクトキーを返す)" vertex="1">
           <mxGeometry height="26" width="430" y="26" as="geometry" />
@@ -685,8 +688,11 @@
         <mxCell id="BYCcMowsIHghyu1aMJfP-2" parent="BYCcMowsIHghyu1aMJfP-0" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="delete_photo() (S3にアップロードされた写真を削除する)" vertex="1">
           <mxGeometry height="26" width="430" y="52" as="geometry" />
         </mxCell>
-        <mxCell id="BYCcMowsIHghyu1aMJfP-3" parent="BYCcMowsIHghyu1aMJfP-0" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="generate_presigned_url() (S3にアップロードされた写真のURLを発行する)" vertex="1">
+        <mxCell id="5C73R72qSzMqKFBUqKvF-1" parent="BYCcMowsIHghyu1aMJfP-0" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="get_photo_data() (S3から分析用写真をダウンロードする)" vertex="1">
           <mxGeometry height="26" width="430" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="BYCcMowsIHghyu1aMJfP-3" parent="BYCcMowsIHghyu1aMJfP-0" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="generate_presigned_url() (S3内写真の表示・ダウンロード用URLを発行する)" vertex="1">
+          <mxGeometry height="26" width="430" y="104" as="geometry" />
         </mxCell>
         <mxCell id="nFOozhMhLUBEkwd81P8s-1" edge="1" parent="BYCcMowsIHghyu1aMJfP-0" source="BYCcMowsIHghyu1aMJfP-0" style="edgeStyle=none;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;dashed=1;dashPattern=8 8;strokeColor=#666666;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;startSize=10;endArrow=classic;endFill=1;endSize=10;fillColor=#ffe6cc;" target="BYCcMowsIHghyu1aMJfP-3">
           <mxGeometry relative="1" as="geometry" />
@@ -718,6 +724,12 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="KIB885WmK0BS5-hB7-0g-20" edge="1" parent="YCK70QZ3uc2CR85IP90H-1" source="KIB885WmK0BS5-hB7-0g-7" style="edgeStyle=none;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.836;exitDx=0;exitDy=0;entryX=1.001;entryY=0.836;entryDx=0;entryDy=0;entryPerimeter=0;strokeColor=#666666;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;startSize=10;endArrow=classic;endFill=1;endSize=10;fillColor=#ffe6cc;exitPerimeter=0;" target="oU1KeuLmJOfHYG6a5c8T-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="5C73R72qSzMqKFBUqKvF-0" parent="YCK70QZ3uc2CR85IP90H-1" style="html=1;whiteSpace=wrap;" value="analysis_failure.html" vertex="1">
+          <mxGeometry height="40" width="160" x="1096" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="5C73R72qSzMqKFBUqKvF-4" edge="1" parent="YCK70QZ3uc2CR85IP90H-1" source="5C73R72qSzMqKFBUqKvF-3" style="edgeStyle=none;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;strokeColor=#666666;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;startSize=10;endArrow=classic;endFill=1;endSize=10;fillColor=#ffe6cc;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="5C73R72qSzMqKFBUqKvF-0">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
       </root>
