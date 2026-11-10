@@ -736,7 +736,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="O_7DRCqnjRGuK4ZdZr_D" name="確認／履歴">
-    <mxGraphModel dx="1442" dy="748" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1467" dy="752" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -924,7 +924,7 @@
         <mxCell id="K2BR-oMDl3CiBt6Mhyyx-2" parent="1" style="html=1;whiteSpace=wrap;" value="history_detail.html" vertex="1">
           <mxGeometry height="40" width="160" x="1400" y="410" as="geometry" />
         </mxCell>
-        <mxCell id="fJSfQQn-P3_VZWEz96U3-1" parent="1" style="html=1;whiteSpace=wrap;" value="recovery.html" vertex="1">
+        <mxCell id="fJSfQQn-P3_VZWEz96U3-1" parent="1" style="html=1;whiteSpace=wrap;" value="recovery_info.html" vertex="1">
           <mxGeometry height="40" width="160" x="1400" y="120" as="geometry" />
         </mxCell>
         <mxCell id="xiv_ahZEKyFepvj42GfM-1" parent="1" style="html=1;whiteSpace=wrap;" value="mypage.html" vertex="1">

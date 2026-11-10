@@ -418,7 +418,7 @@
         <mxCell id="7nYusDRsxmerJtbTRHId-0" parent="YCK70QZ3uc2CR85IP90H-1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="ChatView(chat_routes.py)" vertex="1">
           <mxGeometry height="78" width="451" x="514.5" y="350" as="geometry" />
         </mxCell>
-        <mxCell id="7nYusDRsxmerJtbTRHId-1" parent="7nYusDRsxmerJtbTRHId-0" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ GET:&amp;nbsp;show_chat() (AI相談チャット画面を表示)" vertex="1">
+        <mxCell id="7nYusDRsxmerJtbTRHId-1" parent="7nYusDRsxmerJtbTRHId-0" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ GET:&amp;nbsp;show_user_chat() (AI相談チャット画面を表示)" vertex="1">
           <mxGeometry height="26" width="451" y="26" as="geometry" />
         </mxCell>
         <mxCell id="7nYusDRsxmerJtbTRHId-2" parent="7nYusDRsxmerJtbTRHId-0" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ POST:&amp;nbsp;send_message() (利用者の質問を受け取り、AIへの回答生成を依頼)" vertex="1">
@@ -521,7 +521,7 @@
         <mxCell id="iYzAxLuSdjJFuF63EZZl-0" parent="YCK70QZ3uc2CR85IP90H-1" style="html=1;whiteSpace=wrap;" value="analysis_result.html" vertex="1">
           <mxGeometry height="40" width="160" x="1096" y="275.5" as="geometry" />
         </mxCell>
-        <mxCell id="uAIt9Ub1p9UHZHtYwXs0-0" parent="YCK70QZ3uc2CR85IP90H-1" style="html=1;whiteSpace=wrap;" value="analysis_chat.html" vertex="1">
+        <mxCell id="uAIt9Ub1p9UHZHtYwXs0-0" parent="YCK70QZ3uc2CR85IP90H-1" style="html=1;whiteSpace=wrap;" value="analysis_user_chat.html" vertex="1">
           <mxGeometry height="40" width="160" x="1096" y="402" as="geometry" />
         </mxCell>
         <mxCell id="KIB885WmK0BS5-hB7-0g-12" edge="1" parent="YCK70QZ3uc2CR85IP90H-1" source="oU1KeuLmJOfHYG6a5c8T-0" style="edgeStyle=none;shape=connector;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;startSize=10;endArrow=classic;endFill=1;endSize=10;fillColor=#ffe6cc;" target="KIB885WmK0BS5-hB7-0g-6">
