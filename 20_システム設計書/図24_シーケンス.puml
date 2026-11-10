@@ -178,6 +178,7 @@
 
 @startuml 被害状況を入力する_1
     title 被害状況を入力する1 (情報入力)
+    skinparam dpi 150
 
     actor "利用者" as a1
     boundary "analysis_input_damage.html" as b1
@@ -520,7 +521,6 @@
     collections "Flask-Session\nEC2ローカルファイル" as sess
     entity "DamagePhoto" as e2
     control "GeminiService" as s2
-    control "ai"
     entity "ChatHistory" as e3
 
     == 1. チャット画面の起動 ==
@@ -562,8 +562,8 @@
             s1 -> sess : ログインチェック
 
             alt ログイン状態
-                c1 -> e1 : チャットを保存
-                e1 --> c1 : 保存完了
+                c1 -> e3 : チャットを保存
+                e3 --> c1 : 保存完了
                 c1 -> b2 : チャット履歴に反映
             else ログアウト状態
                 note over c1 : チャットは保存せず\nそのまま画面を維持する
@@ -580,7 +580,7 @@
 @startuml 復旧に必要な情報を確認する
     title 復旧に必要な情報を確認する
 
-    actor "ユーザー" as a1
+    actor "利用者" as a1
     boundary "任意の画面" as b1
     boundary "recovery_info.html" as b2
     control "RecoveryView" as c1
@@ -619,8 +619,9 @@
 
 @startuml マイページを確認する
     title マイページを確認する
+    skinparam dpi 300
 
-    actor "ユーザー" as a1
+    actor "利用者" as a1
     boundary "任意の画面" as b1
     boundary "mypage.html" as b2
     control "MyPageView" as c1
@@ -663,13 +664,14 @@
 
 @startuml 建物詳細を確認する
     title 建物詳細を確認する
+    skinparam dpi 300
 
-    actor "ユーザー" as u
-    boundary "mypage.html(マイページ画面)" as mp
-    boundary "building_detail.html(建物詳細画面)" as bd
-    control "BuildingView(建物情報表示処理)" as bv
-    entity "Building(建物情報)" as b
-    entity "AnalysisHistory(分析履歴)" as ah
+    actor "利用者" as u
+    boundary "mypage.html \n(マイページ画面)" as mp
+    boundary "building_detail.html \n(建物詳細画面)" as bd
+    control "BuildingView \n(建物情報表示処理)" as bv
+    entity "Building \n(建物情報)" as b
+    entity "AnalysisHistory \n(分析履歴)" as ah
 
     u -> mp : 「建物詳細」リンクをクリック
     mp -> bv : 建物詳細の表示を要求
@@ -693,13 +695,14 @@
 
 @startuml 建物情報を編集する
     title 建物情報を編集する
+    skinparam dpi 300
 
-    actor "ユーザー" as u
-    boundary "building_detail.html(建物詳細画面)" as bd
-    boundary "building_edit.html(建物編集画面)" as be
-    boundary "building_edit_complete.html(建物情報更新完了画面)" as bec
-    control "BuildingView(建物管理処理)" as bv
-    entity "Building(建物情報)" as b
+    actor "利用者" as u
+    boundary "building_detail.html \n(建物詳細画面)" as bd
+    boundary "building_edit.html \n(建物編集画面)" as be
+    boundary "building_edit_complete.html \n(建物情報更新完了画面)" as bec
+    control "BuildingView \n(建物管理処理)" as bv
+    entity "Building \n(建物情報)" as b
 
     u -> bd : 「建物情報を編集する」リンクをクリック
     bd -> bv : 建物情報の取得を要求
@@ -748,13 +751,14 @@
 
 @startuml 建物情報を削除する
     title 建物情報を削除する
+    skinparam dpi 300
 
-    actor "ユーザー" as u
-    boundary "building_edit.html(建物編集画面)" as be
-    boundary "building_delete_confirm.html(建物削除確認画面)" as bdc
-    boundary "building_delete_complete.html(建物削除完了画面)html名は仮" as bcomp
-    control "BuildingView(建物管理処理)" as bv
-    entity "Building(建物情報)" as b
+    actor "利用者" as u
+    boundary "building_edit.html \n(建物編集画面)" as be
+    boundary "building_delete_confirm.html \n(建物削除確認画面)" as bdc
+    boundary "building_delete_complete.html \n(建物削除完了画面)" as bcomp
+    control "BuildingView \n(建物管理処理)" as bv
+    entity "Building \n(建物情報)" as b
 
     u -> be : 「建物削除」リンクをクリック
     be -> bv : 建物情報の取得を要求
@@ -784,16 +788,15 @@
 
 @startuml 建物情報を登録する
     title 建物情報を登録する
+    skinparam dpi 300
 
-    actor "ユーザー" as u
-    boundary "mypage.html(マイページ画面)" as mp
-    boundary "building_register.html(建物登録画面)" as br
-    boundary "building_complate.html(建物登録完了画面)" as bc
-    boundary "mypage.html(マイページ画面)" as mp
-    boundary "building_register.html(建物登録画面)" as br
-    boundary "建物登録完了画面" as bc
-    control "BuildingView(建物管理処理)" as bv
-    entity "Building(建物情報)" as b
+    actor "利用者" as u
+    boundary "mypage.html \n(マイページ画面)" as mp
+    boundary "building_register.html \n(建物登録画面)" as br
+    boundary "building_register_complete.html \n(建物登録完了画面)" as bc
+    boundary "building_register.html \n(建物登録画面)" as br
+    control "BuildingView \n(建物管理処理)" as bv
+    entity "Building \n(建物情報)" as b
 
     u -> mp : 「建物登録」リンクをクリック
     mp -> bv : 建物登録画面の表示を要求
@@ -832,12 +835,13 @@
 
 @startuml 分析履歴一覧を確認する
     title 分析履歴一覧を確認する
+    skinparam dpi 300
 
     actor "ユーザー" as u
-    boundary "mypage.html(マイページ画面)" as mp
-    boundary "history_list.html(分析履歴一覧画面)" as hl
-    control "HistoryView(履歴表示処理)" as hv
-    entity "AnalysisHistory(分析履歴)" as ah
+    boundary "mypage.html \n(マイページ画面)" as mp
+    boundary "history_list.html \n(分析履歴一覧画面)" as hl
+    control "HistoryView \n(履歴表示処理)" as hv
+    entity "AnalysisHistory \n(分析履歴)" as ah
 
 
     u -> mp : 「すべての分析履歴」リンクをクリック
@@ -856,16 +860,18 @@
 
     actor "ユーザー" as u
 
-    boundary "mypage.html(マイページ画面)" as mp
-    boundary "history_detail.html(分析履歴詳細画面)" as hd
+    boundary "mypage.html \n(マイページ画面)" as mp
+    boundary "history_detail.html \n(分析履歴詳細画面)" as hd
 
-    control "HistoryView(履歴表示処理)" as hv
+    control "HistoryView \n(履歴表示処理)" as hv
 
-    entity "AnalysisHistory(分析履歴)" as ah
-    entity "Building(建物情報)" as b
-    entity "DamageReport(被害状況)" as dr
-    entity "DamagePhoto(被害写真)" as dp
-    entity "ChatMessage(チャット履歴)" as cm
+    entity "AnalysisHistory \n(分析履歴)" as ah
+    entity "Building \n(建物情報)" as b
+    entity "DamageReport \n(被害状況)" as dr
+    entity "DamageLocation \n(被害箇所)" as dl
+    entity "DamagePhoto \n(被害写真)" as dp
+    entity "ChatView \n(チャット履歴)" as cm
+    entity "PhotoStorageService" as pss
 
 
     u -> mp : 「分析結果確認」リンクをクリック
@@ -885,6 +891,9 @@
 
     hv -> cm : チャット履歴を取得
     cm --> hv : チャット履歴を返す
+
+    hv -> pss : generate_presigned_url(s3_object_key)
+    pss --> hv : 写真URL
 
     hv -> hd : 分析結果詳細を表示
 
