@@ -30,6 +30,10 @@ def create_app():
 
     Session(app)
 
+    from app.building import building_bp
+
+    app.register_blueprint(building_bp, url_prefix="/building")
+
     @app.route("/")
     def index():
         return render_template("index.html")
