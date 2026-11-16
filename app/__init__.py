@@ -23,6 +23,9 @@ def create_app():
     # 拡張機能の初期化
     db.init_app(app)
     migrate.init_app(app, db)
+    # modelsの読み込み
+    from app import models
+
     server_session.init_app(app)
 
     # Blueprintの登録
