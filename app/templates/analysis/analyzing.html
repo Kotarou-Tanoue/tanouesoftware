@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>被害状況分析</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/analysis.css') }}">
+    <style>
+        .content {
+            padding: 80px 20px 20px;
+        }
+    </style>
+</head>
+
+<body data-analysis-page="analyzing"
+      data-run-url="{{ run_url }}"
+      data-csrf-token="{{ csrf_token }}">
+
+    <main class="container">
+        <div class="screen">
+
+            <header class="header">
+
+                <div class="page-header">
+                    <h1>被害状況分析</h1>
+
+                    <div class="nav">
+
+                        <button class="menu-button" id="menuButton" aria-label="メニューを開く">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
+
+                        <div class="menu" id="menu">
+
+                            <button class="menu-close" id="menuClose" aria-label="メニューを閉じる">
+                                ×
+                            </button>
+
+                            <div class="menu-content">
+
+                                {% if login_url is defined and login_url %}
+                                <div class="menu-account">
+                                    <a href="{{ login_url }}" class="login-button">ログイン</a>
+                                </div>
+                                {% endif %}
+
+                                <nav class="menu-nav">
+                                    <a href="{{ url_for('index') }}">ホーム</a>
+                                    {% if input_url is defined and input_url %}
+                                    <a href="{{ input_url }}">被害状況入力</a>
+                                    {% endif %}
+                                    {% if mypage_url is defined and mypage_url %}
+                                    <a href="{{ mypage_url }}">マイページ</a>
+                                    {% endif %}
+                                </nav>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </header>
+
+
+            <div class="content">
+
+                <div class="progress">
+
+                    <div class="loading-icon">
+                        🧠
+                    </div>
+
+                    <h2>AIが被害状況を分析しています...</h2>
+
+                    <p id="analysis-status" role="status" aria-live="polite">
+                        サーバーに分析を依頼しています。しばらくお待ちください。
+                    </p>
+
+
+                    <div class="steps">
+
+                        <div class="success">
+                            ・写真データの確認
+                        </div>
+
+                        <div class="success">
+                            ・被害状況の分析
+                        </div>
+
+                        <div class="success">
+                            ・必要情報の判定
+                        </div>
+
+                    </div>
+
+
+                    <div class="info">
+                        💡 分析は通信状況によって時間がかかる場合があります。<br>
+                        処理中はこのページを閉じないでください。
+                    </div>
+
+                    <p id="analysis-error" class="analysis-error" role="alert" hidden></p>
+                    <div class="actions">
+                        <button id="analysis-retry" class="button secondary" type="button" hidden>通信を再試行する</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+
+    <script defer src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+
+</body>
+
+</html>

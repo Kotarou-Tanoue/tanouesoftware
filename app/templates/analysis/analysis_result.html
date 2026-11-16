@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分析結果</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/analysis.css') }}">
+</head>
+
+<body data-analysis-page="result">
+
+    <main class="container">
+        <div class="screen">
+
+            <!-- ヘッダー -->
+            <header class="header">
+
+                <div class="page-header">
+
+                    <h1>分析結果</h1>
+
+                    <!-- ハンバーガーメニュー -->
+                    <div class="nav">
+
+                        <button class="menu-button" id="menuButton" aria-label="メニューを開く">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
+
+
+                        <!-- メニュー -->
+                        <div class="menu" id="menu">
+
+                            <button class="menu-close" id="menuClose" aria-label="メニューを閉じる">
+                                ×
+                            </button>
+
+
+                            <div class="menu-content">
+
+                                {% if login_url is defined and login_url %}
+                                <div class="menu-account">
+                                    <a href="{{ login_url }}" class="login-button">ログイン</a>
+                                </div>
+                                {% endif %}
+
+
+                                <nav class="menu-nav">
+
+                                    <a href="{{ url_for('index') }}">
+                                        ホーム
+                                    </a>
+
+                                    {% if input_url is defined and input_url %}
+                                    <a href="{{ input_url }}">被害状況入力</a>
+                                    {% endif %}
+
+                                    {% if mypage_url is defined and mypage_url %}
+                                    <a href="{{ mypage_url }}">マイページ</a>
+                                    {% endif %}
+
+                                </nav>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+
+            <div class="content">
+
+                <h2>📄 AIによる被害状況の分析結果</h2>
+
+                <!-- 実際のAI分析データ（必須: damage_level、repair_cost_min/max） -->
+                <div class="notice">
+                    <p>⚠ 被害状況の目安</p>
+                    <strong>被害レベル {{ result.damage_level }} / 5</strong>
+                    <p>{{ result.description|default('分析の説明はありません。', true) }}</p>
+                </div>
+
+                <div class="card">
+                    <h4>主な被害箇所</h4>
+                    {% set locations = result.get('damage_locations', []) %}
+                    {% if locations %}
+                    <ul>
+                        {% for location in locations %}
+                        <li>
+                        {% if location is string %}
+                            {{ location }}
+                        {% else %}
+                            {{ location.get('name', '') }}
+                            {{ location.get('description', '') }}
+                        {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p>被害箇所の詳細情報はありません。</p>
+                    {% endif %}
+                </div>
+
+                <div class="card">
+                    <h4>💴 修理費用の目安</h4>
+                    {% set cost_min = result.repair_cost_min %}
+                    {% set cost_max = result.repair_cost_max %}
+                    <p class="cost-summary">
+                        {% if cost_min is not none and cost_max is not none %}
+                            約{{ '{:,}'.format(cost_min) }}～{{ '{:,}'.format(cost_max) }}円
+                        {% elif cost_min is not none %}
+                            {{ '{:,}'.format(cost_min) }}円以上（上限未算出）
+                        {% elif cost_max is not none %}
+                            {{ '{:,}'.format(cost_max) }}円以下（下限未算出）
+                        {% else %}
+                            費用の目安は算出できませんでした。
+                        {% endif %}
+                    </p>
+                    {% set items = result.get('repair_items', []) %}
+                    {% if items %}
+                    <table>
+                        <thead><tr><th>修理内容</th><th>費用の目安</th></tr></thead>
+                        <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td>{{ item.get('name', '修理内容不明') }}</td>
+                            <td>
+                            {% set item_min = item.get('cost_min') %}
+                            {% set item_max = item.get('cost_max') %}
+                            {% if item_min is number and item_max is number %}
+                                約{{ '{:,}'.format(item_min) }}～{{ '{:,}'.format(item_max) }}円
+                            {% elif item_min is number %}
+                                約{{ '{:,}'.format(item_min) }}円～
+                            {% elif item_max is number %}
+                                ～約{{ '{:,}'.format(item_max) }}円
+                            {% else %}未算出{% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                    <p>※写真と入力情報に基づく参考推定です。実際の費用は業者の現地見積もりで確認してください。</p>
+                </div>
+
+                <!-- 署名付きURLなど、サーバーが発行した写真URLのみを渡してください -->
+                <div class="card photo-card">
+                    <h4>📷 分析に使用した写真</h4>
+                    <p class="photo-message">
+                        被害状況の確認や各種手続きの参考資料として、写真を保存できます。
+                    </p>
+                    {% set photos = result.get('photos', []) %}
+                    {% if photos %}
+                        {% for photo in photos %}
+                        {% set photo_url = photo.get('url', '') %}
+                        {% set download_url = photo.get('download_url', photo_url) %}
+                        {% if photo_url.startswith('https://') %}
+                        <div class="result-photo">
+                            <img src="{{ photo_url }}" alt="{{ photo.get('alt', '分析に使用した被害状況の写真') }}" loading="lazy">
+                        </div>
+                        {% endif %}
+                        {% if download_url.startswith('https://') %}
+                        <a class="button download-button" href="{{ download_url }}" target="_blank" rel="noopener noreferrer">
+                            ↓ {{ photo.get('name', '写真') }}を保存・表示する
+                        </a>
+                        {% endif %}
+                        {% endfor %}
+                    {% else %}
+                    <p>表示可能な写真データはありません。</p>
+                    {% endif %}
+                    <p class="photo-note">※必要な写真の条件は、申請先の自治体の案内をご確認ください。</p>
+                </div>
+                <p class="analysis-disclaimer">
+                    この分析は建物の安全性を判定するものではありません。危険が疑われる場合は建物に近づかず、専門家や自治体に相談してください。
+                </p>
+
+                <!-- 別担当者の画面はURL確定後に連携する -->
+                <div class="actions">
+                    {% if recovery_url is defined and recovery_url %}
+                    <a class="button" href="{{ recovery_url }}">復旧に必要な情報を確認する ›</a>
+                    {% endif %}
+                    {% if result_chat_url is defined and result_chat_url %}
+                    <a class="button" href="{{ result_chat_url }}">結果について質問する ›</a>
+                    {% endif %}
+                    <a class="button secondary" href="{{ url_for('index') }}">ホームに戻る</a>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- メニュー用JavaScript -->
+    <script defer src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+
+</body>
+</html>

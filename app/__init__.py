@@ -28,6 +28,9 @@ def create_app():
 
     server_session.init_app(app)
 
+    from .analysis.analysis_routes import analysis_bp
+    app.register_blueprint(analysis_bp)
+
     # Blueprintの登録
     """
     作成前のため、コメントアウト
