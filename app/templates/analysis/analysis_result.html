@@ -93,12 +93,10 @@
                     <ul>
                         {% for location in locations %}
                         <li>
-                        {% if location is string %}
-                            {{ location }}
-                        {% else %}
-                            {{ location.get('name', '') }}
-                            {{ location.get('description', '') }}
-                        {% endif %}
+                            {{ location.get('location_name', '') }}
+                            {% if location.get('location_type') %}（{{ location.location_type }}）{% endif %}
+                            {% if location.get('damage_type') %}：{{ location.damage_type }}{% endif %}
+                            {% if location.get('description') %} — {{ location.description }}{% endif %}
                         </li>
                         {% endfor %}
                     </ul>
@@ -156,10 +154,12 @@
                         被害状況の確認や各種手続きの参考資料として、写真を保存できます。
                     </p>
                     {% set photos = result.get('photos', []) %}
-                    {% if photos %}
-                        {% for photo in photos %}
+                    {% set visible_photos = namespace(count=0) %}
+                    {% for photo in photos %}
                         {% set photo_url = photo.get('url', '') %}
                         {% set download_url = photo.get('download_url', photo_url) %}
+                        {% if photo_url.startswith('https://') or download_url.startswith('https://') %}
+                        {% set visible_photos.count = visible_photos.count + 1 %}
                         {% if photo_url.startswith('https://') %}
                         <div class="result-photo">
                             <img src="{{ photo_url }}" alt="{{ photo.get('alt', '分析に使用した被害状況の写真') }}" loading="lazy">
@@ -170,8 +170,9 @@
                             ↓ {{ photo.get('name', '写真') }}を保存・表示する
                         </a>
                         {% endif %}
-                        {% endfor %}
-                    {% else %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if visible_photos.count == 0 %}
                     <p>表示可能な写真データはありません。</p>
                     {% endif %}
                     <p class="photo-note">※必要な写真の条件は、申請先の自治体の案内をご確認ください。</p>

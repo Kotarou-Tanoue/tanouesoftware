@@ -22,7 +22,12 @@ DamageAnalysisService 側に委譲し、このモジュールでは実行しな�
             "repair_cost_min": 10000,  # int または None
             "repair_cost_max": 30000,  # int または None
             "description": "...",
-            # 写真の表示情報、被害箇所などは画面仕様に合わせて追加可能
+            # 設計書のDamageLocationと同名のキーを利用する。
+            "damage_locations": [{"location_id": 1, "location_name": "和室", "description": "...", "severity": 2}],
+            # 明細は画面用（analysis_historyには保存先がない）。
+            "repair_items": [{"name": "天井補修", "cost_min": 10000, "cost_max": 20000}],
+            # S3キーと署名付きURLは別物。URLはPhotoStorageServiceが発行する。
+            "photos": [{"s3_object_key": "...", "url": "https://...", "download_url": "https://..."}],
         }}
 
     service.save_analysis_result(
@@ -40,7 +45,6 @@ session['guest_analysis']（未ログイン利用時）をセットする。
 from __future__ import annotations
 
 import hmac
-import json
 import secrets
 from typing import Any
 
@@ -60,7 +64,6 @@ analysis_bp = Blueprint("analysis", __name__, url_prefix="/analysis")
 
 MAX_ANSWER_LENGTH = 2000
 MAX_FOLLOWUP_ROUNDS = 5
-MAX_RESULT_JSON_BYTES = 128 * 1024
 
 
 class InvalidAnalysisResult(ValueError):
@@ -126,33 +129,17 @@ def _service() -> Any:
 
 
 def _validate_result(result: Any) -> dict[str, Any]:
-    if not isinstance(result, dict):
-        raise InvalidAnalysisResult("result は辞書形式である必要があります")
+    """サービスと同じデータ形式を検証し、未検証の結果をSessionへ保存しない。"""
+    from .damage_analysis_service import DamageAnalysisService
 
-    level = result.get("damage_level")
-    if type(level) is not int or not 1 <= level <= 5:
-        raise InvalidAnalysisResult("damage_level は1～5の整数です")
-
-    lower = result.get("repair_cost_min")
-    upper = result.get("repair_cost_max")
-    for name, cost in (("repair_cost_min", lower), ("repair_cost_max", upper)):
-        if cost is not None and (type(cost) is not int or cost < 0):
-            raise InvalidAnalysisResult(f"{name} は0以上の整数かnullです")
-    if lower is not None and upper is not None and lower > upper:
-        raise InvalidAnalysisResult("修理費用の下限が上限を超えています")
-
-    # Flask-Session の JSON シリアライザで保存できる構造であることを確認。
     try:
-        encoded = json.dumps(result, ensure_ascii=False, allow_nan=False)
+        return DamageAnalysisService._validate_result(result)
     except (TypeError, ValueError) as exc:
-        raise InvalidAnalysisResult("result はJSONで表現できる必要があります") from exc
-    if len(encoded.encode("utf-8")) > MAX_RESULT_JSON_BYTES:
-        raise InvalidAnalysisResult("結果データのサイズが上限を超えています")
-    return result
+        raise InvalidAnalysisResult(str(exc)) from exc
 
 
-def _process_analysis() -> str:
-    """分析を1回実行し、次に表示する endpoint 名を返す。"""
+def _process_analysis(*, after_followup_answer: bool = False) -> str:
+    """分析を行う。回答直後は再判定のみ実施し、再分析を画面遷移後へ分ける。"""
     context = _input_context()
     if context is None:
         return "analysis.failure"
@@ -171,6 +158,7 @@ def _process_analysis() -> str:
             guest_analysis=context["guest_analysis"],
             answers=answers,
             user_id=context["user_id"],
+            check_followup_only=after_followup_answer,
         )
         if not isinstance(response, dict):
             raise InvalidAnalysisResult("AI分析の応答が辞書ではありません")
@@ -187,7 +175,20 @@ def _process_analysis() -> str:
             session.pop("analysis_error", None)
             return "analysis.followup"
 
+        if status == "ready_to_resume" and after_followup_answer:
+            # 回答内容の再判定が完了。AI分析自体は分析中画面への遷移後に行う。
+            reply = response.get("message")
+            if not isinstance(reply, str) or not reply.strip():
+                raise InvalidAnalysisResult("回答確認メッセージがありません")
+            session["analysis_reply"] = reply.strip()[:1000]
+            session["analysis_resume_pending"] = True
+            session.pop("analysis_followup", None)
+            session.pop("analysis_error", None)
+            return "analysis.followup"
+
         if status == "completed":
+            if after_followup_answer:
+                raise InvalidAnalysisResult("再判定中に結果生成が実行されました")
             result = _validate_result(response.get("result"))
             # ダミーは表示確認のみ。ログイン利用者でもDB保存しない。
             if context["report_id"] is not None and result.get("is_mock") is not True:
@@ -230,9 +231,17 @@ def index():
     if _input_context() is None:
         return redirect(url_for("index"))
 
-    # 被害状況入力画面から新たに遷移したときは分析状態を初期化する。
-    for key in ("analysis_answers", "analysis_followup", "analysis_result", "analysis_error", "analysis_id"):
-        session.pop(key, None)
+    # 追加回答後は分析中画面に戻って分析を再開する。
+    # この経路で回答履歴を消すと、同じ追加質問を繰り返してしまう。
+    if request.args.get("resume") == "1" and session.pop("analysis_resume_pending", False) is True:
+        session.pop("analysis_reply", None)
+    else:
+        # 被害状況入力画面から新しく開始したときのみ分析状態を初期化する。
+        for key in (
+            "analysis_answers", "analysis_followup", "analysis_result",
+            "analysis_error", "analysis_id", "analysis_reply", "analysis_resume_pending",
+        ):
+            session.pop(key, None)
 
     return render_template(
         "analysis/analyzing.html",
@@ -258,7 +267,21 @@ def run():
 def followup():
     """追加質問画面の表示と回答受付。"""
     pending = session.get("analysis_followup")
+    reply = session.get("analysis_reply") if session.get("analysis_resume_pending") is True else None
+    if request.method == "GET" and isinstance(reply, str) and reply:
+        return render_template(
+            "analysis/analysis_additional_chat.html",
+            question=None,
+            answers=session.get("analysis_answers", []),
+            reply=reply,
+            resume_url=url_for("analysis.index", resume="1"),
+            csrf_token=_csrf_token(),
+            answer_url=url_for("analysis.followup"),
+            error=None,
+        )
     if not isinstance(pending, dict) or not pending.get("question"):
+        if request.method == "POST" and reply:
+            abort(409, description="回答は受付済みです。分析の再開をお待ちください。")
         return redirect(url_for("analysis.index"))
 
     if request.method == "GET":
@@ -266,6 +289,8 @@ def followup():
             "analysis/analysis_additional_chat.html",
             question=pending["question"],
             answers=session.get("analysis_answers", []),
+            reply=None,
+            resume_url=None,
             csrf_token=_csrf_token(),
             answer_url=url_for("analysis.followup"),
             error=None,
@@ -283,6 +308,8 @@ def followup():
             answers=session.get("analysis_answers", []),
             csrf_token=_csrf_token(),
             answer_url=url_for("analysis.followup"),
+            reply=None,
+            resume_url=None,
             error="回答を1～2000文字以内で入力してください。",
         ), 400
 
@@ -295,7 +322,7 @@ def followup():
     answers.append({"question": str(pending["question"]), "answer": answer.strip()})
     session["analysis_answers"] = answers
     session.pop("analysis_followup", None)
-    return _respond_with_destination(_process_analysis())
+    return _respond_with_destination(_process_analysis(after_followup_answer=True))
 
 
 @analysis_bp.get("/result")
