@@ -28,6 +28,20 @@ if (chatForm) {
   });
 }
 
+// 設計書: 追加回答が十分になった場合は応答を表示し、一定時間後に分析中画面へ戻る。
+// 時間の具体値は設計書にないため、画面表示用に3秒とする。
+if (document.body?.dataset.analysisPage === "followup") {
+  const resumeUrl = document.body.dataset.resumeUrl;
+  if (resumeUrl) {
+    window.setTimeout(() => {
+      const destination = new URL(resumeUrl, window.location.href);
+      if (destination.origin === window.location.origin) {
+        window.location.assign(destination.href);
+      }
+    }, 3000);
+  }
+}
+
 // Analyze with a real POST; only server result determines next page.
 if (document.body?.dataset.analysisPage === "analyzing") {
   const status = document.getElementById("analysis-status");

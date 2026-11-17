@@ -12,7 +12,7 @@
 </head>
 
 
-<body data-analysis-page="followup">
+<body data-analysis-page="followup" data-resume-url="{{ resume_url or '' }}">
 
     <main class="container">
 
@@ -113,10 +113,18 @@
                             <div class="message-content">{{ entry.answer }}</div>
                         </div>
                         {% endfor %}
+                        {% if question %}
                         <div class="message ai">
                             <div class="message-icon">AI</div>
                             <div class="message-content">{{ question }}</div>
                         </div>
+                        {% endif %}
+                        {% if reply %}
+                        <div class="message ai">
+                            <div class="message-icon">AI</div>
+                            <div class="message-content">{{ reply }}</div>
+                        </div>
+                        {% endif %}
                     </div>
 
                     <!-- 分析状況 -->
@@ -124,13 +132,18 @@
 
                         <strong>分析状況</strong><br>
 
+                        {% if reply %}
+                        追加回答を確認しました。まもなく分析中画面へ移動します。
+                        {% else %}
                         追加情報を確認しています。
                         回答が完了すると、被害状況の分析を再開します。
+                        {% endif %}
 
                     </div>
 
 
-                    <!-- 回答をFlaskへ送信。処理結果に応じて結果画面または次の質問へリダイレクト -->
+                    <!-- 回答が必要な場合のみ入力欄を表示。応答後はJavaScriptで分析画面に戻る。 -->
+                    {% if not reply %}
                     <form class="chat-input-area" id="chatForm" action="{{ answer_url }}" method="post">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                         <label class="visually-hidden" for="userInput">追加質問への回答</label>
@@ -143,6 +156,10 @@
                     <p class="analysis-error" role="alert">{{ error }}</p>
                     {% endif %}
                     <p class="chat-note">回答内容を送信すると、AI分析を再開します。</p>
+                    {% else %}
+                    <p class="chat-note" role="status">数秒後に分析中画面へ自動で移動します。</p>
+                    <p class="chat-note"><a href="{{ resume_url }}">自動で移動しない場合は、こちらを押してください。</a></p>
+                    {% endif %}
 
                 </section>
 
