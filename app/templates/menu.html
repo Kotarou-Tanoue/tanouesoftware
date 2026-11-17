@@ -1,0 +1,24 @@
+<div class="menu" id="menu">
+    <button class="menu-close" id="menuClose" aria-label="メニューを閉じる">×</button>
+
+    <div class="menu-content">
+        <div class="menu-account">
+            {% if session.get('user_id') %}
+            {# TODO: auth Blueprint が入ったら url_for('auth.logout_confirm') に戻す #}
+            <a href="/logout" class="login-button">ログアウト</a>
+            {% else %}
+            {# TODO: auth Blueprint が入ったら url_for('auth.login') に戻す #}
+            <a href="/login" class="login-button">ログイン</a>
+            {% endif %}
+        </div>
+
+        <nav class="menu-nav">
+            {# TODO: main Blueprint が入ったら url_for('main.index') に戻す #}
+            <a href="/">ホーム</a>
+            <a href="/building">被害状況分析</a>
+            {% if session.get('user_id') %}
+            <a href="/mypage">マイページ</a>
+            {% endif %}
+        </nav>
+    </div>
+</div>
