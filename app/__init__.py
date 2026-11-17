@@ -5,12 +5,17 @@ from cachelib.file import FileSystemCache
 from flask import Flask, render_template
 
 from .config import Config
-from .extensions import db, migrate, server_session
+from .extensions import csrf, db, migrate, server_session
 
 
 def create_app():
     app = Flask(__name__)
+
+    # config.pyの設定を読み込む
     app.config.from_object(Config)
+
+    # CSRF対策を有効化
+    csrf.init_app(app)
 
     # セッションデータの保存先を準備
     session_dir = Path(app.instance_path) / "sessions"
@@ -30,6 +35,7 @@ def create_app():
     server_session.init_app(app)
 
     from .analysis.analysis_routes import analysis_bp
+
     app.register_blueprint(analysis_bp)
 
     # 開発中のみダミーのGeminiServiceを使用。実際の被害判定は行わない。
@@ -54,5 +60,12 @@ def create_app():
     @app.route("/")
     def index():
         return render_template("index.html")
+
+    # 認証
+    from .auth.login import login_bp
+    from .auth.logout import logout_bp
+
+    app.register_blueprint(login_bp)
+    app.register_blueprint(logout_bp)
 
     return app
