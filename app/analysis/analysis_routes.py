@@ -7,7 +7,7 @@ DamageAnalysisService 側に委譲し、このモジュールでは実行しな�
     app.extensions["damage_analysis_service"] = DamageAnalysisService(...)
 
 サービスの契約:
-    service.analyze(
+    service.analyze_damage(
         report_id=int | None,
         guest_analysis=dict | None,
         answers=list[dict[str, str]],
@@ -25,11 +25,11 @@ DamageAnalysisService 側に委譲し、このモジュールでは実行しな�
             # 写真の表示情報、被害箇所などは画面仕様に合わせて追加可能
         }}
 
-    service.save_result(
+    service.save_analysis_result(
         report_id=int,
         result=dict,
         user_id=int | str,
-    ) -> None
+    ) -> int | None
 
 事前に入力担当側で session['report_id']（ログイン利用時）または
 session['guest_analysis']（未ログイン利用時）をセットする。
@@ -166,7 +166,7 @@ def _process_analysis() -> str:
 
     try:
         service = _service()
-        response = service.analyze(
+        response = service.analyze_damage(
             report_id=context["report_id"],
             guest_analysis=context["guest_analysis"],
             answers=answers,
@@ -189,13 +189,15 @@ def _process_analysis() -> str:
 
         if status == "completed":
             result = _validate_result(response.get("result"))
-            if context["report_id"] is not None:
-                # 失敗時に「保存済み」と見せない。DB操作はサービス側で実装する。
-                service.save_result(
+            # ダミーは表示確認のみ。ログイン利用者でもDB保存しない。
+            if context["report_id"] is not None and result.get("is_mock") is not True:
+                analysis_id = service.save_analysis_result(
                     report_id=context["report_id"],
                     result=result,
                     user_id=context["user_id"],
                 )
+                if analysis_id is not None:
+                    session["analysis_id"] = analysis_id
             session["analysis_result"] = result
             session.pop("analysis_followup", None)
             session.pop("analysis_answers", None)
@@ -229,7 +231,7 @@ def index():
         return redirect(url_for("index"))
 
     # 被害状況入力画面から新たに遷移したときは分析状態を初期化する。
-    for key in ("analysis_answers", "analysis_followup", "analysis_result", "analysis_error"):
+    for key in ("analysis_answers", "analysis_followup", "analysis_result", "analysis_error", "analysis_id"):
         session.pop(key, None)
 
     return render_template(
@@ -247,6 +249,8 @@ def run():
         abort(400, description="分析対象の情報がありません。")
     if session.get("analysis_followup"):
         abort(409, description="追加質問への回答が必要です。")
+    if isinstance(session.get("analysis_result"), dict):
+        return _respond_with_destination("analysis.result")
     return _respond_with_destination(_process_analysis())
 
 
