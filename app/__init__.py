@@ -79,4 +79,11 @@ def create_app():
 
     app.register_blueprint(auth_bp)
 
+    # 分析入力(建物情報入力・被害状況入力)
+    from .analysis_input.views import analysis_input_bp
+
+    app.register_blueprint(analysis_input_bp)
+
+
     return app
+
