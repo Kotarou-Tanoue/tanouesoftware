@@ -5,7 +5,7 @@ from cachelib.file import FileSystemCache
 from flask import Flask, render_template
 
 from .config import Config
-from .extensions import csrf, db, migrate, server_session
+from .extensions import csrf, db, login_manager, migrate, server_session
 
 
 def create_app():
@@ -16,6 +16,9 @@ def create_app():
 
     # CSRF対策を有効化
     csrf.init_app(app)
+
+    # Flask-Loginを初期化
+    login_manager.init_app(app)
 
     # セッションデータの保存先を準備
     session_dir = Path(app.instance_path) / "sessions"
