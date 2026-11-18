@@ -6,6 +6,16 @@ from flask import Flask, render_template
 
 from .config import Config
 from .extensions import csrf, db, login_manager, migrate, server_session
+from .models import User
+
+
+# ログインマネージャー
+@login_manager.user_loader
+def load_user(user_id):
+    try:
+        return db.session.get(User, int(user_id))
+    except (TypeError, ValueError):
+        return None
 
 
 def create_app():
@@ -65,10 +75,8 @@ def create_app():
         return render_template("index.html")
 
     # 認証
-    from .auth.login import login_bp
-    from .auth.logout import logout_bp
+    from .auth.auth_routes import auth_bp
 
-    app.register_blueprint(login_bp)
-    app.register_blueprint(logout_bp)
+    app.register_blueprint(auth_bp)
 
     return app
