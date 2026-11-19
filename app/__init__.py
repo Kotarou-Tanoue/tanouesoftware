@@ -71,12 +71,12 @@ def create_app():
     # Blueprintの登録
     """
     作成前のため、コメントアウト
-    
+    """
     from app.building import building_bp
 
     app.register_blueprint(building_bp, url_prefix="/building")
     
-    """
+   
     # トップページ
     @app.route("/")
     def index():
