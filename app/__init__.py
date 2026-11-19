@@ -5,7 +5,17 @@ from cachelib.file import FileSystemCache
 from flask import Flask, render_template
 
 from .config import Config
-from .extensions import csrf, db, migrate, server_session
+from .extensions import csrf, db, login_manager, migrate, server_session
+from .models import User
+
+
+# ログインマネージャー
+@login_manager.user_loader
+def load_user(user_id):
+    try:
+        return db.session.get(User, int(user_id))
+    except (TypeError, ValueError):
+        return None
 
 
 def create_app():
@@ -16,6 +26,9 @@ def create_app():
 
     # CSRF対策を有効化
     csrf.init_app(app)
+
+    # Flask-Loginを初期化
+    login_manager.init_app(app)
 
     # セッションデータの保存先を準備
     session_dir = Path(app.instance_path) / "sessions"
@@ -62,10 +75,15 @@ def create_app():
         return render_template("index.html")
 
     # 認証
-    from .auth.login import login_bp
-    from .auth.logout import logout_bp
+    from .auth.auth_routes import auth_bp
 
-    app.register_blueprint(login_bp)
-    app.register_blueprint(logout_bp)
+    app.register_blueprint(auth_bp)
+
+    # 分析入力(建物情報入力・被害状況入力)
+    from .analysis_input.views import analysis_input_bp
+
+    app.register_blueprint(analysis_input_bp)
+
 
     return app
+

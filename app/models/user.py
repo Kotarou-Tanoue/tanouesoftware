@@ -1,9 +1,11 @@
 """利用者テーブルのModel。"""
 
+from flask_login import UserMixin
+
 from app.extensions import db
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = "user"
 
     user_id = db.Column(
@@ -40,3 +42,6 @@ class User(db.Model):
     authentications = db.relationship("UserAuth", back_populates="user")
 
     buildings = db.relationship("Building", back_populates="user")
+
+    def get_id(self):
+        return str(self.user_id)
