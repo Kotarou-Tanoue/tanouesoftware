@@ -38,15 +38,17 @@ DamageAnalysisService 側に委譲し、このモジュールでは実行しな�
 
 事前に入力担当側で session['report_id']（ログイン利用時）または
 session['guest_analysis']（未ログイン利用時）をセットする。
-ログイン時には session['user_id'] も必要（認証担当とキー名を統一すること）。
+ログイン時の利用者IDは Flask-Login の current_user から取得する。
 サービスは必ず report_id の所有者確認を行うこと。
 """
 
 from __future__ import annotations
 
-import hmac
-import secrets
 from typing import Any
+
+from flask_login import current_user
+from flask_wtf.csrf import generate_csrf, validate_csrf
+from wtforms.validators import ValidationError
 
 from flask import (
     Blueprint,
@@ -71,19 +73,16 @@ class InvalidAnalysisResult(ValueError):
 
 
 def _csrf_token() -> str:
-    token = session.get("analysis_csrf_token")
-    if not isinstance(token, str) or not token:
-        token = secrets.token_urlsafe(32)
-        session["analysis_csrf_token"] = token
-    return token
+    """アプリ全体で有効なFlask-WTFと同じCSRFトークンを返す。"""
+    return generate_csrf()
 
 
 def _validate_csrf() -> None:
-    submitted = request.headers.get("X-CSRF-Token", "")
-    if not submitted:
-        submitted = request.form.get("csrf_token", "")
-    expected = session.get("analysis_csrf_token", "")
-    if not isinstance(expected, str) or not hmac.compare_digest(submitted, expected):
+    """全体CSRF保護と同じ署名・期限・セッションの検証を行う。"""
+    submitted = request.headers.get("X-CSRF-Token") or request.form.get("csrf_token")
+    try:
+        validate_csrf(submitted)
+    except ValidationError:
         abort(400, description="不正なリクエストです。ページを再読み込みしてください。")
 
 
@@ -110,15 +109,45 @@ def _input_context() -> dict[str, Any] | None:
     report_id = _report_id()
     guest = session.get("guest_analysis")
     if report_id is not None:
-        # DB 側データはサービスが取り出す。report_id の所有者確認もサービスの責任。
+        # Flask-Loginが認証した利用者だけを採用する。旧sessionのuser_idは信用しない。
+        if not current_user.is_authenticated:
+            return None
         return {
             "report_id": report_id,
             "guest_analysis": None,
-            "user_id": session.get("user_id"),
+            "user_id": current_user.user_id,
         }
     if isinstance(guest, dict) and guest:
         return {"report_id": None, "guest_analysis": guest, "user_id": None}
     return None
+
+
+def _followup_identity() -> dict[str, Any] | None:
+    """追加質問を開始した認証ユーザー・分析対象の組を表す。"""
+    context = _input_context()
+    if context is None:
+        return None
+    return {
+        "report_id": context["report_id"],
+        "user_id": context["user_id"],
+        # ゲスト分析でも、ログイン状態をまたいで内容を引き継がせない。
+        "login_user_id": str(current_user.user_id) if current_user.is_authenticated else None,
+    }
+
+
+def _clear_followup_state() -> None:
+    """他ユーザーの追加質問と回答履歴が再利用されないよう破棄する。"""
+    for key in (
+        "analysis_followup", "analysis_followup_context", "analysis_answers",
+        "analysis_reply", "analysis_resume_pending",
+    ):
+        session.pop(key, None)
+
+
+def _followup_state_is_owned() -> bool:
+    """追加質問の開始時に固定した利用者・分析対象と照合する。"""
+    identity = _followup_identity()
+    return identity is not None and session.get("analysis_followup_context") == identity
 
 
 def _service() -> Any:
@@ -172,6 +201,8 @@ def _process_analysis(*, after_followup_answer: bool = False) -> str:
                 session["analysis_error"] = "追加質問の回数が上限に達しました。"
                 return "analysis.failure"
             session["analysis_followup"] = {"question": question.strip()[:1000]}
+            # ログアウト・ユーザー切替後の旧質問/回答へのアクセスを禁止する。
+            session["analysis_followup_context"] = _followup_identity()
             session.pop("analysis_error", None)
             return "analysis.followup"
 
@@ -200,8 +231,12 @@ def _process_analysis(*, after_followup_answer: bool = False) -> str:
                 if analysis_id is not None:
                     session["analysis_id"] = analysis_id
             session["analysis_result"] = result
-            session.pop("analysis_followup", None)
-            session.pop("analysis_answers", None)
+            # 認証ユーザー・分析対象が変わった後に旧結果を表示させない。
+            session["analysis_result_context"] = {
+                "report_id": context["report_id"],
+                "user_id": context["user_id"],
+            }
+            _clear_followup_state()
             session.pop("analysis_error", None)
             return "analysis.result"
 
@@ -233,13 +268,18 @@ def index():
 
     # 追加回答後は分析中画面に戻って分析を再開する。
     # この経路で回答履歴を消すと、同じ追加質問を繰り返してしまう。
-    if request.args.get("resume") == "1" and session.pop("analysis_resume_pending", False) is True:
+    if request.args.get("resume") == "1" and session.get("analysis_resume_pending") is True:
+        if not _followup_state_is_owned():
+            _clear_followup_state()
+            return redirect(url_for("analysis.index"))
+        session.pop("analysis_resume_pending", None)
         session.pop("analysis_reply", None)
     else:
         # 被害状況入力画面から新しく開始したときのみ分析状態を初期化する。
         for key in (
             "analysis_answers", "analysis_followup", "analysis_result",
             "analysis_error", "analysis_id", "analysis_reply", "analysis_resume_pending",
+            "analysis_result_context", "analysis_followup_context",
         ):
             session.pop(key, None)
 
@@ -256,10 +296,21 @@ def run():
     _validate_csrf()
     if _input_context() is None:
         abort(400, description="分析対象の情報がありません。")
+    # 旧利用者の回答履歴が新しい分析に混入しないようにする。
+    if (session.get("analysis_followup") or session.get("analysis_resume_pending")
+            or session.get("analysis_answers")) and not _followup_state_is_owned():
+        _clear_followup_state()
     if session.get("analysis_followup"):
         abort(409, description="追加質問への回答が必要です。")
     if isinstance(session.get("analysis_result"), dict):
-        return _respond_with_destination("analysis.result")
+        context = _input_context()
+        if session.get("analysis_result_context") == {
+            "report_id": context["report_id"], "user_id": context["user_id"]
+        }:
+            return _respond_with_destination("analysis.result")
+        # 他のユーザーや別の分析対象の結果を再利用しない。
+        session.pop("analysis_result", None)
+        session.pop("analysis_result_context", None)
     return _respond_with_destination(_process_analysis())
 
 
@@ -268,6 +319,12 @@ def followup():
     """追加質問画面の表示と回答受付。"""
     pending = session.get("analysis_followup")
     reply = session.get("analysis_reply") if session.get("analysis_resume_pending") is True else None
+    if pending or reply:
+        if not _followup_state_is_owned():
+            _clear_followup_state()
+            if request.method == "POST":
+                abort(403, description="追加質問の利用者または分析対象が変わりました。")
+            return redirect(url_for("analysis.index"))
     if request.method == "GET" and isinstance(reply, str) and reply:
         return render_template(
             "analysis/analysis_additional_chat.html",
@@ -329,7 +386,11 @@ def followup():
 def result():
     """GET /analysis/result : 完了した分析結果を表示する。"""
     data = session.get("analysis_result")
-    if not isinstance(data, dict):
+    context = _input_context()
+    if (not isinstance(data, dict) or context is None or
+            session.get("analysis_result_context") != {
+                "report_id": context["report_id"], "user_id": context["user_id"]
+            }):
         return redirect(url_for("analysis.index"))
     return render_template("analysis/analysis_result.html", result=data)
 
