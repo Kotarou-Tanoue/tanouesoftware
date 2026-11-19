@@ -4,11 +4,13 @@
     <div class="menu-content">
         <div class="menu-account">
             {% if session.get('user_id') %}
-            {# TODO: auth Blueprint が入ったら url_for('auth.logout_confirm') に戻す #}
-            <a href="/logout" class="login-button">ログアウト</a>
+            <a href="{{ url_for('auth.logout') }}" class="login-button">ログアウト</a>
             {% else %}
-            {# TODO: auth Blueprint が入ったら url_for('auth.login') に戻す #}
-            <a href="/login" class="login-button">ログイン</a>
+            <a href="{{ url_for('auth.login') }}" class="login-button">ログイン</a>
+            <!-- 開発用ログインリンク 本番環境では削除すること -->
+            <br>
+            <a href="{{ url_for('auth.dev_login') }}" class="login-button">開発者ログイン</a>
+            <!-- ここまで -->
             {% endif %}
         </div>
 
