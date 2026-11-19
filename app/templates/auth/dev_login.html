@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>開発用テストログイン</title>
+    </head>
+    <body>
+        <main>
+            <h1>開発用テストログイン</h1>
+            <p>ローカル開発専用です。既存のDBユーザーを選択します。</p>
+
+            {% if current_user.is_authenticated %}
+            <p>ログイン中：ユーザー {{ current_user.user_id }}</p>
+            <form method="post" action="{{ url_for('auth.logout') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit">ログアウト</button>
+            </form>
+            {% else %}
+            <p>未ログインです。</p>
+            {% endif %}
+
+            {% if error %}
+            <p role="alert">{{ error }}</p>
+            {% endif %}
+            <form method="POST" action="{{ url_for('auth.dev_login') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <button type="submit" name="user_id" value="2">
+                    テストユーザーAでログイン
+                </button>
+
+                <button type="submit" name="user_id" value="3">
+                    テストユーザーBでログイン
+                </button>
+            </form>
+            <p><a href="{{ url_for('index') }}">トップページへ</a></p>
+        </main>
+    </body>
+</html>

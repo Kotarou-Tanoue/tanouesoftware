@@ -57,6 +57,8 @@ INSERT INTO `chat_history` (`chat_id`, `analysis_id`, `user_question`, `ai_answe
 VALUES (1, 1, 'この被害はすぐに修理すべきですか？', '建物の倒壊等の大きな被害につながる可能性は低いと推測されるため、修理の緊急性はないと考えられます。'), (2, 1, '修理をする必要はないですか？', '分析結果はあくまで推測ですので、修理が必要かどうかについては自治体や修理業者に相談することをおすすめします。') AS seed_row
 ON DUPLICATE KEY UPDATE `ai_answer` = seed_row.`ai_answer`;
 
+COMMIT;
+
 
 -- 確認用SQL
 -- 利用者
