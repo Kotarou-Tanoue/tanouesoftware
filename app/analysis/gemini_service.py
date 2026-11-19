@@ -7,6 +7,8 @@ from typing import Any, Mapping, Sequence
 class GeminiService:
     """初回は追加質問、回答後は明確にダミーと記した結果を返す。"""
 
+    is_mock = True  # 本物のAIと区別し、結果質問のDB履歴も汚さない
+
     def judgement_data(
         self, analysis_data: Mapping[str, Any], answers: Sequence[dict[str, str]]
     ) -> bool:
@@ -33,3 +35,14 @@ class GeminiService:
             "repair_items": [],
             "photos": [],
         }
+
+    def generate_chat_response(
+        self, analysis_result: Mapping[str, Any], question: str,
+        chat_history: Sequence[dict[str, str]],
+    ) -> str:
+        """画面遷移用ダミー。実際のAI判断・修理助言は生成しない。"""
+        return (
+            "【開発用ダミー回答】結果質問画面の動作確認中です。"
+            "実際のGemini APIによる回答生成はまだ接続されていません。"
+            "このメッセージは建物の状態や修理方法の判断ではありません。"
+        )

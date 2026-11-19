@@ -1,35 +1,40 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>ログアウト - ウチミテ</title>
-
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 <body>
     <main class="container">
         <div class="screen">
-            <!-- ログアウト確認ボタン -->
-            <form method="POST" action="{{ url_for('auth.logout') }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="logout-confirm-button">
-                    ログアウトする
-                </button>
-            </form>
+            <!-- ログアウト確認画面 -->
+            <section class="logout-page">
+                <div class="logout-card">
+                    <h1>ログアウト</h1>
+                    <p class="description">
+                        ログアウトしてもよろしいですか？
+                    </p>
+                    <p class="logout-note">
+                        ログアウトすると、ログインが必要な機能を<br>
+                        利用するには再度ログインが必要になります。
+                    </p>
+                    <!-- 確認ボタン -->
+                    <form method="POST" action="{{ url_for('auth.logout') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="logout-confirm-button">
+                            ログアウトする
+                        </button>
+                    </form>
 
-            <!-- キャンセルボタン -->
-            <button type="button" class="logout-cancel-button" onclick="window.location.href='{{ url_for("index") }}'">
-                キャンセル
-            </button>
-
+                    <!-- キャンセルボタン -->
+                    <button type="button" class="logout-cancel-button" onclick="window.location.href='{{ url_for("index") }}'">
+                        キャンセル
+                    </button>
+                </div>
+            </section>
         </div>
-
     </main>
-
 </body>
-
 </html>
