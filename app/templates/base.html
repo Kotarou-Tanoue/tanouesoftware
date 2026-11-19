@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ウチミテ{% endblock %} | ウチミテ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <main class="container">
+        <div class="screen">
+
+
+            {% set page_heading %}{% block heading %}{{ self.title() }}{% endblock %}{% endset %}
+            {% block header %}{% include "header.html" %}{% endblock %}
+
+            {% include "menu.html" %}
+
+            {% block body %}
+            <div class="content{% block content_class %}{% endblock %}">
+                {% include "flash.html" %}
+                {% block content %}{% endblock %}
+            </div>
+            {% endblock %}
+
+            {% block footer %}{% include "footer.html" %}{% endblock %}
+
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/menu.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
