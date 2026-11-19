@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登録完了</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <div class="screen">
+            <header class="header">
+                <div class="page-header">
+                    <h1>登録完了</h1>
+                </div>
+            </header>
+            <div class="content">
+                <div class="card">
+                    <p>建物を登録しました。</p>
+                    <div class="actions">
+                        <a class="button" href="{{ url_for('building.register') }}">続けて登録</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
