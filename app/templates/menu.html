@@ -1,0 +1,26 @@
+<div class="menu" id="menu">
+    <button class="menu-close" id="menuClose" aria-label="メニューを閉じる">×</button>
+
+    <div class="menu-content">
+        <div class="menu-account">
+            {% if session.get('user_id') %}
+            <a href="{{ url_for('auth.logout') }}" class="login-button">ログアウト</a>
+            {% else %}
+            <a href="{{ url_for('auth.login') }}" class="login-button">ログイン</a>
+            <!-- 開発用ログインリンク 本番環境では削除すること -->
+            <br>
+            <a href="{{ url_for('auth.dev_login') }}" class="login-button">開発者ログイン</a>
+            <!-- ここまで -->
+            {% endif %}
+        </div>
+
+        <nav class="menu-nav">
+            {# TODO: main Blueprint が入ったら url_for('main.index') に戻す #}
+            <a href="/">ホーム</a>
+            <a href="/building">被害状況分析</a>
+            {% if session.get('user_id') %}
+            <a href="/mypage">マイページ</a>
+            {% endif %}
+        </nav>
+    </div>
+</div>

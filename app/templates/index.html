@@ -1,3 +1,12 @@
+<<<<<<< HEAD
+{% extends "base.html" %}
+
+{% block title %}ホーム{% endblock %}
+
+{% block content %}
+<p>Flaskの起動に成功しました。</p>
+{% endblock %}
+=======
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -8,5 +17,8 @@
 <body>
     <h1>建物被害分析システム</h1>
     <p>Flaskの起動に成功しました。</p>
+    <a href="{{ url_for('auth.dev_login') }}">開発用ログイン</a>
+    <a href="{{ url_for('auth.logout') }}">開発用ログアウト</a>
 </body>
 </html>
+>>>>>>> 04d671ebf9ae8ad6e3931a340bee380afc53d615
