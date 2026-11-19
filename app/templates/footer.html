@@ -12,7 +12,7 @@
             <a href="/">ホーム</a>
             <span>｜</span>
             <a href="/building">被害状況分析</a>
-            {% if session.get('user_id') %}
+            {% if current_user.is_authenticated %}
             <span>｜</span>
             <a href="/mypage">マイページ</a>
             {% endif %}

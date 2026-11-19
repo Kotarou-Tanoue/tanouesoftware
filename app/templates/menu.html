@@ -3,7 +3,7 @@
 
     <div class="menu-content">
         <div class="menu-account">
-            {% if session.get('user_id') %}
+            {% if current_user.is_authenticated %}
             <a href="{{ url_for('auth.logout') }}" class="login-button">ログアウト</a>
             {% else %}
             <a href="{{ url_for('auth.login') }}" class="login-button">ログイン</a>
@@ -18,7 +18,7 @@
             {# TODO: main Blueprint が入ったら url_for('main.index') に戻す #}
             <a href="/">ホーム</a>
             <a href="/building">被害状況分析</a>
-            {% if session.get('user_id') %}
+            {% if current_user.is_authenticated %}
             <a href="/mypage">マイページ</a>
             {% endif %}
         </nav>
