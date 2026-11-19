@@ -38,15 +38,17 @@ DamageAnalysisService 側に委譲し、このモジュールでは実行しな�
 
 事前に入力担当側で session['report_id']（ログイン利用時）または
 session['guest_analysis']（未ログイン利用時）をセットする。
-ログイン時には session['user_id'] も必要（認証担当とキー名を統一すること）。
+ログイン時の利用者IDは Flask-Login の current_user から取得する。
 サービスは必ず report_id の所有者確認を行うこと。
 """
 
 from __future__ import annotations
 
-import hmac
-import secrets
 from typing import Any
+
+from flask_login import current_user
+from flask_wtf.csrf import generate_csrf, validate_csrf
+from wtforms.validators import ValidationError
 
 from flask import (
     Blueprint,
@@ -71,19 +73,16 @@ class InvalidAnalysisResult(ValueError):
 
 
 def _csrf_token() -> str:
-    token = session.get("analysis_csrf_token")
-    if not isinstance(token, str) or not token:
-        token = secrets.token_urlsafe(32)
-        session["analysis_csrf_token"] = token
-    return token
+    """アプリ全体で有効なFlask-WTFと同じCSRFトークンを返す。"""
+    return generate_csrf()
 
 
 def _validate_csrf() -> None:
-    submitted = request.headers.get("X-CSRF-Token", "")
-    if not submitted:
-        submitted = request.form.get("csrf_token", "")
-    expected = session.get("analysis_csrf_token", "")
-    if not isinstance(expected, str) or not hmac.compare_digest(submitted, expected):
+    """全体CSRF保護と同じ署名・期限・セッションの検証を行う。"""
+    submitted = request.headers.get("X-CSRF-Token") or request.form.get("csrf_token")
+    try:
+        validate_csrf(submitted)
+    except ValidationError:
         abort(400, description="不正なリクエストです。ページを再読み込みしてください。")
 
 
@@ -110,11 +109,13 @@ def _input_context() -> dict[str, Any] | None:
     report_id = _report_id()
     guest = session.get("guest_analysis")
     if report_id is not None:
-        # DB 側データはサービスが取り出す。report_id の所有者確認もサービスの責任。
+        # Flask-Loginが認証した利用者だけを採用する。旧sessionのuser_idは信用しない。
+        if not current_user.is_authenticated:
+            return None
         return {
             "report_id": report_id,
             "guest_analysis": None,
-            "user_id": session.get("user_id"),
+            "user_id": current_user.user_id,
         }
     if isinstance(guest, dict) and guest:
         return {"report_id": None, "guest_analysis": guest, "user_id": None}
@@ -200,6 +201,11 @@ def _process_analysis(*, after_followup_answer: bool = False) -> str:
                 if analysis_id is not None:
                     session["analysis_id"] = analysis_id
             session["analysis_result"] = result
+            # 認証ユーザー・分析対象が変わった後に旧結果を表示させない。
+            session["analysis_result_context"] = {
+                "report_id": context["report_id"],
+                "user_id": context["user_id"],
+            }
             session.pop("analysis_followup", None)
             session.pop("analysis_answers", None)
             session.pop("analysis_error", None)
@@ -240,6 +246,7 @@ def index():
         for key in (
             "analysis_answers", "analysis_followup", "analysis_result",
             "analysis_error", "analysis_id", "analysis_reply", "analysis_resume_pending",
+            "analysis_result_context",
         ):
             session.pop(key, None)
 
@@ -259,7 +266,14 @@ def run():
     if session.get("analysis_followup"):
         abort(409, description="追加質問への回答が必要です。")
     if isinstance(session.get("analysis_result"), dict):
-        return _respond_with_destination("analysis.result")
+        context = _input_context()
+        if session.get("analysis_result_context") == {
+            "report_id": context["report_id"], "user_id": context["user_id"]
+        }:
+            return _respond_with_destination("analysis.result")
+        # 他のユーザーや別の分析対象の結果を再利用しない。
+        session.pop("analysis_result", None)
+        session.pop("analysis_result_context", None)
     return _respond_with_destination(_process_analysis())
 
 
@@ -329,7 +343,11 @@ def followup():
 def result():
     """GET /analysis/result : 完了した分析結果を表示する。"""
     data = session.get("analysis_result")
-    if not isinstance(data, dict):
+    context = _input_context()
+    if (not isinstance(data, dict) or context is None or
+            session.get("analysis_result_context") != {
+                "report_id": context["report_id"], "user_id": context["user_id"]
+            }):
         return redirect(url_for("analysis.index"))
     return render_template("analysis/analysis_result.html", result=data)
 
