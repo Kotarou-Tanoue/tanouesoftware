@@ -51,6 +51,11 @@ def create_app():
 
     app.register_blueprint(analysis_bp)
 
+    #仮置きマイページのやつ
+    from app.mypage import mypage_bp
+
+    app.register_blueprint(mypage_bp,url_prefix="/mypage")
+
     # 開発中のみダミーのGeminiServiceを使用。実際の被害判定は行わない。
     # 本物のGeminiService完成後にこの登録部分を差し替える。
     if os.environ.get("ANALYSIS_USE_MOCK") == "1" and app.debug:
