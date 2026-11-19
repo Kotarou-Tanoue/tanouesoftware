@@ -31,3 +31,8 @@ class Config:
     SESSION_COOKIE_SECURE = (
         os.environ.get("SESSION_COOKIE_SECURE", "false").lower() == "true"
     )
+
+    # LINE認証
+    LINE_CHANNEL_ID = os.environ["LINE_CHANNEL_ID"]
+    LINE_CHANNEL_SECRET = os.environ["LINE_CHANNEL_SECRET"]
+    LINE_CALLBACK_URL = os.environ["LINE_CALLBACK_URL"]
