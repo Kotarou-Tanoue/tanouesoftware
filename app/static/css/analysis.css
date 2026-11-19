@@ -1762,3 +1762,24 @@ th {
 .analysis-disclaimer { margin: 22px 0; font-size: 0.93rem; line-height: 1.7; }
 .cost-summary { font-size: 1.2rem; font-weight: 700; margin: 12px 0 20px; }
 .actions .button { margin: 5px 0; }
+
+/* 結果質問画面（既存チャット用スタイルを継承） */
+.result-chat-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+.result-chat-suggestions button {
+    background: #eaf2fc !important;
+    color: #17558a !important;
+    border: 1px solid #c8d9ea !important;
+    border-radius: 24px !important;
+    font-size: 13px !important;
+    padding: 10px 14px !important;
+}
+.result-chat-suggestions button:hover { background: #d9e9fc !important; }
+body[data-analysis-page="user-chat"] .chat-container .message-content {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}

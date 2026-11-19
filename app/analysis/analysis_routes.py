@@ -392,7 +392,8 @@ def result():
                 "report_id": context["report_id"], "user_id": context["user_id"]
             }):
         return redirect(url_for("analysis.index"))
-    return render_template("analysis/analysis_result.html", result=data)
+    return render_template("analysis/analysis_result.html", result=data,
+                           result_chat_url=url_for("chat.show_user_chat"))
 
 
 @analysis_bp.get("/failure")

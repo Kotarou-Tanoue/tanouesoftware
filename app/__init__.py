@@ -48,8 +48,10 @@ def create_app():
     server_session.init_app(app)
 
     from .analysis.analysis_routes import analysis_bp
+    from .analysis.chat_routes import chat_bp
 
     app.register_blueprint(analysis_bp)
+    app.register_blueprint(chat_bp)
 
     #仮置きマイページのやつ
     from app.mypage import mypage_bp
@@ -63,10 +65,11 @@ def create_app():
     ):
         from .analysis.damage_analysis_service import DamageAnalysisService
         from .analysis.gemini_service import GeminiService
+        from .analysis.chat_service import ChatService
 
-        app.extensions["damage_analysis_service"] = DamageAnalysisService(
-            GeminiService()
-        )
+        gemini_service = GeminiService()
+        app.extensions["damage_analysis_service"] = DamageAnalysisService(gemini_service)
+        app.extensions["chat_service"] = ChatService(gemini_service)
 
     # Blueprintの登録
     """
