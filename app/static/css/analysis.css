@@ -1779,7 +1779,7 @@ th {
     padding: 10px 14px !important;
 }
 .result-chat-suggestions button:hover { background: #d9e9fc !important; }
-body[data-analysis-page="user-chat"] .chat-container .message-content {
+.analysis-user-chat .chat-container .message-content {
     white-space: pre-wrap;
     overflow-wrap: anywhere;
 }

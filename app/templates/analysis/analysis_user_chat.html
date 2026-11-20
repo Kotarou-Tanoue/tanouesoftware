@@ -1,103 +1,77 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>分析結果について質問</title>
+{% extends "base.html" %}
+
+{% block title %}分析結果について質問{% endblock %}
+{% block heading %}分析結果について質問{% endblock %}
+
+{% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/analysis.css') }}">
-</head>
-<body data-analysis-page="user-chat">
-    <main class="container">
-        <div class="screen">
-            <header class="header">
-                <div class="page-header">
-                    <h1>分析結果について質問</h1>
-                    <div class="nav">
-                        <button class="menu-button" id="menuButton" type="button" aria-label="メニューを開く">
-                            <span></span><span></span><span></span>
-                        </button>
-                        <div class="menu" id="menu">
-                            <button class="menu-close" id="menuClose" type="button" aria-label="メニューを閉じる">×</button>
-                            <div class="menu-content">
-                                {% if current_user.is_authenticated %}
-                                <div class="menu-account"><a href="{{ url_for('auth.logout') }}" class="login-button">ログアウト</a></div>
-                                {% else %}
-                                <div class="menu-account"><a href="{{ url_for('auth.login') }}" class="login-button">ログイン</a></div>
-                                {% endif %}
-                                <nav class="menu-nav">
-                                    <a href="{{ url_for('index') }}">ホーム</a>
-                                    <a href="{{ back_url }}">{{ back_label }}</a>
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </header>
-            <div class="content">
-                <section class="chat-container" aria-label="分析結果に関する質問">
-                    <div class="chat-header">
-                        <h2>分析結果について質問</h2>
-                        <p>今回の分析結果について、分からないことや気になることを質問できます。</p>
-                    </div>
-                    <div class="chat-box" id="chatBox" role="log" aria-live="polite" aria-relevant="additions">
-                        <div class="message ai">
-                            <div class="message-icon">AI</div>
-                            <div class="message-content">分析結果について質問があれば、何でも入力してください。<br>被害状況や修理について、分析結果をもとに回答します。</div>
-                        </div>
-                        {% for message in messages %}
-                        <div class="message user">
-                            <div class="message-icon">あなた</div>
-                            <div class="message-content">{{ message.question }}</div>
-                        </div>
-                        <div class="message ai">
-                            <div class="message-icon">AI</div>
-                            <div class="message-content">{{ message.answer }}</div>
-                        </div>
-                        {% endfor %}
-                    </div>
+{% endblock %}
 
-                    {% if error %}
-                    <p class="analysis-error" role="alert">{{ error }}</p>
-                    {% endif %}
-
-                    <div class="result-chat-suggestions" aria-label="質問例">
-                        <button type="button" data-chat-suggestion="この被害は修理したほうがいいですか？">修理したほうがいい？</button>
-                        <button type="button" data-chat-suggestion="今回の被害で注意することはありますか？">注意することは？</button>
-                        <button type="button" data-chat-suggestion="修理費用はどのくらいかかりますか？">修理費用について</button>
-                    </div>
-                    <form class="chat-input-area" id="resultChatForm" method="post" action="{{ send_url }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                        <label class="visually-hidden" for="userInput">分析結果についての質問</label>
-                        <input id="userInput" name="question" type="text" placeholder="分析結果について質問してください..."
-                               autocomplete="off" maxlength="2000" required>
-                        <button type="submit">送信</button>
-                    </form>
-                    {% if is_mock %}
-                    <p class="chat-note">※現在は画面確認用のダミー回答です。実際のGemini APIによる回答ではありません。</p>
-                    {% endif %}
-                    <p class="chat-note">※AIの回答は建物の安全性を保証しません。危険が疑われる場合は専門家や自治体に相談してください。</p>
-                    <div class="actions">
-                        <a class="button secondary" href="{{ back_url }}">{{ back_label }}</a>
-                    </div>
-                </section>
-            </div>
+{% block content %}
+<div id="analysisPage" class="analysis-page analysis-user-chat" data-analysis-page="user-chat">
+    <section class="chat-container" aria-label="分析結果に関する質問">
+        <div class="chat-header">
+            <h2>分析結果について質問</h2>
+            <p>今回の分析結果について、分からないことや気になることを質問できます。</p>
         </div>
-    </main>
-    <script defer src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+        <div class="chat-box" id="chatBox" role="log" aria-live="polite" aria-relevant="additions">
+            <div class="message ai">
+                <div class="message-icon">AI</div>
+                <div class="message-content">分析結果について質問があれば、何でも入力してください。<br>被害状況や修理について、分析結果をもとに回答します。</div>
+            </div>
+            {% for message in messages %}
+            <div class="message user">
+                <div class="message-icon">あなた</div>
+                <div class="message-content">{{ message.question }}</div>
+            </div>
+            <div class="message ai">
+                <div class="message-icon">AI</div>
+                <div class="message-content">{{ message.answer }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if error %}
+        <p class="analysis-error" role="alert">{{ error }}</p>
+        {% endif %}
+
+        <div class="result-chat-suggestions" aria-label="質問例">
+            <button type="button" data-chat-suggestion="この被害は修理したほうがいいですか？">修理したほうがいい？</button>
+            <button type="button" data-chat-suggestion="今回の被害で注意することはありますか？">注意することは？</button>
+            <button type="button" data-chat-suggestion="修理費用はどのくらいかかりますか？">修理費用について</button>
+        </div>
+        <form class="chat-input-area" id="resultChatForm" method="post" action="{{ send_url }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <label class="visually-hidden" for="userInput">分析結果についての質問</label>
+            <input id="userInput" name="question" type="text" placeholder="分析結果について質問してください..."
+                   autocomplete="off" maxlength="2000" required>
+            <button type="submit">送信</button>
+        </form>
+        {% if is_mock %}
+        <p class="chat-note">※現在は画面確認用のダミー回答です。実際のGemini APIによる回答ではありません。</p>
+        {% endif %}
+        <p class="chat-note">※AIの回答は建物の安全性を保証しません。危険が疑われる場合は専門家や自治体に相談してください。</p>
+        <div class="actions">
+            <a class="button secondary" href="{{ back_url }}">{{ back_label }}</a>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const box = document.getElementById("chatBox");
-            if (box) box.scrollTop = box.scrollHeight;
-            const input = document.getElementById("userInput");
-            const form = document.getElementById("resultChatForm");
-            document.querySelectorAll("[data-chat-suggestion]").forEach(function (button) {
-                button.addEventListener("click", function () {
-                    input.value = button.getAttribute("data-chat-suggestion") || "";
-                    if (form.requestSubmit) form.requestSubmit();
-                    else form.submit();
+            document.addEventListener("DOMContentLoaded", function () {
+                const box = document.getElementById("chatBox");
+                if (box) box.scrollTop = box.scrollHeight;
+                const input = document.getElementById("userInput");
+                const form = document.getElementById("resultChatForm");
+                document.querySelectorAll("[data-chat-suggestion]").forEach(function (button) {
+                    button.addEventListener("click", function () {
+                        input.value = button.getAttribute("data-chat-suggestion") || "";
+                        if (form.requestSubmit) form.requestSubmit();
+                        else form.submit();
+                    });
                 });
             });
-        });
-    </script>
-</body>
-</html>
+        </script>
+{% endblock %}

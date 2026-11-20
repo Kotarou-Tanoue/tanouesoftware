@@ -113,9 +113,6 @@ def line_callback():
         )
     ):
         return _line_failure()
-    session.pop(LINE_FLOW_KEY)
-    if time.time() - flow["issued_at"] > LINE_FLOW_TTL or not _line_configured():
-        return _line_failure()
 
     errors = request.args.getlist("error")
     codes = request.args.getlist("code")
@@ -129,12 +126,22 @@ def line_callback():
         user = get_or_create_line_user(line_user_id)
         if not user.is_active:
             return _line_failure()
-        session.clear()
-        login_user(user)
-        current_app.session_interface.regenerate(session)
-    except (LineAuthError, RequestException, SQLAlchemyError, ValueError) as exc:
-        current_app.logger.warning("LINE login failed (%s)", type(exc).__name__)
+
+    except (LineAuthError, RequestException, SQLAlchemyError, ValueError):
+        current_app.logger.exception("LINE認証またはユーザー取得に失敗しました")
         return _line_failure()
+
+    try:
+        session.clear()
+        regenerate = getattr(current_app.session_interface, "regenerate", None)
+
+        if regenerate is not None:
+            regenerate(session)
+    except Exception:
+        current_app.logger.exception("ログインセッションの再生成に失敗しました")
+        return _line_failure()
+
+    login_result = login_user(user)
 
     return redirect(url_for("index"), code=303)
 
