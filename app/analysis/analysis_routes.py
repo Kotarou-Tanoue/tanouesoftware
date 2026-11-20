@@ -47,6 +47,7 @@ from __future__ import annotations
 from typing import Any
 
 from flask_login import current_user
+from app.common.photos import get_current_analysis_photo_keys
 from flask_wtf.csrf import generate_csrf, validate_csrf
 from wtforms.validators import ValidationError
 
@@ -392,8 +393,12 @@ def result():
                 "report_id": context["report_id"], "user_id": context["user_id"]
             }):
         return redirect(url_for("analysis.index"))
-    return render_template("analysis/analysis_result.html", result=data,
-                           result_chat_url=url_for("chat.show_user_chat"))
+    return render_template(
+        "analysis/analysis_result.html",
+        result=data,
+        photo_keys=get_current_analysis_photo_keys(),
+        result_chat_url=url_for("chat.show_user_chat"),
+    )
 
 
 @analysis_bp.get("/failure")

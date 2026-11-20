@@ -79,34 +79,22 @@
         <p>※写真と入力情報に基づく参考推定です。実際の費用は業者の現地見積もりで確認してください。</p>
     </div>
 
-    <!-- 署名付きURLなど、サーバーが発行した写真URLのみを渡してください -->
+    <!-- 写真は所有者確認付きの共通ルートから表示する。URLの直接組み立てはしない。 -->
     <div class="card photo-card">
         <h4>📷 分析に使用した写真</h4>
         <p class="photo-message">
             被害状況の確認や各種手続きの参考資料として、写真を保存できます。
         </p>
-        {% set photos = result.get('photos', []) %}
-        {% set visible_photos = namespace(count=0) %}
-        {% for photo in photos %}
-            {% set photo_url = photo.get('url', '') %}
-            {% set download_url = photo.get('download_url', photo_url) %}
-            {% if photo_url.startswith('https://') or download_url.startswith('https://') %}
-            {% set visible_photos.count = visible_photos.count + 1 %}
-            {% if photo_url.startswith('https://') %}
-            <div class="result-photo">
-                <img src="{{ photo_url }}" alt="{{ photo.get('alt', '分析に使用した被害状況の写真') }}" loading="lazy">
-            </div>
-            {% endif %}
-            {% if download_url.startswith('https://') %}
-            <a class="button download-button" href="{{ download_url }}" target="_blank" rel="noopener noreferrer">
-                ↓ {{ photo.get('name', '写真') }}を保存・表示する
-            </a>
-            {% endif %}
-            {% endif %}
-        {% endfor %}
-        {% if visible_photos.count == 0 %}
+        {% for key in photo_keys %}
+        <div class="result-photo">
+            <img src="{{ photo_url(key) }}" alt="分析に使用した被害写真 {{ loop.index }}" loading="lazy">
+        </div>
+        <a class="button download-button" href="{{ photo_url(key) }}" download>
+            ↓ 写真{{ loop.index }}を保存する
+        </a>
+        {% else %}
         <p>表示可能な写真データはありません。</p>
-        {% endif %}
+        {% endfor %}
         <p class="photo-note">※必要な写真の条件は、申請先の自治体の案内をご確認ください。</p>
     </div>
     <p class="analysis-disclaimer">
