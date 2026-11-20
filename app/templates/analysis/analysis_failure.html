@@ -1,132 +1,51 @@
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="ja">
+{% block title %}AI分析失敗{% endblock %}
+{% block heading %}AI分析結果{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>AI分析失敗 - ウチミテ</title>
-
+{% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/analysis.css') }}">
-</head>
+{% endblock %}
 
-<body data-analysis-page="failure">
+{% block content %}
+<div id="analysisPage" class="analysis-page analysis-failure failure-page" data-analysis-page="failure">
+    <div class="failure-card">
 
-    <main class="container">
+        <!-- エラーアイコン -->
+        <div class="failure-icon">
+            !
+        </div>
 
-        <div class="screen">
+        <h2>AI分析に失敗しました</h2>
 
-            <!-- ヘッダー -->
-            <header class="header">
+        <p class="failure-message" role="alert">{{ error_message }}</p>
 
-                <div class="page-header">
+        <!-- エラーの説明 -->
+        <div class="failure-notice">
 
-                    <h1>AI分析結果</h1>
+            <strong>考えられる原因</strong>
 
-                    <!-- ハンバーガーメニュー -->
-                    <div class="nav">
-
-                        <button class="menu-button" id="menuButton"
-                            aria-label="メニューを開く">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </button>
-
-                        <!-- メニュー -->
-                        <div class="menu" id="menu">
-
-                            <button class="menu-close" id="menuClose"
-                                aria-label="メニューを閉じる">
-                                ×
-                            </button>
-
-                            <div class="menu-content">
-
-                                {% if login_url is defined and login_url %}
-                                <div class="menu-account">
-                                    <a href="{{ login_url }}" class="login-button">ログイン</a>
-                                </div>
-                                {% endif %}
-
-                                <nav class="menu-nav">
-
-                                    <a href="{{ url_for('index') }}">ホーム</a>
-
-                                    {% if input_url is defined and input_url %}
-                                    <a href="{{ input_url }}">被害状況入力</a>
-                                    {% endif %}
-
-                                    {% if mypage_url is defined and mypage_url %}
-                                    <a href="{{ mypage_url }}">マイページ</a>
-                                    {% endif %}
-
-                                </nav>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </header>
-
-
-            <!-- メインコンテンツ -->
-            <div class="content failure-page">
-
-                <div class="failure-card">
-
-                    <!-- エラーアイコン -->
-                    <div class="failure-icon">
-                        !
-                    </div>
-
-                    <h2>AI分析に失敗しました</h2>
-
-                    <p class="failure-message" role="alert">{{ error_message }}</p>
-
-                    <!-- エラーの説明 -->
-                    <div class="failure-notice">
-
-                        <strong>考えられる原因</strong>
-
-                        <ul>
-                            <li>画像の読み込みに失敗した</li>
-                            <li>通信環境が不安定になっている</li>
-                            <li>AI分析サービスが一時的に利用できない</li>
-                        </ul>
-
-                    </div>
-
-                    <p class="failure-note">
-                        入力内容や写真を確認して、もう一度お試しください。
-                    </p>
-
-                    <!-- 入力画面は他の担当者のルートが確定してから接続 -->
-                    <div class="failure-actions">
-                        {% if input_url is defined and input_url %}
-                        <a href="{{ input_url }}" class="failure-back-button">被害状況入力に戻る</a>
-                        {% endif %}
-                        <a href="{{ url_for('analysis.index') }}" class="failure-back-button">もう一度分析する</a>
-                        <a href="{{ url_for('index') }}" class="failure-home-button">ホームに戻る</a>
-                    </div>
-
-                </div>
-
-            </div>
+            <ul>
+                <li>画像の読み込みに失敗した</li>
+                <li>通信環境が不安定になっている</li>
+                <li>AI分析サービスが一時的に利用できない</li>
+            </ul>
 
         </div>
 
-    </main>
+        <p class="failure-note">
+            入力内容や写真を確認して、もう一度お試しください。
+        </p>
 
+        <!-- 入力画面は他の担当者のルートが確定してから接続 -->
+        <div class="failure-actions">
+            {% if input_url is defined and input_url %}
+            <a href="{{ input_url }}" class="failure-back-button">被害状況入力に戻る</a>
+            {% endif %}
+            <a href="{{ url_for('analysis.index') }}" class="failure-back-button">もう一度分析する</a>
+            <a href="{{ url_for('index') }}" class="failure-home-button">ホームに戻る</a>
+        </div>
 
-    <!-- メニュー用JavaScript -->
-    <script defer src="{{ url_for('static', filename='js/analysis.js') }}"></script>
-
-</body>
-
-</html>
+    </div>
+</div>
+{% endblock %}

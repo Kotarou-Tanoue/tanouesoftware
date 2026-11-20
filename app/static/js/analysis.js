@@ -1,19 +1,8 @@
 "use strict";
 
-// Shared menu behavior. Navigation URLs are rendered by Flask/Jinja.
-const menuButton = document.getElementById("menuButton");
-const menu = document.getElementById("menu");
-const menuClose = document.getElementById("menuClose");
-if (menu && menuButton && menuClose) {
-  menuButton.addEventListener("click", () => {
-    menu.classList.add("active");
-    menuButton.style.display = "none";
-  });
-  menuClose.addEventListener("click", () => {
-    menu.classList.remove("active");
-    menuButton.style.display = "flex";
-  });
-}
+// Shared header and menu behavior is provided by base.html / menu.js.
+// Dataset attributes live on the page content, since base.html owns <body>.
+const analysisPage = document.getElementById("analysisPage") || document.body;
 
 // Follow-up answers are submitted as an HTML POST form, not simulated in JS.
 const chatForm = document.getElementById("chatForm");
@@ -30,8 +19,8 @@ if (chatForm) {
 
 // 設計書: 追加回答が十分になった場合は応答を表示し、一定時間後に分析中画面へ戻る。
 // 時間の具体値は設計書にないため、画面表示用に3秒とする。
-if (document.body?.dataset.analysisPage === "followup") {
-  const resumeUrl = document.body.dataset.resumeUrl;
+if (analysisPage?.dataset.analysisPage === "followup") {
+  const resumeUrl = analysisPage.dataset.resumeUrl;
   if (resumeUrl) {
     window.setTimeout(() => {
       const destination = new URL(resumeUrl, window.location.href);
@@ -43,12 +32,12 @@ if (document.body?.dataset.analysisPage === "followup") {
 }
 
 // Analyze with a real POST; only server result determines next page.
-if (document.body?.dataset.analysisPage === "analyzing") {
+if (analysisPage?.dataset.analysisPage === "analyzing") {
   const status = document.getElementById("analysis-status");
   const error = document.getElementById("analysis-error");
   const retry = document.getElementById("analysis-retry");
-  const runUrl = document.body.dataset.runUrl;
-  const csrfToken = document.body.dataset.csrfToken;
+  const runUrl = analysisPage.dataset.runUrl;
+  const csrfToken = analysisPage.dataset.csrfToken;
   let submitting = false;
 
   async function beginAnalysis() {
