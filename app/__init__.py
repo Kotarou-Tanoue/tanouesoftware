@@ -28,6 +28,7 @@ def create_app():
     csrf.init_app(app)
 
     # Flask-Loginを初期化
+    login_manager.login_view = "auth.login"
     login_manager.init_app(app)
 
     # セッションデータの保存先を準備

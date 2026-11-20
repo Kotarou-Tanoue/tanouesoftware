@@ -1,12 +1,114 @@
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>マイページ</title>
-</head>
-<body>
-    <h1>マイページ</h1>
-    <p>マイページの表示テストです。</p>
-</body>
-</html>
+{% block title %}マイページ{% endblock %}
+
+{% block heading %}マイページ{% endblock %}
+
+{% block content %}
+
+<h2>登録済みの建物</h2>
+
+{% if buildings %}
+    {% for building in buildings %}
+        <div class="card building-card" {% if loop.index > 2 %}hidden{% endif %}>
+
+            <h3>{{ building.building_name }}</h3>
+
+            <p>
+                住所：
+                {{ building.prefecture }}{{ building.city }}
+            </p>
+
+            <p>
+                建築年：
+                {{ building.built_year }}年
+            </p>
+        </div>
+    {% endfor %}
+    {% if buildings|length > 2 %}
+        <button type="button" id="buildingToggle">
+            もっと見る
+        </button>
+    {% endif %}
+{% else %}
+    <p>登録した建物はありません。</p>
+{% endif %}
+
+<h2>最近の分析履歴</h2>
+
+{% if histories %}
+    {% for history in histories %}
+        <div class="card history-card"
+             {% if loop.index > 2 %}
+                hidden
+             {% endif %}>
+
+            <h3>
+                {{ history.damage_report.building.building_name }}
+            </h3>
+
+            <p>
+                分析日時：
+                {{ history.created_at.strftime('%Y年%m月%d日 %H:%M') }}
+            </p>
+
+            <p>
+                被害度：
+                {{ history.damage_level }}
+            </p>
+
+            <p>
+                {{ history.description }}
+            </p>
+
+        </div>
+    {% endfor %}
+
+    {% if histories|length > 2 %}
+        <button type="button" id="historyToggle">
+            もっと見る
+        </button>
+    {% endif %}
+
+{% else %}
+    <p>分析履歴はありません。</p>
+{% endif %}
+
+{% block scripts %}
+<script>
+    const toggleButton = document.getElementById("buildingToggle");
+    const historyToggle = document.getElementById("historyToggle");
+
+if (historyToggle) {
+    historyToggle.addEventListener("click", function () {
+        const histories = document.querySelectorAll(".history-card");
+        const isExpanded = historyToggle.textContent.trim() === "閉じる";
+
+        histories.forEach((history, index) => {
+            if (index >= 2) {
+                history.hidden = isExpanded;
+            }
+        });
+
+        historyToggle.textContent = isExpanded ? "もっと見る" : "閉じる";
+    });
+}
+
+    if (toggleButton) {
+        toggleButton.addEventListener("click", function () {
+            const buildings = document.querySelectorAll(".building-card");
+            const isExpanded = toggleButton.textContent.trim() === "閉じる";
+
+            buildings.forEach((building, index) => {
+                if (index >= 2) {
+                    building.hidden = isExpanded;
+                }
+            });
+
+            toggleButton.textContent = isExpanded ? "もっと見る" : "閉じる";
+        });
+    }
+</script>
+{% endblock %}
+
+{% endblock %}
