@@ -1,177 +1,92 @@
-<!DOCTYPE html>
-<html lang="ja">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% block title %}追加情報の確認{% endblock %}
+{% block heading %}追加情報の確認{% endblock %}
 
-    <title>追加情報の確認</title>
-
+{% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/analysis.css') }}">
+{% endblock %}
 
-</head>
+{% block content %}
+<div id="analysisPage" class="analysis-page analysis-followup" data-analysis-page="followup" data-resume-url="{{ resume_url or '' }}">
+    <section class="chat-container">
 
+        <div class="chat-header">
 
-<body data-analysis-page="followup" data-resume-url="{{ resume_url or '' }}">
+            <h2>追加情報の確認</h2>
 
-    <main class="container">
-
-        <div class="screen">
-
-            <!-- ヘッダー -->
-            <header class="header">
-
-                <div class="page-header">
-
-                    <h1>追加情報の確認</h1>
-
-                    <div class="nav">
-
-                        <button
-                            class="menu-button"
-                            id="menuButton"
-                            aria-label="メニューを開く"
-                        >
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </button>
-
-
-                        <div class="menu" id="menu">
-
-                            <button
-                                class="menu-close"
-                                id="menuClose"
-                                aria-label="メニューを閉じる"
-                            >
-                                ×
-                            </button>
-
-
-                            <div class="menu-content">
-
-                                {% if login_url is defined and login_url %}
-                                <div class="menu-account">
-                                    <a href="{{ login_url }}" class="login-button">ログイン</a>
-                                </div>
-                                {% endif %}
-
-
-                                <nav class="menu-nav">
-
-                                    <a href="{{ url_for('index') }}">
-                                        ホーム
-                                    </a>
-
-                                    {% if input_url is defined and input_url %}
-                                    <a href="{{ input_url }}">被害状況入力</a>
-                                    {% endif %}
-
-                                    {% if mypage_url is defined and mypage_url %}
-                                    <a href="{{ mypage_url }}">マイページ</a>
-                                    {% endif %}
-
-                                </nav>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </header>
-
-
-            <div class="content">
-
-                <section class="chat-container">
-
-                    <div class="chat-header">
-
-                        <h2>追加情報の確認</h2>
-
-                        <p>
-                            被害状況の分析に必要な情報が不足しています。
-                            いくつか質問しますので回答してください。
-                        </p>
-
-                    </div>
-
-
-                    <!-- チャット -->
-                    <div class="chat-box" id="chatBox" aria-live="polite">
-                        {% for entry in answers %}
-                        <div class="message ai">
-                            <div class="message-icon">AI</div>
-                            <div class="message-content">{{ entry.question }}</div>
-                        </div>
-                        <div class="message user">
-                            <div class="message-icon">あなた</div>
-                            <div class="message-content">{{ entry.answer }}</div>
-                        </div>
-                        {% endfor %}
-                        {% if question %}
-                        <div class="message ai">
-                            <div class="message-icon">AI</div>
-                            <div class="message-content">{{ question }}</div>
-                        </div>
-                        {% endif %}
-                        {% if reply %}
-                        <div class="message ai">
-                            <div class="message-icon">AI</div>
-                            <div class="message-content">{{ reply }}</div>
-                        </div>
-                        {% endif %}
-                    </div>
-
-                    <!-- 分析状況 -->
-                    <div class="analysis-status">
-
-                        <strong>分析状況</strong><br>
-
-                        {% if reply %}
-                        追加回答を確認しました。まもなく分析中画面へ移動します。
-                        {% else %}
-                        追加情報を確認しています。
-                        回答が完了すると、被害状況の分析を再開します。
-                        {% endif %}
-
-                    </div>
-
-
-                    <!-- 回答が必要な場合のみ入力欄を表示。応答後はJavaScriptで分析画面に戻る。 -->
-                    {% if not reply %}
-                    <form class="chat-input-area" id="chatForm" action="{{ answer_url }}" method="post">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                        <label class="visually-hidden" for="userInput">追加質問への回答</label>
-                        <input type="text" id="userInput" name="answer"
-                            placeholder="質問に対する回答を入力してください..."
-                            autocomplete="off" maxlength="2000" required autofocus>
-                        <button id="answerSubmit" type="submit">回答して分析を続ける</button>
-                    </form>
-                    {% if error %}
-                    <p class="analysis-error" role="alert">{{ error }}</p>
-                    {% endif %}
-                    <p class="chat-note">回答内容を送信すると、AI分析を再開します。</p>
-                    {% else %}
-                    <p class="chat-note" role="status">数秒後に分析中画面へ自動で移動します。</p>
-                    <p class="chat-note"><a href="{{ resume_url }}">自動で移動しない場合は、こちらを押してください。</a></p>
-                    {% endif %}
-
-                </section>
-
-            </div>
+            <p>
+                被害状況の分析に必要な情報が不足しています。
+                いくつか質問しますので回答してください。
+            </p>
 
         </div>
 
-    </main>
+
+        <!-- チャット -->
+        <div class="chat-box" id="chatBox" aria-live="polite">
+            {% for entry in answers %}
+            <div class="message ai">
+                <div class="message-icon">AI</div>
+                <div class="message-content">{{ entry.question }}</div>
+            </div>
+            <div class="message user">
+                <div class="message-icon">あなた</div>
+                <div class="message-content">{{ entry.answer }}</div>
+            </div>
+            {% endfor %}
+            {% if question %}
+            <div class="message ai">
+                <div class="message-icon">AI</div>
+                <div class="message-content">{{ question }}</div>
+            </div>
+            {% endif %}
+            {% if reply %}
+            <div class="message ai">
+                <div class="message-icon">AI</div>
+                <div class="message-content">{{ reply }}</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- 分析状況 -->
+        <div class="analysis-status">
+
+            <strong>分析状況</strong><br>
+
+            {% if reply %}
+            追加回答を確認しました。まもなく分析中画面へ移動します。
+            {% else %}
+            追加情報を確認しています。
+            回答が完了すると、被害状況の分析を再開します。
+            {% endif %}
+
+        </div>
 
 
+        <!-- 回答が必要な場合のみ入力欄を表示。応答後はJavaScriptで分析画面に戻る。 -->
+        {% if not reply %}
+        <form class="chat-input-area" id="chatForm" action="{{ answer_url }}" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <label class="visually-hidden" for="userInput">追加質問への回答</label>
+            <input type="text" id="userInput" name="answer"
+                placeholder="質問に対する回答を入力してください..."
+                autocomplete="off" maxlength="2000" required autofocus>
+            <button id="answerSubmit" type="submit">回答して分析を続ける</button>
+        </form>
+        {% if error %}
+        <p class="analysis-error" role="alert">{{ error }}</p>
+        {% endif %}
+        <p class="chat-note">回答内容を送信すると、AI分析を再開します。</p>
+        {% else %}
+        <p class="chat-note" role="status">数秒後に分析中画面へ自動で移動します。</p>
+        <p class="chat-note"><a href="{{ resume_url }}">自動で移動しない場合は、こちらを押してください。</a></p>
+        {% endif %}
+
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
     <script defer src="{{ url_for('static', filename='js/analysis.js') }}"></script>
-
-</body>
-
-</html>
+{% endblock %}
