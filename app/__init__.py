@@ -111,4 +111,16 @@ def create_app():
 
     app.register_blueprint(analysis_input_bp)
 
+    app.register_blueprint(analysis_input_bp)
+
+    # 開発中: 写真の保存先(S3)ができるまで、ローカル(instance/uploads)に保存する。
+    # 本物のPhotoStorageServiceができたら、この登録を差し替える。
+    if "photo_storage_service" not in app.extensions:
+        from .analysis_input.local_photo_storage import LocalPhotoStorage
+
+        app.extensions["photo_storage_service"] = LocalPhotoStorage(
+            Path(app.instance_path) / "uploads"
+        )
+
     return app
+
