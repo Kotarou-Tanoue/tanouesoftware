@@ -109,6 +109,21 @@ def create_app():
     # 分析入力(建物情報入力・被害状況入力)
     from .analysis_input.views import analysis_input_bp
 
+    from .analysis_input.views import analysis_input_bp
+
     app.register_blueprint(analysis_input_bp)
 
+    # 開発中: 写真の保存先(S3)ができるまで、ローカル(instance/uploads)に保存する。
+    if "photo_storage_service" not in app.extensions:
+        from .analysis_input.local_photo_storage import LocalPhotoStorage
+
+        app.extensions["photo_storage_service"] = LocalPhotoStorage(
+            Path(app.instance_path) / "uploads"
+        )
+
+    from .common.photos import photo_bp
+
+    app.register_blueprint(photo_bp)
+
     return app
+
