@@ -11,6 +11,7 @@ from __future__ import annotations
 from copy import deepcopy
 from io import BytesIO
 import json
+import os
 from urllib.parse import urlsplit
 from typing import Any, Callable, Mapping, Protocol, Sequence
 
@@ -22,6 +23,24 @@ MAX_IMAGE_BYTES = 10 * 1024 * 1024
 MAX_IMAGE_PIXELS = 20_000_000
 MAX_IMAGE_EDGE = 1600
 MAX_DB_INTEGER = 2_147_483_647  # analysis_history の integer カラム
+
+
+def mock_history_save_enabled() -> bool:
+    """ローカルの開発環境で明示的に許可した場合だけダミー履歴を保存する。"""
+    # 開発用フラグだけで保存できないよう、実行環境・DB・アクセス元も確認する。
+    if (os.environ.get("ANALYSIS_USE_MOCK") != "1"
+            or os.environ.get("ANALYSIS_SAVE_MOCK_HISTORY") != "1"):
+        return False
+
+    from flask import current_app, has_request_context, request
+    from app.extensions import db
+
+    if not (current_app.debug or os.environ.get("FLASK_DEBUG") == "1"):
+        return False
+    if not has_request_context() or request.remote_addr not in ("127.0.0.1", "::1"):
+        return False
+    # 本番/リモートDBを巻き込まない。開発用MySQLのlocalhostに限定。
+    return db.engine.url.host in ("localhost", "127.0.0.1")
 
 
 class AnalysisInputError(ValueError):
@@ -138,9 +157,10 @@ class DamageAnalysisService:
         result: dict[str, Any],
         user_id: int | str,
     ) -> int | None:
-        """ログイン利用者の分析履歴と、AIが判定した被害箇所情報を保存する。
+        """ログイン利用者の分析履歴と、被害箇所情報を保存する。
 
-        ダミー分析結果はDBに保存しない。保存時は必ず所有者確認をやり直す。
+        ダミー結果はローカル開発環境で明示的に許可した場合だけ保存する。
+        保存時は必ず所有者確認をやり直す。
         """
         if type(report_id) is not int or report_id <= 0:
             raise AnalysisInputError("report_idが不正です。")
@@ -148,7 +168,13 @@ class DamageAnalysisService:
             raise AnalysisInputError("認証済みのuser_idが必要です。")
         validated = self._validate_result(result)
         if validated.get("is_mock") is True:
-            raise AnalysisInputError("ダミーの分析結果をDBへ保存できません。")
+            if not mock_history_save_enabled():
+                raise AnalysisInputError("ダミーの分析結果をDBへ保存できません。")
+            # analysis_historyにはis_mock列がないため、履歴画面に残る説明文で明示する。
+            validated["description"] = (
+                "【検証用ダミーデータ／実際のAI判定・安全性判定ではありません】\n"
+                + validated["description"]
+            )
         self._load_input(report_id=report_id, guest_analysis=None, user_id=user_id)
 
         if self._result_saver is not None:
