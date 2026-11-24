@@ -15,10 +15,11 @@
         </div>
 
         <nav class="menu-nav">
-            <a href="{{ url_for('index') }}">ホーム</a>
-            <a href="{{ url_for('analysis_input.building') }}">被害状況分析</a>
+            {# TODO: main Blueprint が入ったら url_for('main.index') に戻す #}
+            <a href="/">ホーム</a>
+            <a href="/building">被害状況分析</a>
             {% if current_user.is_authenticated %}
-            <a href="{{ url_for('mypage.show_mypage') }}">マイページ</a>
+            <a href="/mypage">マイページ</a>
             {% endif %}
         </nav>
     </div>
