@@ -1752,3 +1752,18 @@ th {
     }
 
 }
+
+/* flashメッセージの設定 */
+.flash-messages {
+    margin: 16px 0;
+}
+
+.flash-message {
+    padding: 12px;
+    color: #b91c1c;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    font-size: 14px;
+    text-align: center;
+}

@@ -31,7 +31,9 @@ auth_bp = Blueprint(
     __name__,
     url_prefix="/auth",
 )
+# sessionにLINE認証情報を保存する際のキー名
 LINE_FLOW_KEY = "line_login_flow"
+# LINE認証処理の有効時間(秒)
 LINE_FLOW_TTL = 600
 
 
@@ -41,6 +43,7 @@ def login():
     return render_template("auth/login.html")
 
 
+# LINE認証を開始する前に、必要な設定がそろっているかを確認する
 def _line_configured():
     return all(
         current_app.config.get(key)
@@ -52,6 +55,7 @@ def _line_configured():
     )
 
 
+# LINE認証失敗時の処理
 def _line_failure(
     message="LINEログインを完了できませんでした。もう一度お試しください。",
 ):
@@ -59,6 +63,7 @@ def _line_failure(
     return redirect(url_for("auth.login"), code=303)
 
 
+# LINEログインに関係するHTTPレスポンスに、セキュリティ対策用のヘッダーを追加する処理
 @auth_bp.after_request
 def protect_line_response(response):
     if request.endpoint in {"auth.line_login", "auth.line_callback"}:
@@ -67,8 +72,10 @@ def protect_line_response(response):
     return response
 
 
+# LINEログインを開始するための関数
 @auth_bp.get("/line")
 def line_login():
+    # LINEログインに必要な設定がない場合、処理終了
     if not _line_configured():
         return _line_failure("LINEログインは現在利用できません。")
 
@@ -80,12 +87,14 @@ def line_login():
         .decode("ascii")
         .rstrip("=")
     )
+    # 認証情報をsessionに保存
     session[LINE_FLOW_KEY] = {
         "state": state,
         "nonce": nonce,
         "verifier": verifier,
         "issued_at": time.time(),
     }
+    # LINE認証URLのパラメータを作成
     params = urlencode(
         {
             "response_type": "code",
@@ -98,11 +107,14 @@ def line_login():
             "code_challenge_method": "S256",
         }
     )
+    # LINE認証画面にリダイレクト
     return redirect(f"{LINE_AUTHORIZE_URL}?{params}")
 
 
+# LINEでの認証が完了した後、認証結果を検証しログイン処理をする
 @auth_bp.get("/line/callback")
 def line_callback():
+    # stateの検証
     flow = session.get(LINE_FLOW_KEY)
     states = request.args.getlist("state")
     if (
@@ -114,6 +126,7 @@ def line_callback():
     ):
         return _line_failure()
 
+    # エラーと認可コードの確認
     errors = request.args.getlist("error")
     codes = request.args.getlist("code")
     if errors == ["access_denied"] and not codes:
@@ -121,6 +134,7 @@ def line_callback():
     if errors or len(codes) != 1 or not codes[0]:
         return _line_failure()
 
+    # LINE認証の検証とユーザーの取得
     try:
         line_user_id = verify_line_login(codes[0], flow["nonce"], flow["verifier"])
         user = get_or_create_line_user(line_user_id)
@@ -131,6 +145,7 @@ def line_callback():
         current_app.logger.exception("LINE認証またはユーザー取得に失敗しました")
         return _line_failure()
 
+    # セッションの初期化・再生成
     try:
         session.clear()
         regenerate = getattr(current_app.session_interface, "regenerate", None)
@@ -141,8 +156,10 @@ def line_callback():
         current_app.logger.exception("ログインセッションの再生成に失敗しました")
         return _line_failure()
 
-    login_result = login_user(user)
+    # Flask-Loginでログイン
+    login_user(user)
 
+    # トップページへリダイレクト
     return redirect(url_for("index"), code=303)
 
 

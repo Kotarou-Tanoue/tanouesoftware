@@ -1,7 +1,6 @@
 -- MySQL 8.4 / UTF-8
 -- 出典: 26_テーブル設計書.xlsx（各マスタ定義書の備考欄）
 -- 作成日: 2026-11-17
--- 前提: Flask-Migrate適用済み。設計書どおりの主キー、InnoDBを使用すること。
 -- 実行前に対象DBを選択すること。DB名は設計書に未記載のため固定しない。
 -- 例: mysql --default-character-set=utf8mb4 --database=対象DB -u ユーザー -p < seed_master.sql
 -- 専用接続で実行し、エラー時は停止すること（--force は使用しない）。
@@ -10,7 +9,6 @@
 --
 -- 再実行: 同一主キーは名称のみ設計書の値に更新。主キー変更・削除はしない。
 -- 設計書にない既存行は残す。REPLACE / TRUNCATE / DELETE は使用しない。
--- 外部キー検査を無効化しない。6マスタ間に外部キー依存はなく、子テーブルより先に実行する。
 --
 -- あくまでテストデータであるため、本番環境(AWS RDS)では実行しないこと。
 
@@ -44,7 +42,7 @@ ON DUPLICATE KEY UPDATE `location_name` = seed_row.`location_name`;
 
 -- テーブル定義書_被害写真テーブル
 INSERT INTO `damage_photo` (`photo_id`, `location_id`, `s3_object_key`)
-VALUES (1, 1, 'test_images/sample01.png'), (2, 2, 'test_images/sample02.png'), (3, 3, 'test_images/sample01.png') AS seed_row
+VALUES (1, 1, 'sample_01.png'), (2, 2, 'sample_02.png'), (3, 3, 'sample_01.png') AS seed_row
 ON DUPLICATE KEY UPDATE `s3_object_key` = seed_row.`s3_object_key`;
 
 -- テーブル定義書_分析履歴テーブル

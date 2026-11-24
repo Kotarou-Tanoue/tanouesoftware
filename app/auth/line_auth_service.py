@@ -19,10 +19,12 @@ LINE_PROVIDER_CODE = 1  # database/seed_master.sql
 USER_ROLE_CODE = 1
 
 
+# LINE認証や認証マスタの検証に失敗したことを表す、独自の例外クラス
 class LineAuthError(Exception):
     """LINE認証または認証マスタの検証に失敗した。"""
 
 
+# LINE APIにPOSTリクエストを送信し、レスポンスが正常であることを確認したうえで、取得したJSONデータを辞書型として返す共通関数
 def _post_to_line(url, data):
     response = requests.post(url, data=data, timeout=(3, 7), allow_redirects=False)
     if response.status_code != 200:
