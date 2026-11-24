@@ -48,6 +48,7 @@ from typing import Any
 
 from flask_login import current_user
 from app.common.photos import get_current_analysis_photo_keys
+from .damage_analysis_service import mock_history_save_enabled
 from flask_wtf.csrf import generate_csrf, validate_csrf
 from wtforms.validators import ValidationError
 
@@ -222,8 +223,10 @@ def _process_analysis(*, after_followup_answer: bool = False) -> str:
             if after_followup_answer:
                 raise InvalidAnalysisResult("再判定中に結果生成が実行されました")
             result = _validate_result(response.get("result"))
-            # ダミーは表示確認のみ。ログイン利用者でもDB保存しない。
-            if context["report_id"] is not None and result.get("is_mock") is not True:
+            # 通常はダミーを保存しない。明示的に許可したローカル開発時のみ保存。
+            if context["report_id"] is not None and (
+                result.get("is_mock") is not True or mock_history_save_enabled()
+            ):
                 analysis_id = service.save_analysis_result(
                     report_id=context["report_id"],
                     result=result,
