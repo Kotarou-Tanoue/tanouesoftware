@@ -1,14 +1,16 @@
 
 from datetime import datetime
 
-from flask import render_template, request, redirect, url_for, abort
+from flask import render_template, request, redirect, url_for, abort, flash, session
 from flask_login import login_required, current_user
+from sqlalchemy.exc import IntegrityError
 
 from app.extensions import db
 from app.models import Building
 
 from . import building_bp
 
+BUILDING_TYPE_NAMES = {1: "戸建て", 2: "集合住宅"}
 
 # 建物登録
 @building_bp.route("/register", methods=["GET", "POST"])
@@ -131,15 +133,59 @@ def edit_complete(building_id):
         building=building
     )
 
-# 建物削除確認（今回は画面表示のみ）
-@building_bp.route("/delete/confirm")
+# 建物削除確認
+@building_bp.route("/delete/confirm/<int:building_id>")
 @login_required
-def delete_confirm():
-    return render_template("building/building_delete_confirm.html")
+def delete_confirm(building_id):
+
+    # ログイン中のユーザーが登録した建物だけ取得（他人の建物は404）
+    building = Building.query.filter_by(
+        building_id=building_id,
+        user_id=current_user.user_id
+    ).first_or_404()
+
+    # 築年数を計算（detail / edit と同じ名前）
+    building_age = datetime.now().year - building.built_year
+
+    return render_template(
+    "building/building_delete_confilm.html",
+    building=building,
+    building_age=building_age
+    )
 
 
-# 建物削除完了（今回は画面表示のみ）
+# 建物削除実行
+@building_bp.route("/delete/<int:building_id>", methods=["POST"])
+@login_required
+def delete(building_id):
+
+    building = Building.query.filter_by(
+        building_id=building_id,
+        user_id=current_user.user_id
+    ).first_or_404()
+
+    name = building.building_name
+
+    try:
+        db.session.delete(building)
+        db.session.commit()
+    except IntegrityError:
+        # 分析結果などが紐づいていて消せない場合
+        db.session.rollback()
+        flash("この建物は分析履歴があるため削除できません。", "error")
+        return redirect(url_for("building.edit", building_id=building_id))
+
+    # 完了画面で名前を出すため、一時的に保存
+    session["deleted_building_name"] = name
+    return redirect(url_for("building.delete_complete"))
+
+
+# 建物削除完了
 @building_bp.route("/delete/complete")
 @login_required
 def delete_complete():
-    return render_template("building/building_delete_complete.html")
+    name = session.pop("deleted_building_name", None)
+    return render_template(
+        "building/building_delete_complete.html",
+        building_name=name
+    )
