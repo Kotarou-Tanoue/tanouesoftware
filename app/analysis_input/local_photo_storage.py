@@ -46,8 +46,7 @@ class LocalPhotoStorage:
             raise PhotoStorageError("対応していない画像形式です(JPEG・PNG・WEBPのみ)。")
 
         # 保存名は利用者のファイル名を使わず、ランダムな名前にする
-        owner = "guest" if user_id is None else f"user_{''.join(c for c in str(user_id) if c.isalnum())}"
-        key = f"photos/{owner}/{uuid.uuid4().hex}{extension}"
+        key = f"photos/{uuid.uuid4().hex}{extension}"
 
         path = self._path_for(key)
         path.parent.mkdir(parents=True, exist_ok=True)
