@@ -6,7 +6,7 @@
 
 {% block content %}
 
-<h2>登録済みの建物</h2>
+<h2>建物一覧</h2>
 
 {% if buildings %}
     {% for building in buildings %}
@@ -15,84 +15,100 @@
             <h3>{{ building.building_name }}</h3>
 
             <p>
-                住所：
-                {{ building.prefecture }}{{ building.city }}
+                {{ building.building_type.type_name }}
+                （築{{ now_year - building.built_year }}年）
             </p>
 
-            <p>
-                建築年：
-                {{ building.built_year }}年
-            </p>
+            <a href="{{ url_for('building.detail', building_id=building.building_id) }}">
+                建物詳細を見る
+            </a>
+
         </div>
     {% endfor %}
+
     {% if buildings|length > 2 %}
         <button type="button" id="buildingToggle">
             もっと見る
         </button>
     {% endif %}
+
 {% else %}
     <p>登録した建物はありません。</p>
 {% endif %}
 
+<p>
+    <a href="{{ url_for('building.register') }}">
+        ＋建物を登録する
+    </a>
+</p>
+
 <h2>最近の分析履歴</h2>
 
 {% if histories %}
-    {% for history in histories %}
-        <div class="card history-card"
-             {% if loop.index > 2 %}
-                hidden
-             {% endif %}>
+    {% for history in histories[:2] %}
+        <div class="card history-card">
 
-            <h3>
-                {{ history.damage_report.building.building_name }}
-            </h3>
+            <!-- 建物画像 -->
+            {% if photo_keys.get(history.report_id) %}
+                <img
+                    src="{{ photo_url(photo_keys.get(history.report_id)) }}"
+                    alt="建物の被害写真"
+                    style="max-width: 300px;"
+                >
+            {% else %}
+                <p>写真はありません。</p>
+            {% endif %}
 
+            <!-- 分析日時 -->
             <p>
                 分析日時：
-                {{ history.created_at.strftime('%Y年%m月%d日 %H:%M') }}
+                {{ history.created_at.strftime('%Y/%m/%d %H:%M') }}
             </p>
 
+            <!-- 対象建物 -->
+            <p>
+                <strong>
+                    対象建物：
+                    {{ history.damage_report.building.building_name }}
+                </strong>
+            </p>
+
+            <!-- 被害度 -->
             <p>
                 被害度：
                 {{ history.damage_level }}
             </p>
 
-            <p>
-                {{ history.description }}
-            </p>
+            <!-- 分析結果確認 -->
+            <a
+                href="{{ url_for('history.show_history_detail', analysis_id=history.analysis_id) }}"
+            >
+                分析結果を確認する
+            </a>
 
         </div>
     {% endfor %}
 
-    {% if histories|length > 2 %}
-        <button type="button" id="historyToggle">
-            もっと見る
-        </button>
-    {% endif %}
+    <p>
+        <a href="{{ url_for('history.show_history') }}">
+            すべての分析履歴を見る
+        </a>
+    </p>
 
 {% else %}
     <p>分析履歴はありません。</p>
 {% endif %}
 
+<!-- 新しく分析する -->
+<p>
+    <a href="{{ url_for('analysis_input.building') }}">
+        ＋新しく分析する
+    </a>
+</p>
+
 {% block scripts %}
 <script>
     const toggleButton = document.getElementById("buildingToggle");
-    const historyToggle = document.getElementById("historyToggle");
-
-if (historyToggle) {
-    historyToggle.addEventListener("click", function () {
-        const histories = document.querySelectorAll(".history-card");
-        const isExpanded = historyToggle.textContent.trim() === "閉じる";
-
-        histories.forEach((history, index) => {
-            if (index >= 2) {
-                history.hidden = isExpanded;
-            }
-        });
-
-        historyToggle.textContent = isExpanded ? "もっと見る" : "閉じる";
-    });
-}
 
     if (toggleButton) {
         toggleButton.addEventListener("click", function () {

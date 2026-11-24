@@ -1,8 +1,11 @@
+from datetime import datetime
+
 from flask import render_template
 from flask_login import login_required, current_user
 
 from app.mypage import mypage_bp
 from app.models import Building, DamageReport, AnalysisHistory
+from app.common.photos import get_first_photo_keys
 
 
 @mypage_bp.route("/", methods=["GET"])
@@ -29,9 +32,23 @@ def show_mypage():
         AnalysisHistory.created_at.desc()
     ).all()
 
+    # 分析履歴のreport_idを取得
+    report_ids = [history.report_id for history in histories]
+
+    # 各分析履歴の1枚目の写真を取得
+    photo_keys = get_first_photo_keys(
+        report_ids,
+        current_user.user_id
+    )
+
+    print("report_ids:", report_ids)
+    print("photo_keys:", photo_keys)
+
     # マイページを表示
     return render_template(
         "mypage/mypage.html",
         buildings=buildings,
-        histories=histories
+        histories=histories,
+        now_year=datetime.now().year,
+        photo_keys=photo_keys
     )

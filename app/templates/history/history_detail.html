@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}分析履歴詳細{% endblock %}
+{% block heading %}分析履歴詳細{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/analysis.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="analysis-page analysis-result">
+
+    <!-- マイページへ戻る -->
+    <p>
+        <a href="{{ url_for('mypage.show_mypage') }}">
+            ← マイページに戻る
+        </a>
+    </p>
+
+    <!-- 分析日時 -->
+    <p>
+        分析日時：
+        {{ history.created_at.strftime('%Y年%m月%d日 %H:%M') }}
+    </p>
+
+    <!-- 建物名 -->
+    <h2>
+        {{ history.damage_report.building.building_name }}の分析結果
+    </h2>
+
+    <!-- AI分析結果 -->
+    <h2>📄 AIによる被害状況の分析結果</h2>
+
+    <div class="notice">
+        <p>⚠ 被害状況の目安</p>
+
+        <strong>
+            被害レベル {{ history.damage_level }} / 5
+        </strong>
+
+        <p>
+            {{ history.description or "分析の説明はありません。" }}
+        </p>
+    </div>
+
+    <!-- 主な被害箇所 -->
+    <div class="card">
+
+        <h4>主な被害箇所</h4>
+
+        {% set locations = history.damage_report.damage_locations %}
+
+        {% if locations %}
+            <ul>
+                {% for location in locations %}
+                    <li>
+                        {{ location.location_name }}
+                        {% if location.description %}
+                            ：{{ location.description }}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>被害箇所の詳細情報はありません。</p>
+        {% endif %}
+
+    </div>
+
+    <!-- 分析に使用した写真 -->
+    <div class="card">
+
+        <h4>分析に使用した写真</h4>
+
+        <p>
+            AI分析に使用した建物の被害写真です。
+        </p>
+
+        {% for key in photo_keys %}
+            <div class="result-photo">
+                <img
+                    src="{{ photo_url(key) }}"
+                    alt="分析に使用した被害写真 {{ loop.index }}"
+                    loading="lazy"
+                >
+            </div>
+
+            <a
+                class="button download-button"
+                href="{{ photo_url(key) }}"
+                download
+            >
+                ↓ 写真{{ loop.index }}を保存する
+            </a>
+
+        {% else %}
+            <p>表示可能な写真データはありません。</p>
+        {% endfor %}
+
+        <p class="disclaimer">
+            ※表示されている写真は、過去の分析時に使用した写真です。
+        </p>
+
+    </div>
+
+    <!-- 修理費用の目安 -->
+    <div class="card">
+
+        <h4>修理費用の目安</h4>
+
+        {% if history.repair_cost_min is not none
+              and history.repair_cost_max is not none %}
+
+            <p>
+                <strong>
+                    {{ "{:,}".format(history.repair_cost_min) }}円
+                    ～ 
+                    {{ "{:,}".format(history.repair_cost_max) }}円
+                </strong>
+            </p>
+
+        {% else %}
+            <p>修理費用の目安は表示できません。</p>
+        {% endif %}
+
+        <p class="disclaimer">
+            ※修理費用はAIによる推定値です。実際の費用は建物の状態や施工業者によって異なります。
+        </p>
+
+    </div>
+
+    <!-- チャットボットの会話履歴 -->
+    <div class="card">
+
+        <h4>チャットボットの会話履歴</h4>
+
+        <p>
+            過去の分析結果に対して行った質問とAIの回答を確認できます。
+        </p>
+
+        {% if chat_histories %}
+
+            {% for chat in chat_histories %}
+
+                <div class="card">
+
+                    <p>
+                        <strong>質問：</strong>
+                    </p>
+
+                    <p>
+                        {{ chat.user_question }}
+                    </p>
+
+                    <p>
+                        <strong>AIの回答：</strong>
+                    </p>
+
+                    <p>
+                        {{ chat.ai_answer }}
+                    </p>
+
+                    <p class="text-muted">
+                        {{ chat.created_at.strftime('%Y年%m月%d日 %H:%M') }}
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+            <p>この分析結果に対する会話履歴はありません。</p>
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
