@@ -1,211 +1,104 @@
 
-<!DOCTYPE html>
-<html lang="ja">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% block title %}建物詳細{% endblock %}
 
-    <title>建物詳細</title>
+{% block heading %}建物詳細{% endblock %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
+{% block content %}
 
-<body>
+<!-- 建物情報 -->
+<section class="building-detail-section">
 
-    <main class="container">
+    <h2>建物情報</h2>
 
-        <div class="screen">
+    <div class="card">
 
-            <!-- ヘッダー -->
-            <header class="header">
+        <div class="building-info">
 
-                <div class="page-header">
+            <p>
+                <strong>建物名</strong>
+                <br>
+                {{ building.building_name }}
+            </p>
 
-                    <h1>建物詳細</h1>
+            <p>
+                <strong>建物の種類</strong>
+                <br>
+                {{ building.building_type.type_name }}
+            </p>
 
-                    <!-- ハンバーガーメニュー -->
-                    <div class="nav">
+            <p>
+                <strong>築年数</strong>
+                <br>
+                {{ building_age }}年
+            </p>
 
-                        <button class="menu-button" id="menuButton" aria-label="メニューを開く">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </button>
+            <p>
+                <strong>所在地</strong>
+                <br>
+                {{ building.prefecture }}{{ building.city }}
+            </p>
 
-                        <!-- メニュー -->
-                        <div class="menu" id="menu">
+        </div>
 
-                            <button class="menu-close" id="menuClose" aria-label="メニューを閉じる">
-                                ×
-                            </button>
+        <!-- 建物編集ボタン -->
+        <div class="actions">
 
-                            <div class="menu-content">
+            <a class="button"
+               href="{{ url_for('building.edit', building_id=building.building_id) }}">
+                建物情報を編集する
+            </a>
 
-                                <div class="menu-account">
+        </div>
 
-                                    <a href="login.html" class="login-button">
-                                        ログイン
-                                    </a>
+    </div>
 
-                                </div>
+</section>
 
-                                <nav class="menu-nav">
+<!-- 分析履歴 -->
+<section class="building-detail-section">
 
-                                    <a href="index.html">
-                                        ホーム
-                                    </a>
+    <h2>分析履歴</h2>
 
-                                    <a href="analysis_input_building.html">
-                                        被害状況分析
-                                    </a>
+    <div class="card">
 
-                                    <a href="mypage.html">
-                                        マイページ
-                                    </a>
+        <div class="building-detail-history">
 
-                                </nav>
+            <img
+                src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=300"
+                alt="室内写真"
+            >
 
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </header>
-
-            <!-- メインコンテンツ -->
-            <div class="content">
-
-                <!-- 建物情報 -->
-                <section class="building-detail-section">
-
-                    <h2>建物情報</h2>
-
-                    <div class="card">
-
-                        <div class="building-info">
-
-                            <p>
-                                <strong>建物名</strong>
-                                <br>
-                                {{ building.building_name }}
-                            </p>
-
-                            <p>
-                                <strong>建物の種類</strong>
-                                <br>
-                                {{ building.building_type.type_name }}
-                            </p>
-
-                            <p>
-                                <strong>築年数</strong>
-                                <br>
-                                {{ building_age }}年
-                            </p>
-
-                            <p>
-                                <strong>所在地</strong>
-                                <br>
-                                {{ building.prefecture }}{{ building.city }}
-                            </p>
-
-                        </div>
-
-                        <div class="actions">
-
-                            <a class="button"
-                               href="{{ url_for('building.edit', building_id=building.building_id) }}">
-                                建物情報を編集する
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-                <!-- 分析履歴 -->
-                <section class="building-detail-section">
-
-                    <h2>分析履歴</h2>
-
-                    <div class="card">
-
-                        <div class="building-detail-history">
-
-                            <img
-                                src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=300"
-                                alt="室内写真"
-                            >
-
-                            <div>
-                                <p>2026/04/12 14:32</p>
-                                <b>中程度の被害</b>
-                                <p>壁・天井などに被害が確認されました。</p>
-                                <a href="analysis_detail.html">分析結果を確認する　›</a>
-                            </div>
-
-                        </div>
-
-                        <div class="actions">
-
-                            <a class="button" href="analysis_input_building.html">
-                                ＋ 新しく分析する
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-                <!-- 戻る -->
-                <div class="actions">
-
-                    <a class="button secondary" href="mypage.html">
-                        マイページに戻る
-                    </a>
-
-                </div>
-
+            <div>
+                <p>2026/04/12 14:32</p>
+                <b>中程度の被害</b>
+                <p>壁・天井などに被害が確認されました。</p>
+                <a href="analysis_detail.html">分析結果を確認する　›</a>
             </div>
 
         </div>
 
-    </main>
+        <!-- 新しく分析するボタン -->
+        <div class="actions">
 
-    <!-- メニュー用JavaScript -->
-    <script>
+            <a class="button" href="analysis_input_building.html">
+                ＋ 新しく分析する
+            </a>
 
-        const menuButton = document.getElementById("menuButton");
-        const menu = document.getElementById("menu");
-        const menuClose = document.getElementById("menuClose");
+        </div>
 
-        // メニューを開く
-        menuButton.addEventListener("click", function () {
+    </div>
 
-            menu.classList.add("active");
+</section>
 
-            // ハンバーガーボタンを隠す
-            menuButton.style.display = "none";
+<!-- マイページに戻る -->
+<div class="actions">
 
-        });
+    <a class="button secondary" href="{{ url_for('mypage.show_mypage') }}">
+        マイページに戻る
+    </a>
 
-        // メニューを閉じる
-        menuClose.addEventListener("click", function () {
+</div>
 
-            menu.classList.remove("active");
-
-            // ハンバーガーボタンを表示
-            menuButton.style.display = "flex";
-
-        });
-
-    </script>
-
-</body>
-
-</html>
+{% endblock %}
