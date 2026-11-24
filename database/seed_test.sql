@@ -42,7 +42,7 @@ ON DUPLICATE KEY UPDATE `location_name` = seed_row.`location_name`;
 
 -- テーブル定義書_被害写真テーブル
 INSERT INTO `damage_photo` (`photo_id`, `location_id`, `s3_object_key`)
-VALUES (1, 1, 'sample_01.png'), (2, 2, 'sample_02.png'), (3, 3, 'sample_01.png') AS seed_row
+VALUES (1, 1, 'photos/user_2/sample_01.jpg'), (2, 2, 'photos/user_2/sample_02.jpg'), (3, 3, 'photos/user_2/sample_03.jpg') AS seed_row
 ON DUPLICATE KEY UPDATE `s3_object_key` = seed_row.`s3_object_key`;
 
 -- テーブル定義書_分析履歴テーブル
