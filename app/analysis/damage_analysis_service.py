@@ -22,6 +22,8 @@ MAX_RESULT_BYTES = 128 * 1024
 MAX_IMAGE_BYTES = 10 * 1024 * 1024
 MAX_IMAGE_PIXELS = 20_000_000
 MAX_IMAGE_EDGE = 1600
+MAX_AI_PHOTOS = 20
+MAX_TOTAL_AI_IMAGE_BYTES = 20 * 1024 * 1024  # 前処理後の合計サイズ
 MAX_DB_INTEGER = 2_147_483_647  # analysis_history の integer カラム
 
 
@@ -104,8 +106,10 @@ class DamageAnalysisService:
             report_id=report_id, guest_analysis=guest_analysis, user_id=user_id
         )
         normalized_answers = self.process_answers(answers)
-        # 写真はS3オブジェクトキーで管理する。実画像の取得・前処理は
-        # PhotoStorageService の実装後に preprocess_images() へ接続する。
+        # 実API使用時だけ、所有者確認済みの写真キーから画像を読み込む。
+        # DBやセッションにはbytesを保存しない（このメソッド内でのみ使用する）。
+        if getattr(self._gemini, "requires_image_bytes", False) is True:
+            payload["_gemini_image_jpegs"] = self._load_gemini_images(payload)
         need_followup = self._gemini.judgement_data(payload, normalized_answers)
         if type(need_followup) is not bool:
             raise ValueError("AIの情報不足判定はboolである必要があります。")
@@ -131,6 +135,50 @@ class DamageAnalysisService:
         result = self._gemini.generate_analysis_result(payload, normalized_answers)
         validated = self._validate_result(result)
         return {"status": "completed", "result": validated}
+
+    @classmethod
+    def _load_gemini_images(cls, payload: Mapping[str, Any]) -> list[bytes]:
+        """DB/セッションを通じて検証済みの写真キーだけを画像に変換する。"""
+        from flask import current_app
+
+        photos = payload.get("photos", [])
+        if not isinstance(photos, list):
+            raise AnalysisInputError("写真一覧の形式が不正です。")
+        unique_keys = []
+        seen = set()
+        for item in photos:
+            if not isinstance(item, Mapping):
+                raise AnalysisInputError("写真情報が不正です。")
+            key = item.get("s3_object_key")
+            if not isinstance(key, str) or not key or len(key) > 1024:
+                raise AnalysisInputError("写真キーが不正です。")
+            if key not in seen:
+                unique_keys.append(key)
+                seen.add(key)
+        if len(unique_keys) > MAX_AI_PHOTOS:
+            raise AnalysisInputError(
+                f"一度に分析できる写真は{MAX_AI_PHOTOS}枚までです。"
+            )
+        if not unique_keys:
+            return []
+        storage = current_app.extensions.get("photo_storage_service")
+        if storage is None or not callable(getattr(storage, "read_photo", None)):
+            raise AnalysisConfigurationError("写真取得サービスが登録されていません。")
+
+        images = []
+        total_bytes = 0
+        for key in unique_keys:
+            # 受信者から任意のキーを指定させず、_load_input()で確認済みの写真だけ使う。
+            try:
+                original = storage.read_photo(key)
+            except Exception as exc:
+                raise AnalysisInputError("分析対象の写真を読み込めません。") from exc
+            processed = cls.preprocess_images(original)
+            total_bytes += len(processed)
+            if total_bytes > MAX_TOTAL_AI_IMAGE_BYTES:
+                raise AnalysisInputError("分析対象の写真の合計サイズが上限を超えています。")
+            images.append(processed)
+        return images
 
     @staticmethod
     def process_answers(answers: Sequence[Mapping[str, Any]]) -> list[dict[str, str]]:

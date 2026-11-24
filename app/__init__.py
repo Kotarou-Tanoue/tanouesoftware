@@ -79,16 +79,17 @@ def create_app():
     app.register_blueprint(history_bp, url_prefix="/history")
     
     
-    # 開発中のみダミーのGeminiServiceを使用。実際の被害判定は行わない。
-    # 本物のGeminiService完成後にこの登録部分を差し替える。
-    if os.environ.get("ANALYSIS_USE_MOCK") == "1" and (
-        app.debug or os.environ.get("FLASK_DEBUG") == "1"
-    ):
+    # 実APIは明示的に有効化したときのみ登録。Mockのデフォルト動作を維持する。
+    use_mock = os.environ.get("ANALYSIS_USE_MOCK") == "1"
+    use_live = os.environ.get("ANALYSIS_USE_GEMINI") == "1"
+    if use_mock and use_live:
+        raise RuntimeError("ANALYSIS_USE_MOCKとANALYSIS_USE_GEMINIを同時に有効化できません。")
+    if (use_mock and (app.debug or os.environ.get("FLASK_DEBUG") == "1")) or use_live:
         from .analysis.chat_service import ChatService
         from .analysis.damage_analysis_service import DamageAnalysisService
         from .analysis.gemini_service import GeminiService
 
-        gemini_service = GeminiService()
+        gemini_service = GeminiService(use_mock=not use_live)
         app.extensions["damage_analysis_service"] = DamageAnalysisService(
             gemini_service
         )
