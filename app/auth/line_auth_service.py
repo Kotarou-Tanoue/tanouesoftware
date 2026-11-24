@@ -24,7 +24,8 @@ class LineAuthError(Exception):
     """LINE認証または認証マスタの検証に失敗した。"""
 
 
-# LINE APIにPOSTリクエストを送信し、レスポンスが正常であることを確認したうえで、取得したJSONデータを辞書型として返す共通関数
+# LINE APIにPOSTリクエストを送信し、
+# レスポンスが正常であることを確認したうえで、取得したJSONデータを辞書型として返す共通関数
 def _post_to_line(url, data):
     response = requests.post(url, data=data, timeout=(3, 7), allow_redirects=False)
     if response.status_code != 200:
@@ -35,6 +36,8 @@ def _post_to_line(url, data):
     return payload
 
 
+# LINEから返された認可コードをIDトークンに交換し、
+# そのIDトークンが正当なものであることを検証したうえで、LINEユーザーIDを取得する関数
 def verify_line_login(code, nonce, code_verifier):
     """認可コードを交換し、LINEの検証APIが返した利用者IDを取得する。"""
     config = current_app.config
@@ -70,6 +73,7 @@ def verify_line_login(code, nonce, code_verifier):
     return claims.get("sub")
 
 
+# LINEユーザーIDを使用してデータベースから登録済みのユーザーを検索し、対応するUserオブジェクトを取得する関数
 def _find_line_user(line_user_id):
     provider = db.session.get(Provider, LINE_PROVIDER_CODE)
     if provider is None or provider.provider_name.strip().casefold() != "line":
@@ -84,6 +88,7 @@ def _find_line_user(line_user_id):
     return identity.user
 
 
+# LINEユーザーIDを使用して既存ユーザーを検索し、未登録の場合は新規ユーザーと認証情報をデータベースに登録する関数
 def get_or_create_line_user(line_user_id):
     """検証済みsubで照合し、初回のみ利用者と認証情報を一括登録する。"""
     if not isinstance(line_user_id, str) or not re.fullmatch(
