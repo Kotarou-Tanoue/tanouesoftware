@@ -1,0 +1,14 @@
+{% extends "errors/error_base.html" %}
+
+{% block title %}429 Too Many Requests{% endblock %}
+
+{% block error_code %}429{% endblock %}
+
+{% block error_title %}
+    アクセス回数が上限に達しました
+{% endblock %}
+
+{% block error_message %}
+    短時間に多くのリクエストが送信されました。
+    しばらく時間をおいてから再度お試しください。
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "errors/error_base.html" %}
+
+{% block title %}503 Service Unavailable{% endblock %}
+
+{% block menu %}{% endblock %}
+
+{% block error_code %}503{% endblock %}
+
+{% block error_title %}
+    現在サービスを利用できません
+{% endblock %}
+
+{% block error_message %}
+    現在、一時的にサービスを利用できない状態です。
+    しばらく時間をおいてから再度お試しください。
+{% endblock %}

@@ -4,6 +4,8 @@ from pathlib import Path
 from cachelib.file import FileSystemCache
 from flask import Flask, render_template
 
+from app.common.errors import register_error_handlers
+
 from .config import Config
 from .extensions import csrf, db, login_manager, migrate, oauth, server_session
 from .models import User
@@ -62,6 +64,18 @@ def create_app():
         },
     )
 
+    # エラーハンドラーの登録
+    register_error_handlers(app)
+
+    # エラー確認用 ここから
+    """
+    from app.common.errors import error_test_bp
+
+    if app.debug:
+        app.register_blueprint(error_test_bp)
+    """
+    # エラー確認用 ここまで
+
     from .analysis.analysis_routes import analysis_bp
     from .analysis.chat_routes import chat_bp
 
@@ -77,13 +91,14 @@ def create_app():
     from app.history import history_bp
 
     app.register_blueprint(history_bp, url_prefix="/history")
-    
-    
+
     # 実APIは明示的に有効化したときのみ登録。Mockのデフォルト動作を維持する。
     use_mock = os.environ.get("ANALYSIS_USE_MOCK") == "1"
     use_live = os.environ.get("ANALYSIS_USE_GEMINI") == "1"
     if use_mock and use_live:
-        raise RuntimeError("ANALYSIS_USE_MOCKとANALYSIS_USE_GEMINIを同時に有効化できません。")
+        raise RuntimeError(
+            "ANALYSIS_USE_MOCKとANALYSIS_USE_GEMINIを同時に有効化できません。"
+        )
     if (use_mock and (app.debug or os.environ.get("FLASK_DEBUG") == "1")) or use_live:
         from .analysis.chat_service import ChatService
         from .analysis.damage_analysis_service import DamageAnalysisService
@@ -102,8 +117,7 @@ def create_app():
     from app.building import building_bp
 
     app.register_blueprint(building_bp, url_prefix="/building")
-    
-   
+
     # トップページ
     @app.route("/")
     def index():
@@ -115,8 +129,6 @@ def create_app():
     app.register_blueprint(auth_bp)
 
     # 分析入力(建物情報入力・被害状況入力)
-    from .analysis_input.views import analysis_input_bp
-
     from .analysis_input.views import analysis_input_bp
 
     app.register_blueprint(analysis_input_bp)
@@ -134,4 +146,3 @@ def create_app():
     app.register_blueprint(photo_bp)
 
     return app
-

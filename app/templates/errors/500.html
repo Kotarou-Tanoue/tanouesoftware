@@ -1,0 +1,16 @@
+{% extends "errors/error_base.html" %}
+
+{% block title %}500 Internal Server Error{% endblock %}
+
+{% block menu %}{% endblock %}
+
+{% block error_code %}500{% endblock %}
+
+{% block error_title %}
+    システムエラーが発生しました
+{% endblock %}
+
+{% block error_message %}
+    システム内部で予期しないエラーが発生しました。
+    しばらく時間をおいてから再度お試しください。
+{% endblock %}

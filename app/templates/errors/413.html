@@ -1,0 +1,14 @@
+{% extends "errors/error_base.html" %}
+
+{% block title %}413 Content Too Large{% endblock %}
+
+{% block error_code %}413{% endblock %}
+
+{% block error_title %}
+    送信データのサイズが大きすぎます
+{% endblock %}
+
+{% block error_message %}
+    送信されたデータが許容サイズを超えています。
+    ファイルサイズを小さくしてから再度お試しください。
+{% endblock %}

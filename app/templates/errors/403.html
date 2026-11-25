@@ -1,0 +1,14 @@
+{% extends "errors/error_base.html" %}
+
+{% block title %}403 Forbidden{% endblock %}
+
+{% block error_code %}403{% endblock %}
+
+{% block error_title %}
+    アクセス権限がありません
+{% endblock %}
+
+{% block error_message %}
+    このページにアクセスする権限がありません。
+    利用可能なページから操作を行ってください。
+{% endblock %}
