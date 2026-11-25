@@ -11,13 +11,6 @@
 
 <div class="analysis-page analysis-result">
 
-    <!-- マイページへ戻る -->
-    <p>
-        <a href="{{ url_for('mypage.show_mypage') }}">
-            ← マイページに戻る
-        </a>
-    </p>
-
     <!-- 分析日時 -->
     <p>
         分析日時：
@@ -174,6 +167,13 @@
         {% endif %}
 
     </div>
+
+        <!-- マイページへ戻る -->
+    <p>
+        <a href="{{ url_for('mypage.show_mypage') }}">
+            ← マイページに戻る
+        </a>
+    </p>
 
 </div>
 
