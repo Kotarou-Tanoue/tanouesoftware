@@ -119,18 +119,18 @@
     </mxGraphModel>
   </diagram>
   <diagram id="H2JDIGPubJdKtOIXWKZR" name="情報入力／登録">
-    <mxGraphModel dx="1442" dy="748" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1613" dy="1075" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="cFOgbkUPI56o_DGh_mG1-1" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;swimlaneFillColor=#FFFFFF;" value="Service(AI処理)" vertex="1">
-          <mxGeometry height="199" width="489" x="631" y="721" as="geometry" />
+          <mxGeometry height="199" width="489" x="631" y="779.5" as="geometry" />
         </mxCell>
         <mxCell id="f153JnUCAg7jQag_D75Z-1" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;swimlaneFillColor=#FFFFFF;" value="Model" vertex="1">
           <mxGeometry height="840" width="279" x="281" y="80" as="geometry" />
         </mxCell>
         <mxCell id="f153JnUCAg7jQag_D75Z-2" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;width=150;height=30;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;swimlaneFillColor=default;" value="View（コントローラー）" vertex="1">
-          <mxGeometry height="600" width="480" x="640" y="80" as="geometry" />
+          <mxGeometry height="650" width="480" x="640" y="80" as="geometry" />
         </mxCell>
         <mxCell id="f153JnUCAg7jQag_D75Z-3" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;swimlaneFillColor=#FFFFFF;width=110;height=30;" value="Template（画面）" vertex="1">
           <mxGeometry height="600" width="279" x="1201" y="80" as="geometry" />
@@ -251,19 +251,28 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="wxgV7WQKOsUym9qVIVCi-1" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="AnalysisInputView(analysis_input_routes.py)" vertex="1">
-          <mxGeometry height="130" width="406" x="680" y="510" as="geometry" />
+          <mxGeometry height="208" width="400" x="683" y="500" as="geometry" />
         </mxCell>
-        <mxCell id="wxgV7WQKOsUym9qVIVCi-2" parent="wxgV7WQKOsUym9qVIVCi-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ GET:show_building_input() (分析する建物の入力画面を表示)" vertex="1">
-          <mxGeometry height="26" width="406" y="26" as="geometry" />
+        <mxCell id="wxgV7WQKOsUym9qVIVCi-2" parent="wxgV7WQKOsUym9qVIVCi-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;building()&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;&amp;nbsp;(&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;建物情報入力画面を表示・建物情報を登録&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="26" width="400" y="26" as="geometry" />
         </mxCell>
-        <mxCell id="wxgV7WQKOsUym9qVIVCi-4" parent="wxgV7WQKOsUym9qVIVCi-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ POST:save_building() (分析時に新規入力した建物を登録)" vertex="1">
-          <mxGeometry height="26" width="406" y="52" as="geometry" />
+        <mxCell id="wxgV7WQKOsUym9qVIVCi-4" parent="wxgV7WQKOsUym9qVIVCi-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;damage()&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;&amp;nbsp;(&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;被害状況入力画面を表示・被害情報を追加、削除&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="26" width="400" y="52" as="geometry" />
         </mxCell>
-        <mxCell id="wxgV7WQKOsUym9qVIVCi-5" parent="wxgV7WQKOsUym9qVIVCi-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ GET:show_damage_input() (被害状況の入力画面を表示)" vertex="1">
-          <mxGeometry height="26" width="406" y="78" as="geometry" />
+        <mxCell id="wxgV7WQKOsUym9qVIVCi-5" parent="wxgV7WQKOsUym9qVIVCi-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;- get_login_user_id()&lt;/span&gt;&amp;nbsp;(&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;ログインユーザーIDを取得&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="26" width="400" y="78" as="geometry" />
         </mxCell>
-        <mxCell id="wxgV7WQKOsUym9qVIVCi-6" parent="wxgV7WQKOsUym9qVIVCi-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ POST: submit_damage_report() (入力された被害内容・写真を追加)" vertex="1">
-          <mxGeometry height="26" width="406" y="104" as="geometry" />
+        <mxCell id="wxgV7WQKOsUym9qVIVCi-6" parent="wxgV7WQKOsUym9qVIVCi-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;- get_selected_building()&lt;/span&gt;&amp;nbsp;(&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;選択された建物情報を取得&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="26" width="400" y="104" as="geometry" />
+        </mxCell>
+        <mxCell id="K9L2B2F6eDrMqA22b6Lj-5" parent="wxgV7WQKOsUym9qVIVCi-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;- _create_building()&lt;/span&gt;&amp;nbsp;(&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;建物情報をデータベースに登録&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="26" width="400" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="K9L2B2F6eDrMqA22b6Lj-6" parent="wxgV7WQKOsUym9qVIVCi-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;-&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;_create_report()&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;&amp;nbsp;(&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;被害状況をデータベースに登録&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="26" width="400" y="156" as="geometry" />
+        </mxCell>
+        <mxCell id="K9L2B2F6eDrMqA22b6Lj-7" parent="wxgV7WQKOsUym9qVIVCi-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;-&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;_hand_off_to_analysis()&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;&amp;nbsp;(&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;AI分析処理にデータを引き渡す&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="26" width="400" y="182" as="geometry" />
         </mxCell>
         <mxCell id="5qqPHlxAc5xdL1nQDkbj-1" parent="1" style="html=1;whiteSpace=wrap;" value="building_detail.html" vertex="1">
           <mxGeometry height="40" width="160" x="1241" y="130" as="geometry" />
@@ -347,7 +356,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="wwtK_3_v1YTKrWwF-7su-1" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="PhotoStorageService(photo_storage_service.py)" vertex="1">
-          <mxGeometry height="118" width="406" x="680" y="780" as="geometry" />
+          <mxGeometry height="118" width="406" x="680" y="820" as="geometry" />
         </mxCell>
         <mxCell id="wwtK_3_v1YTKrWwF-7su-2" parent="wwtK_3_v1YTKrWwF-7su-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="upload_photo() (写真をs3にアップロードし、s3オブジェクトキーを返す)" vertex="1">
           <mxGeometry height="26" width="406" y="26" as="geometry" />
@@ -357,6 +366,9 @@
         </mxCell>
         <mxCell id="wwtK_3_v1YTKrWwF-7su-4" parent="wwtK_3_v1YTKrWwF-7su-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="generate_presigned_url() (s3にアップロードされた写真のURLを発行する)" vertex="1">
           <mxGeometry height="40" width="406" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="_j1Re6xjLSKYN36efAwy-2" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;swimlaneFillColor=#FFFFFF;" value="Service(AI処理)" vertex="1">
+          <mxGeometry height="199" width="430" x="1190" y="780" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
