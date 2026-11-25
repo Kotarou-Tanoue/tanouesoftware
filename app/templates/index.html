@@ -48,12 +48,11 @@
 
         <div class="damage-content">
 
-            {# TODO: 被害状況分析の最初の画面の URL が決まったら直す #}
-            <a href="/building" class="damage-title">
+
+            <a href="{{ url_for('analysis_input.building') }}" class="damage-title">
                 被害状況を調べる
                 <span>›</span>
             </a>
-
             <p>
                 建物内部の写真などの情報を入力し、
                 被害状況の目安などの情報を確認できます。
