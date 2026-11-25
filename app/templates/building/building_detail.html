@@ -56,6 +56,7 @@
 
 </section>
 
+
 <!-- 分析履歴 -->
 <section class="building-detail-section">
 
@@ -63,26 +64,50 @@
 
     <div class="card">
 
-        <div class="building-detail-history">
+        {% if histories %}
 
-            <img
-                src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=300"
-                alt="室内写真"
-            >
+            <!-- 分析履歴がある場合 -->
+            {% for history in histories %}
 
-            <div>
-                <p>2026/04/12 14:32</p>
-                <b>中程度の被害</b>
-                <p>壁・天井などに被害が確認されました。</p>
-                <a href="analysis_detail.html">分析結果を確認する　›</a>
-            </div>
+                <div class="building-detail-history">
 
-        </div>
+                    <div>
+
+                        <p>
+                            {{ history.created_at }}
+                        </p>
+
+                        <b>
+                            {{ history.damage_status.status_name }}
+                        </b>
+
+                        <p>
+                            {{ history.summary }}
+                        </p>
+
+                        <a href="{{ url_for('history.show_history_detail', analysis_id=history.analysis_id) }}">
+                            分析結果を確認する　›
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <!-- 分析履歴がない場合 -->
+            <p>
+                この建物の分析履歴はありません。
+            </p>
+
+        {% endif %}
 
         <!-- 新しく分析するボタン -->
         <div class="actions">
 
-            <a class="button" href="analysis_input_building.html">
+            <a class="button" href="{{ url_for('analysis_input.building') }}">
                 ＋ 新しく分析する
             </a>
 
@@ -91,6 +116,7 @@
     </div>
 
 </section>
+
 
 <!-- マイページに戻る -->
 <div class="actions">
