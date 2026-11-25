@@ -49,42 +49,44 @@
         <div class="card history-card">
 
             <!-- 建物画像 -->
-            {% if photo_keys.get(history.report_id) %}
-                <img
-                    src="{{ photo_url(photo_keys.get(history.report_id)) }}"
-                    alt="建物の被害写真"
-                    style="max-width: 300px;"
+            <div class="history-photo">
+                {% if photo_keys.get(history.report_id) %}
+                    <img
+                        src="{{ photo_url(photo_keys.get(history.report_id)) }}"
+                        alt="建物の被害写真"
+                    >
+                {% else %}
+                    <p>写真はありません。</p>
+                {% endif %}
+            </div>
+
+            <!-- 分析情報 -->
+            <div class="history-info">
+
+                <p>
+                    分析日時：
+                    {{ history.created_at.strftime('%Y/%m/%d %H:%M') }}
+                </p>
+
+                <p>
+                    <strong>
+                        対象建物：
+                        {{ history.damage_report.building.building_name }}
+                    </strong>
+                </p>
+
+                <p>
+                    被害度：
+                    {{ history.damage_level }}
+                </p>
+
+                <a
+                    href="{{ url_for('history.show_history_detail', analysis_id=history.analysis_id) }}"
                 >
-            {% else %}
-                <p>写真はありません。</p>
-            {% endif %}
+                    分析結果を確認する
+                </a>
 
-            <!-- 分析日時 -->
-            <p>
-                分析日時：
-                {{ history.created_at.strftime('%Y/%m/%d %H:%M') }}
-            </p>
-
-            <!-- 対象建物 -->
-            <p>
-                <strong>
-                    対象建物：
-                    {{ history.damage_report.building.building_name }}
-                </strong>
-            </p>
-
-            <!-- 被害度 -->
-            <p>
-                被害度：
-                {{ history.damage_level }}
-            </p>
-
-            <!-- 分析結果確認 -->
-            <a
-                href="{{ url_for('history.show_history_detail', analysis_id=history.analysis_id) }}"
-            >
-                分析結果を確認する
-            </a>
+            </div>
 
         </div>
     {% endfor %}
