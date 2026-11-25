@@ -24,7 +24,7 @@
             </div>
             {% endblock %}
 
-            {% block footer %}{% include "footer.html" %}{% endblock %}
+            {% block footer %}{% if request.path == '/' %}{% include "footer.html" %}{% endif %}{% endblock %}
 
         </div>
     </main>

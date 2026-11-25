@@ -1,24 +1,134 @@
-<<<<<<< HEAD
 {% extends "base.html" %}
-
 {% block title %}ホーム{% endblock %}
 
-{% block content %}
-<p>Flaskの起動に成功しました。</p>
+{% block head %}
+    <style>
+        .content {
+            padding: 20px;
+        }
+    </style>
 {% endblock %}
-=======
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>建物被害分析システム</title>
-</head>
-<body>
-    <h1>建物被害分析システム</h1>
-    <p>Flaskの起動に成功しました。</p>
-    <a href="{{ url_for('auth.dev_login') }}">開発用ログイン</a>
-    <a href="{{ url_for('auth.logout') }}">開発用ログアウト</a>
-</body>
-</html>
->>>>>>> 04d671ebf9ae8ad6e3931a340bee380afc53d615
+
+{% block header %}
+<div class="header">
+    <div class="nav">
+        <button class="menu-button" id="menuButton" aria-label="メニューを開く">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block body %}
+{% include "flash.html" %}
+
+<!-- メイン画面 -->
+<section class="hero">
+
+    <h1>地震被害度測定システム</h1>
+
+    <h2>
+        地震後の不安を、<br>
+        このシステムでサポートします。
+    </h2>
+
+</section>
+
+
+<!-- 機能紹介 -->
+<section class="main">
+
+    <div class="feature damage">
+
+        <div class="damage-image">
+            <img src="{{ url_for('static', filename='images/damage.jpg') }}" alt="建物の被害状況">
+        </div>
+
+        <div class="damage-content">
+
+            {# TODO: 被害状況分析の最初の画面の URL が決まったら直す #}
+            <a href="/building" class="damage-title">
+                被害状況を調べる
+                <span>›</span>
+            </a>
+
+            <p>
+                建物内部の写真などの情報を入力し、
+                被害状況の目安などの情報を確認できます。
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- コンセプト -->
+    <section class="concept">
+
+        <h2>
+            被害を知ることが、復旧への第一歩。
+        </h2>
+
+        <p>
+            地震後の不安を、ひとつずつ整理するために。
+        </p>
+
+        <p>
+            建物の被害状況を確認し、
+            復旧に向けた次の行動をサポートします。
+        </p>
+
+        <p>
+            写真と簡単な質問を入力するだけで、
+            被害状況の目安を確認できます。
+        </p>
+
+        <p>
+            写真と簡単な質問から、
+            今の状況を確認してみませんか？
+        </p>
+
+    </section>
+
+
+    <!-- マイページ -->
+    <section class="mypage-guidance">
+
+        <div class="mypage-inner">
+
+            <div class="mypage-image">
+                <img src="{{ url_for('static', filename='images/mypage.jpg') }}" alt="マイページ">
+            </div>
+
+            <div class="mypage-content">
+
+                <h2>
+                    ログインすると、もっと便利に。
+                </h2>
+
+                <p>
+                    過去に調べた被害状況を保存して、
+                    いつでも確認できるようになります。
+                </p>
+
+                <p>
+                    被害状況の履歴を確認したい方は、
+                    マイページをご利用ください。
+                </p>
+
+                {# ログイン中はマイページ、未ログインはログイン画面へ #}
+                <a href="{% if current_user.is_authenticated %}/mypage{% else %}{{ url_for('auth.login') }}{% endif %}" class="mypage-link">
+                    マイページを見る
+                    <span>›</span>
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</section>
+{% endblock %}

@@ -7,16 +7,6 @@
             被災後の「どうすればいい？」をサポートします。
         </p>
 
-        <nav class="footer-nav">
-            {# TODO: main Blueprint が入ったら url_for('main.index') に戻す #}
-            <a href="/">ホーム</a>
-            <span>｜</span>
-            <a href="/building">被害状況分析</a>
-            {% if current_user.is_authenticated %}
-            <span>｜</span>
-            <a href="/mypage">マイページ</a>
-            {% endif %}
-        </nav>
 
         <p class="copyright">
             © 2026 地震被害度測定システム
