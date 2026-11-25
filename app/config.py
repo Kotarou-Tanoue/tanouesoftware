@@ -36,3 +36,10 @@ class Config:
     LINE_CHANNEL_ID = os.environ["LINE_CHANNEL_ID"]
     LINE_CHANNEL_SECRET = os.environ["LINE_CHANNEL_SECRET"]
     LINE_CALLBACK_URL = os.environ["LINE_CALLBACK_URL"]
+
+    # AWS, S3との連携
+    S3_BUCKET_NAME = os.environ.get("S3_BUCKET_NAME")
+    AWS_REGION = os.environ.get(
+        "AWS_DEFAULT_REGION",
+        "ap-northeast-1",
+    )
