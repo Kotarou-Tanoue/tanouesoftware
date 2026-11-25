@@ -57,7 +57,7 @@ def _line_configured():
 
 # LINE認証失敗時の処理
 def _line_failure(
-    message="LINEログインを完了できませんでした。もう一度お試しください。",
+    message="LINEログインを完了できませんでした。\nもう一度お試しください。",
 ):
     flash(message)
     return redirect(url_for("auth.login"), code=303)

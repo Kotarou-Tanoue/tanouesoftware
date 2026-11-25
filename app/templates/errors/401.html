@@ -1,0 +1,14 @@
+{% extends "errors/error_base.html" %}
+
+{% block title %}401 Unauthorized{% endblock %}
+
+{% block error_code %}401{% endblock %}
+
+{% block error_title %}
+    ログインが必要です
+{% endblock %}
+
+{% block error_message %}
+    このページを利用するにはログインが必要です。
+    ログインしてから再度お試しください。
+{% endblock %}

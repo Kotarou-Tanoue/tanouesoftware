@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}エラーページ{% endblock %}
+
+{% block heading %}エラー{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/error.css') }}">
+{% endblock %}
+
+{% block content_class %} error-content{% endblock %}
+
+{% block content %}
+    <div class="error-container">
+        <h1 class="error-code">
+            {{ self.error_code() | trim }}
+        </h1>
+
+        <h2 class="error-title">
+            {{ self.error_title() | trim }}
+        </h2>
+
+        <p class="error-message">{{ self.error_message() | trim }}</p>
+
+        <a href="{{ url_for('index') }}" class="error-home-button">
+            ホームへ戻る
+        </a>
+    </div>
+{% endblock %}
+
+{% block footer %}{% include "footer.html" %}{% endblock %}

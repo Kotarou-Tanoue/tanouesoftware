@@ -15,7 +15,9 @@
             {% set page_heading %}{% block heading %}{{ self.title() }}{% endblock %}{% endset %}
             {% block header %}{% include "header.html" %}{% endblock %}
 
-            {% include "menu.html" %}
+            {% block menu %}
+                {% include "menu.html" %}
+            {% endblock %}
 
             {% block body %}
             <div class="content{% block content_class %}{% endblock %}">

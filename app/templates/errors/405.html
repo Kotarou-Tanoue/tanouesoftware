@@ -1,0 +1,14 @@
+{% extends "errors/error_base.html" %}
+
+{% block title %}405 Method Not Allowed{% endblock %}
+
+{% block error_code %}405{% endblock %}
+
+{% block error_title %}
+    許可されていない操作です
+{% endblock %}
+
+{% block error_message %}
+    このページでは指定された操作を行うことができません。
+    正しい操作手順で再度お試しください。
+{% endblock %}
