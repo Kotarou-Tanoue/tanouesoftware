@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/analysis.css') }}">
 {% endblock %}
 
+{% block menu %}{% endblock %}
+
 {% block content %}
 <div id="analysisPage" class="analysis-page analysis-analyzing" data-analysis-page="analyzing" data-run-url="{{ run_url }}" data-csrf-token="{{ csrf_token }}">
     <div class="progress">
