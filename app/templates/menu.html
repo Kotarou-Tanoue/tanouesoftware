@@ -17,6 +17,7 @@
         <nav class="menu-nav">
             <a href="{{ url_for('index') }}">ホーム</a>
             <a href="{{ url_for('analysis_input.building') }}">被害状況分析</a>
+            <a href="{{ url_for('recovery.index', source='menu') }}">復旧情報</a>
             {% if current_user.is_authenticated %}
             <a href="{{ url_for('mypage.show_mypage') }}">マイページ</a>
             {% endif %}
