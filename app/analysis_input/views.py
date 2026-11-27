@@ -356,6 +356,9 @@ def _hand_off_to_analysis(user_id, building_info, damage_data):
         session.pop("report_id", None)
         session.pop("user_id", None)
 
+    # 分析側に渡し終えたので、入力途中のデータを消す
+    session.pop(SESSION_KEY, None)
+
 
 # ----------------------------------------------------------------------
 # ステップ2: 被害状況入力
