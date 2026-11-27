@@ -40,10 +40,7 @@ def show_mypage():
         report_ids,
         current_user.user_id
     )
-
-    print("report_ids:", report_ids)
-    print("photo_keys:", photo_keys)
-
+    
     # マイページを表示
     return render_template(
         "mypage/mypage.html",
