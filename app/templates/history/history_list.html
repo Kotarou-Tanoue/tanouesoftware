@@ -10,19 +10,23 @@
 
 {% if histories %}
 
-    {% for history in histories %}
-        <div class="card history-card">
+{% for history in histories %}
+    <div class="card history-card">
 
-            <!-- 写真 -->
+        <!-- 写真 -->
+        <div class="history-photo">
             {% if photo_keys.get(history.report_id) %}
                 <img
                     src="{{ photo_url(photo_keys.get(history.report_id)) }}"
                     alt="被害写真"
-                    style="max-width: 300px;"
                 >
             {% else %}
                 <p>写真はありません。</p>
             {% endif %}
+        </div>
+
+        <!-- 分析情報 -->
+        <div class="history-info">
 
             <!-- 建物名 -->
             <h3>
@@ -55,7 +59,9 @@
             </a>
 
         </div>
-    {% endfor %}
+
+    </div>
+{% endfor %}
 
 {% else %}
     <p>分析履歴はありません。</p>

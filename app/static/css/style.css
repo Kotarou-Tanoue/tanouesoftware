@@ -1768,3 +1768,50 @@ th {
     text-align: center;
     white-space: pre-line;
 }
+
+/* マイページの最近の分析履歴 */
+.history-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+/* 分析履歴の写真 */
+.history-card img {
+    width: 90px;
+    height: 80px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+/* 分析履歴の文字 */
+.history-card p {
+    margin: 5px 0;
+}
+
+/* マイページの最近の分析履歴 */
+.history-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.history-photo {
+    flex-shrink: 0;
+    width: 150px;
+}
+
+.history-photo img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.history-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.history-info p {
+    margin: 5px 0;
+}

@@ -67,15 +67,6 @@ def create_app():
     # エラーハンドラーの登録
     register_error_handlers(app)
 
-    # エラー確認用 ここから
-    """
-    from app.common.errors import error_test_bp
-
-    if app.debug:
-        app.register_blueprint(error_test_bp)
-    """
-    # エラー確認用 ここまで
-
     from .analysis.analysis_routes import analysis_bp
     from .analysis.chat_routes import chat_bp
 
@@ -111,9 +102,6 @@ def create_app():
         app.extensions["chat_service"] = ChatService(gemini_service)
 
     # Blueprintの登録
-    """
-    作成前のため、コメントアウト
-    """
     from app.building import building_bp
 
     app.register_blueprint(building_bp, url_prefix="/building")
@@ -124,7 +112,7 @@ def create_app():
         return render_template("index.html")
 
     # 認証
-    from .auth.auth_routes import auth_bp
+    from .auth import auth_bp
 
     app.register_blueprint(auth_bp)
 
@@ -132,6 +120,11 @@ def create_app():
     from .analysis_input.views import analysis_input_bp
 
     app.register_blueprint(analysis_input_bp)
+
+    # 復旧情報
+    from .recovery import recovery_bp
+
+    app.register_blueprint(recovery_bp)
 
     # 開発中: 写真の保存先(S3)ができるまで、ローカル(instance/uploads)に保存する。
     if "photo_storage_service" not in app.extensions:

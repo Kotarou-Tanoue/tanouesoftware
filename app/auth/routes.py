@@ -5,7 +5,6 @@ import time
 from urllib.parse import urlencode
 
 from flask import (
-    Blueprint,
     current_app,
     flash,
     redirect,
@@ -26,11 +25,8 @@ from app.auth.line_auth_service import (
 )
 from app.models.user import User
 
-auth_bp = Blueprint(
-    "auth",
-    __name__,
-    url_prefix="/auth",
-)
+from . import auth_bp
+
 # sessionにLINE認証情報を保存する際のキー名
 LINE_FLOW_KEY = "line_login_flow"
 # LINE認証処理の有効時間(秒)
@@ -114,9 +110,10 @@ def line_login():
 # LINEでの認証が完了した後、認証結果を検証しログイン処理をする
 @auth_bp.get("/line/callback")
 def line_callback():
-    # stateの検証
+    # LINE認証情報の取得
     flow = session.get(LINE_FLOW_KEY)
     states = request.args.getlist("state")
+    # stateの検証
     if (
         not flow
         or len(states) != 1
@@ -125,6 +122,17 @@ def line_callback():
         )
     ):
         return _line_failure()
+
+    # LINE認証情報の削除（再利用防止）
+    session.pop(LINE_FLOW_KEY, None)
+
+    # LINE認証の有効期限の検証
+    elapsed_time = time.time() - flow["issued_at"]
+
+    if not 0 <= elapsed_time <= LINE_FLOW_TTL:
+        return _line_failure(
+            "LINE認証の有効期限が切れました。\nもう一度お試しください。"
+        )
 
     # エラーと認可コードの確認
     errors = request.args.getlist("error")
@@ -145,19 +153,28 @@ def line_callback():
         current_app.logger.exception("LINE認証またはユーザー取得に失敗しました")
         return _line_failure()
 
-    # セッションの初期化・再生成
+    # セッションの初期化・ログイン・再生成
     try:
         session.clear()
+
+        # Flask-Loginでログイン
+        if not login_user(user):
+            session.clear()
+            return _line_failure()
+
+        # セッションIDの再生成
         regenerate = getattr(current_app.session_interface, "regenerate", None)
 
         if regenerate is not None:
             regenerate(session)
-    except Exception:
-        current_app.logger.exception("ログインセッションの再生成に失敗しました")
-        return _line_failure()
 
-    # Flask-Loginでログイン
-    login_user(user)
+    except Exception:
+        logout_user()
+        session.clear()
+
+        current_app.logger.exception("ログインセッションの再生成に失敗しました")
+
+        return _line_failure()
 
     # トップページへリダイレクト
     return redirect(url_for("index"), code=303)
